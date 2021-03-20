@@ -1,0 +1,56 @@
+\documentclass[a4paper,12pt,bibliography=totoc,table,twoside]{scrreprt} % twoside,openright,
+\usepackage[paper=a4paper,left=30mm,right=30mm,top=35mm,bottom=35mm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage{cite} %Bibtex
+\usepackage{wrapfig,graphicx,lipsum} % Einbinden von Grafiken
+\usepackage[english]{babel} %Sprache
+\usepackage[onehalfspacing]{setspace}
+\usepackage{amsmath} %Matheumgebung
+\usepackage{mathtools}
+\usepackage{amssymb} % Erweiterte math. Symbole
+\usepackage{multicol} % mehrere Spalten machbar
+\usepackage{nicefrac}
+\usepackage{hyperref} % Verlinkungen
+\usepackage{import}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{pdfpages} % Einfügen von PDF
+\usepackage{fancyhdr}
+
+%Layout
+\captionsetup{format=plain}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\today} %Kopfzeile links
+\fancyhead[C]{Masterarbeit} %zentrierte Kopfzeile
+\fancyhead[R]{J.Rottmayer} %Kopfzeile rechts
+\fancyfoot[OR]{\thepage}
+\fancyfoot[EL]{\thepage}
+
+% Definitionen
+\newcommand\given[1][]{\:#1\vert\:}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\rr}{\textbf{r}}
+\newcommand{\p}{\textbf{p}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\diff}{\mathrm{d}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Lagr}{\mathcal{L}}
+\newcommand{\J}{\mathcal{J}}
+\newcommand\norm[1]{\left\lVert#1\right\rVert}
+\newcommand\sprod[2]{\langle #1,#2\rangle}
+\newcommand\betrag[1]{\lvert#1\rvert}
+\newcommand{\defgr}{\mathrel{\mathop:\!\!=}}
+\newcommand{\defgl}{\mathrel{=\!\!\mathop:}}
+\newcommand{\Id}{\mathrm{Id}}
+\newcommand{\mybox}{\collectbox{\setlength{\fboxsep}{1pt}\fbox{\BOXCONTENT}}}
+
+%Preamble
+\allowdisplaybreaks
+\raggedbottom
+\graphicspath{{./img/}}
+
+\author{Jan Rottmayer}
+\title{Masterarbeit}
+\date{\today}
