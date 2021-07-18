@@ -1,0 +1,35 @@
+Dependencies for Windows Installation in WSL:
+- Windows Subsystem Linux - WSL
+- Install swig
+	-> sudo apt-get install g++
+	-> sudo apt-get install libpcre3 libpcre3-dev
+	-> Download Swig from homepage http://www.swig.org/download.html 
+	-> mv /home/jan/Downloads/swig-4.0.2.tar.gz /home/jan/lib/swig-4.0.2.tar.gz
+	-> cd /home/jan/lib
+	-> chmod 777 swig-4.0.2.tar.gz
+	-> tar -xzvf swig-4.0.2.tar.gz
+	-> cd ./swig-4.0.2
+	-> ./configure --prefix=/home/jan/lib/swig-4.0.2
+	-> sudo make
+	-> sudo make install
+	-> sudo nano /etc/profile
+		-> add "export SWIG_PATH=/home/jan/lib/swig-4.0.2/bin
+		-> add "export PATH=$SWIG_PATH:$PATH"
+	-> source /etc/profile
+	-> swig -version
+- install mpi for multiprocessing build
+	-> sudo apt install python3-pip
+	-> pip3 install mpi4py
+- clone SU2
+	-> git clone https://github.com/su2code/SU2.git --recurse-submodules
+	-> git clone https://github.com/su2code/TestCases.git
+	-> cp TestCases/ ~/SU2/ -r
+- build SU2
+	-> cd /home/jan/SU2
+	-> ./meson.py build --reconfigure -Denable-pywrapper=true --prefix=/home/jan/SU2 --buildtype=debug -Dwith-mpi=disabled 
+	-> nano ../.bashrc
+		-> add "export SU2_RUN=/home/jan/SU2/bin"
+         	-> add "export SU2_HOME=/home/jan/SU2"
+         	-> add "export PATH=$PATH:$SU2_RUN"
+         	-> add "export PYTHONPATH=$PYTHONPATH:$SU2_RUN"
+	-> ./ninja -C build install
