@@ -4,11 +4,48 @@
 \title{Master thesis research}
 
 \begin{document}
+	\begin{titlepage}
+		\begin{figure}[ht]
+			\minipage{0.5\textwidth}
+			\includegraphics[width=6cm,trim=1 1.2 1 1.2,clip]{scicomp-logo-tu.png}
+			\label{fig:scicomplogo}
+			\endminipage
+			\minipage{0.5\textwidth}
+			\hfill
+			\includegraphics[width=6cm,trim=1 1.2 1 1.2,clip]{TU_kaiserslautern.svg.png}
+			\label{fig:tukllogo}
+			\endminipage
+		\end{figure}		
+		\vspace{2cm}
+		
+		\noindent\textbf{\huge Flow Control \\via Reduced Order Models}\\
+		\textbf{\large POD-Galerkin Modeling and Control \\Application for Compressible Flows}\\
+		\vspace{1cm}\\
+		\textbf{Master's Thesis\\by Jan Rottmayer\\}\linebreak	
+		\emph{A thesis submitted in fulfillment of the requirements for the degree\\ Master of Science Maschinenbau mit angewandter Informatik}\\
+		\vspace{1em}\\
+		\textbf{\large at Chair of Scientific Computing (SciComp)}\\
+		\textbf{\large Department of Computer Science}\\				
+		\vspace{1cm}\\
+		\textbf{1st Reviewer: 		\tab{\;\;Prof. Dr.-Ing. Martin B\"ohle }}\\
+		\textbf{2nd Reviewer: 		\tab{\;Prof. Dr. Nicolas R. Gauger}}\\	
+		\textbf{1st Supervisor: 	\tab{Dr. Emre \"Ozkaya}}\\
+		\textbf{2nd Supervisor: 	\tab{\!\!Max Aehle}}\\
+		\vfill
+		\noindent
+		TU Kaiserslautern\\
+		\today
+		
+	\end{titlepage}
+	
+	
+	
+	
 	\chapter{Introduction}
 		\section{Motivation}
 		\section{Problem}
 		\section{Task}
-	\chapter{Datasets}
+	\chapter{Datasets}\label{cha:datasets}
 		\section{Mesh}
 			\begin{figure}[htbp]
 				\centering
@@ -23,7 +60,7 @@
 			For the application of control a potential vortex is required, serving as additional basis of the control affine system. The potential vortex is simulated using a steady Navier Stokes solver with a freestream velocity $0.0\frac{m}{s}$ with only fixed wall movement for the cylinder wall defined by its angular velocity. The magnitude of the potential vortex is defined by the speed of the moving wall and corresponds to a control application of magnitude $1$. The angular velocity is chosen to be according to the freestream velocity. %tbc with details to wall speed
 	\chapter{Methodology}
 		\section{Navier Stokes Equation}
-		The derivation of Navier Stokes equations follows \cite{bing_han_2019}.
+			The derivation of Navier Stokes equations follows \cite{bing_han_2019}.
 			\subsection{Reynolds Transport Theorem}
 				\begin{figure}[htbp]
 					\centering
@@ -217,58 +254,81 @@
 			\subsection{Convective Numerical Method} %tbd
 			\subsection{Solver} %tbd
 		\section{Reduced Order Model}
-			This section is formulated in accordance with \cite{ROWLEY2004115}, \cite{Pinnau2008}, \cite{brunton_kutz_2019}, \cite{Arunajatesan20144} and \cite{tubiblio70572}. 
-			\subsection{Proper Orthogonal Decomposition} % Method of Snapshots
-			Proper Orthogonal Decomposition, abbreviated POD, is a projection method finding a reduced order subspace in an optimal least square approximation. 
-			\\
-			\textbf{Definition: }
-			Let $\Omega \in \R^n$ be a finite dimensional Hilbert space with inner product $\langle \cdot , \cdot \rangle_{\Omega}$ and induced norm $\norm{\cdot}_{\Omega} = \sqrt{\langle \cdot , \cdot \rangle_{\Omega}}$. Let \{$q_k \in \Omega| k=1,\dots,m$\} be an ensemble of snapshots with $m<n$ in discrete time where $q(u,v,p,x,t)$ s.t. 
-			\begin{align*}
-				\langle q , q \rangle_{\Omega} &= \int_{\Omega} u_1 u_2 + v_1 v_2 + p_1 p_2 \; dV \\
-				\norm{q}_{\Omega} &= \sqrt{\langle q , q \rangle_{\Omega}}\\
-				\bar{q} &= \frac{1}{T}\int_{T}q \; dt
-			\end{align*}
-			\\
-			\textbf{Problem: }
-			Given the ensemble of data $\Q=$\{$q_k \in H|\;k=1,\dots,m$\}, find subspace $S$ spanned by $\phi_1,\dots,\phi_R \in \Omega$ and coefficients $a_1^1,\dots,a_1^R,\dots,a_m^1,\dots,a_m^R \in \R$ minimizing
-			\begin{equation*}
-			 \norm{\Q - \mathbf{\Phi}\Q}^2 \defgr \sum_{i=1}^{m} \norm{q_i - \sum_{r=1}^{R}\phi_r a_i^{r}}_{\Omega}^2
-			\end{equation*} 
-			where $a_i$ are the time activations of the spatial POD basis. The POD basis is constructed as linear combination of the given snapshots $q_i$ by
-			\begin{equation*}
-				\phi_r = \sum_{i=1}^{m} c_i^r q_i
-			\end{equation*} 
-			where $\vec{c}_k$ are the activations of snapshots.
-			For all $R = 1,\dots,m$ the constraint
-			\begin{equation}
-				\begin{split}
-					\sprod{\phi_i}{\phi_j}_{\Omega} = \delta_{ij}
-				\end{split}\quad\quad\quad
-				\begin{split}
-					i,j = 1, \dots , m.
-				\end{split}
-				\label{eq:podortho}
-			\end{equation}
-			holds.
-			\\
-			Introducing the correlation matrix $\mathbf{K} \in \R^{m \times m}$ defined by
-			\begin{equation*}
-				\mathbf{K}_{ij} = \langle q_i , q_j \rangle_{\Omega}
-			\end{equation*} 
-			By definition, $\mathbf{K}$ is symmetric positive semi-definite matrix with real, non-negative ordered eigenvalues $\lambda_1 \geq \dots \geq \lambda_m \geq 0$.	Due to the construction of $\mathbf{K}$ the eigenvectors of the eigenvalue problem 
-			\begin{equation*}
-				\mathbf{K} \vec{c} = \lambda \vec{c}
-			\end{equation*}
-			are chosen as orthonormal basis to form the spatial POD modes $\phi_r$. The activations $\vec{c}_i$ are scaled by the corresponding eigenvalue $\lambda_i$
-			to enforce the orthonormal condition in equation \ref{eq:podortho} s.t.
-			\begin{equation*}
-				\phi_r = \frac{1}{\lambda_r} \sum_{i}^{m} q_i \vec{c}^{\;r}_i
-			\end{equation*}
-			The activations $a_i$ for the reconstruction of $q_k$ are given by
-			\begin{equation*}
-				a_i^{r} = \sprod{q_i}{\phi_r}
-			\end{equation*}
-			Note that this method of snapshots introduced by Sirovich \cite{sirovich1987turbulence} is advantageous due the reduced dimensions of the eigenvalue problem constructed by the correlation matrix $K$ reducing the complexity from $n \times n$ to $m \times m$. 			
+			This section is formulated in accordance with \cite{ROWLEY2004115}, \cite{Pinnau2008}, \cite{brunton_kutz_2019}, \cite{Arunajatesan20144}, \cite{tubiblio70572} and \cite{tubiblio70572}. 
+			\subsection{Proper Orthogonal Decomposition}
+				Proper Orthogonal Decomposition, abbreviated POD, is a projection method finding a reduced order subspace in an optimal least square approximation. 
+				\\
+				Let $\Omega \in \R^n$ be a finite dimensional Hilbert space with inner product $\langle \cdot , \cdot \rangle_{\Omega}$ and induced norm $\norm{\cdot}_{\Omega} = \sqrt{\langle \cdot , \cdot \rangle_{\Omega}}$. Let \{$q_k \in \Omega| k=1,\dots,m$\} be an ensemble of snapshots with $m<n$ in discrete time where $q(u,v,p,x,t)$ s.t. 
+				\begin{align*}
+					\langle q , q \rangle_{\Omega} &= \int_{\Omega} u_1 u_2 + v_1 v_2 + p_1 p_2 \; dV \\
+					\norm{q}_{\Omega} &= \sqrt{\langle q , q \rangle_{\Omega}}\\
+					\bar{q} &= \frac{1}{T}\int_{T}q \; dt
+				\end{align*}
+				\\
+				\subsubsection{Method of Snapshots}\label{sec:methodofsnapshots}
+					Given the ensemble of data $\Q=$\{$q_k \in H|\;k=1,\dots,m$\}, find subspace $S$ spanned by $\phi_1,\dots,\phi_R \in \Omega$ and coefficients $a_1^1,\dots,a_1^R,\dots,a_m^1,\dots,a_m^R \in \R$ minimizing
+					\begin{equation*}
+					 \norm{\Q - \mathbf{\Phi}\Q}^2 \defgr \sum_{i=1}^{m} \norm{q_i - \sum_{r=1}^{R}\phi_r a_i^{r}}_{\Omega}^2
+					\end{equation*} 
+					where $a_i$ are the time activations of the spatial POD basis. The POD basis is constructed as linear combination of the given snapshots $q_i$ by
+					\begin{equation*}
+						\phi_r = \sum_{i=1}^{m} c_i^r q_i
+					\end{equation*} 
+					where $\vec{c}_k$ are the activations of snapshots.
+					For all $R = 1,\dots,m$ the constraint
+					\begin{equation}
+						\begin{split}
+							\sprod{\phi_i}{\phi_j}_{\Omega} = \delta_{ij}
+						\end{split}\quad\quad\quad
+						\begin{split}
+							i,j = 1, \dots , m.
+						\end{split}
+						\label{eq:podortho}
+					\end{equation}
+					holds.
+					\\
+					Introducing the correlation matrix $\mathbf{K} \in \R^{m \times m}$ defined by
+					\begin{equation*}
+						\mathbf{K}_{ij} = \langle q_i , q_j \rangle_{\Omega}
+					\end{equation*} 
+					By definition, $\mathbf{K}$ is symmetric positive semi-definite matrix with real, non-negative ordered eigenvalues $\lambda_1 \geq \dots \geq \lambda_m \geq 0$.	Due to the construction of $\mathbf{K}$ the eigenvectors of the eigenvalue problem 
+					\begin{equation*}
+						\mathbf{K} \vec{c} = \lambda \vec{c}
+					\end{equation*}
+					are chosen as orthonormal basis to form the spatial POD modes $\phi_r$. The activations $\vec{c}_i$ are scaled by the corresponding eigenvalue $\lambda_i$
+					to enforce the orthonormal condition in equation \ref{eq:podortho} s.t.
+					\begin{equation*}
+						\phi_r = \frac{1}{\lambda_r} \sum_{i}^{m} q_i \vec{c}^{\;r}_i
+					\end{equation*}
+					The activations $a_i$ for the reconstruction of $q_k$ are given by
+					\begin{equation*}
+						a_i^{r} = \sprod{q_i}{\phi_r}
+					\end{equation*}
+					Note that this method of snapshots introduced by Sirovich \cite{sirovich1987turbulence} is advantageous due the reduced dimensions of the eigenvalue problem constructed by the correlation matrix $K$ reducing the complexity from $n \times n$ to $m \times m$. 	
+				\subsubsection{POD and Singular Value Decomposition}
+					Given the ensemble of data $\Q=$\{$q_k \in H|\;k=1,\dots,m$\} with $Q \in \R^{n \times m}$ there exist orthogonal matrices $\Phi \in \R^{n \times n}$ and $V \in \R^{m \times m}$ such that
+					\begin{equation*}
+						\Q = \Phi \Sigma V^T,
+					\end{equation*}
+					where $\Sigma \in \R^{n \times m}$ is diagonal with $diag(\Sigma) = \sigma_1 \geq \dots \geq \sigma_R > 0$ being singular values and $R = rank(\Q)$. The matrices $\Phi$ and $V$ are composed of the eigenvectors $\phi_i$ and $\tau_i$ of the covariance matrices $\Q \Q^T$ and $\Q^T\Q$ respectively and form an orthonormal basis s.t. $\Phi^T \Phi = \mathbf{I}$ and $V V^T = \mathbf{I}$ . 
+					The decomposition allows representation of snapshots $q_i$ in terms of the right and left singular vectors such that
+					\begin{equation*}
+						q_i = \sum_{j=1}^{R} \sigma_j \phi_j v_{ij},
+					\end{equation*}
+					assuming $m<n$. The singular vectors are given as columns of $\Phi$ and $V$ respectively. \\
+					Given the relations 
+					\begin{equation}
+						\begin{aligned}
+							\Q v_j &= \sigma_j \phi_j \\
+							\Q^T \phi_j &= \sigma_j v_j
+						\end{aligned}\label{eq:svdrelations}
+					\end{equation}
+					it follows that
+					\begin{equation}
+						\Q^T Q v_j = \sigma_j^2 v_j,
+					\end{equation}
+					where $\Q^T \Q$ is a symmetric matrix with the eigenvalues being the square of the singular values $\sigma_j$. \\
+					Note that in the case of of a snapshot matrix $\Q \in \R^{n \times m}$, where $n$ is the spatial dimension and $m$ denotes the number of snapshots in time, $\Phi$ corresponds to spatial singular vectors and $V$ to temporal singular vectors. 					
 			\subsection{Galerkin Projection}\label{sec:gp}
 				Given the POD decomposition 
 				\begin{equation}
@@ -339,127 +399,230 @@
 				\end{equation}
 			
 			\subsection{Galerkin Systems}	
-			Given the isentropic Navier Stokes equations from section \ref{sec:INS}, the equations in the two dimensional fluid domain take the variable focused time dynamics form:
-			\begin{align}
-				u_t &= -u u_x - v u_y - \frac{2}{\gamma -1 }a a_x + \mu (u_{xx} + u_{yy}) \nonumber\\
-				v_t &= -u v_x - v v_y - \frac{2}{\gamma -1 }a a_y + \mu (v_{xx} + v_{yy})\label{eq:varisenns}\\
-				a_t &= -u a_x - v a_y - \frac{\gamma -1}{2}a (u_{x} + v_{y}) \nonumber
-			\end{align}
-			Let the dynamic state variable $\mathbf{q} = (u,v,a)$, then equation \ref{eq:varisenns} becomes
-			\begin{equation}
-				\dot{\mathbf{q}} = \nu L(\mathbf{q}) + Q(\mathbf{q},\mathbf{q}), \label{eq:qdot}
-			\end{equation}
-			where 
-			\begin{align}
-				L(\mathbf{q}) &= \begin{pmatrix}
-					u_{xx} + u_{yy} \\ v_{xx} + v_{yy} \\ 0
-				\end{pmatrix} \label{eq:L}\\
-				Q(\mathbf{q}^1,\mathbf{q}^2) &= - \begin{pmatrix}
-					u^1 u^2_x - v^1 u^2_y - \frac{2}{\gamma - 1}a^1 a^2_x \\
-					u^1 v^2_x - v^1 v^2_y - \frac{2}{\gamma - 1}a^1 a^2_y \\
-					u^1 a^2_x - v^1 a^2_y - \frac{\gamma -1}{2}a^1 (u^2_x + v^2_y).
-				\end{pmatrix} \label{eq:Q}
-			\end{align}
-			The superscript in equation \ref{eq:Q} only denotes the corresponding input state and not an exponent. 
-			\\
-			Using the expansion of state $\mathbf{q}$ in terms of any orthogonal basis functions $\phi$ as
-			\begin{equation}
-				\mathbf{q}(x,t) = \bar{\mathbf{q}}(x) + \sum_{i=1}^{r} a_i(t)\phi_i(x) \label{eq:centdecomp},
-			\end{equation}
-			where $\bar{\mathbf{q}}$ is fixed, typically being the mean of all snapshots used for POD determination. The POD computation is performed on the centered data also known as fluctuating flow 
-			\begin{equation}
-				\tilde{\mathbf{q}} = \mathbf{q} - \bar{\mathbf{q}} = \sum_{i=1}^{r} a_i(t)\phi_i(x).
-			\end{equation}
-			The resulting Galerkin system results from projecting the POD modes $\phi$ onto the governing equations \ref{eq:qdot} as described in section \ref{sec:gp}.
-			\begin{equation}
-				\dot{a}_k = \nu b^1_k + b^2_k + \sum_{i=1}^{r} (\nu L_{ik}^1 + L_{ik}^2)a_i + \sum_{i=1}^{r}\sum_{j=1}^{r} Q_{ijk}a_i a_j
-				\label{eq:galerkinsystem}
-			\end{equation}
-			The coefficients for the system of ordinary differential equations follow by utilizing the distributive property of the inner product to project modes onto single terms of the governing equations s.t.
-			\begin{align*}
-				\begin{split}
-					b_k^1 &= \sprod{L(\bar{\mathbf{q}})}{\phi_k} \\
-					L_{ik}^1 &= \sprod{L(\phi_i)}{\phi_k} \\
-					Q_{ijk} &=\sprod{Q(\phi_i,\phi_j))}{\phi_k}.
-				\end{split}
-				\begin{split}
-					b_k^2 &= \sprod{Q(\bar{\mathbf{q}},\bar{\mathbf{q}})}{\phi_k} \\
-					L_{ik}^2 &=\sprod{Q(\bar{\mathbf{q}},\phi_i) + Q(\phi_i,\bar{\mathbf{q}}))}{\phi_k} \\
-					\phantom{empty}					
-				\end{split}
-			\end{align*}
-			The coefficients of equation \ref{eq:galerkinsystem} are constants which are computed before the reduced system is solved. Note that if $\bar{\mathbf{q}}$ is a steady solution of the Navier-Stokes such that 
-			\begin{equation*}
-				\nu L(\bar{\mathbf{q}}) + Q(\bar{\mathbf{q}},\bar{\mathbf{q}}) = 0
-			\end{equation*} 
-			then the affine terms vanish.  
-			 
-			\subsection{Stabilization}
-			The stability of the POD Galerkin method in the case of incompressible Navier Stokes is well researched. Instability is associated with a lack of inclusion for the pressure term in the projection and truncation errors due to the reduction of degrees of freedom. Considering the compressible Navier Stokes, unstable system behavior is more complex and less well understood. Referring to \cite{Iollo2000StabilityPO}, the inclusion of a stabilization scheme is necessary to form a stable solution to the system of ordinary differential equations. \cite{gloerfelt2008}
-			\begin{itemize}
-				\item \textbf{Artifical Viscosity} The stability of the system of ODEs can be achieved by empirically increasing the viscosity $\nu$ until stable dynamical behavior is achieved. According to \cite{couplet2003} and \cite{gloerfelt2008} the intermodal energy transfer bears similarity with the turbulent transfer and form a model closure problem. The lack of modal interaction produced by truncation and simplification in the projection model necessitates additional diffusive behavior. 
-				\item \textbf{Sobolev Norm}	Choosing the inner product norm in a Sobolev space including a disspative part directly in the inner product evaluation \cite{gloerfelt2008} in the form
-				\begin{align*}
-					\sprod{q_1}{q_2} = &\int_{\Omega}\left( u_1 u_2 + v_1 v_2 + \frac{2 \alpha}{\gamma - 1}a_1 a_2\right) dV + \\
-					&\epsilon \int_{\Omega}\left(\nabla u_1 \nabla u_2 + \nabla v_1 \nabla v_2 + \frac{2 \alpha}{\gamma - 1} \nabla a_1 \nabla a_2\right) dV,
-				\end{align*}
-				where parameter $\epsilon$ is tuned empirically.
-				\item \textbf{Penalty Term} 
-				Enforcing the correct boundary conditions in the Galerkin model by using a penalty term instead of including the pressure term was discussed briefly by \cite{gloerfelt2008}. The extension to the compressible regime consists notes
-				\begin{equation*}
-					\dot{a}_k = f_k(a) - G_k(a)
-				\end{equation*}  
-				where $f_k$ is the quadratic Galerkin projection of the compressible Navier-Stokes equations, $\dot{a}_k$ is the time evolution of mode activation and $G_k$ denotes a boundary penalty term
-				\begin{equation*}
-					G_k(a) = \tau \int_{\Omega} \phi_k \Upsilon (x) (q-q_\infty)dV.
-				\end{equation*}
-				with 
-				\begin{equation*}
-					\Upsilon(x) = \left\{ 
-					\begin{array}{l l}
-						1, \text{ if x is on }d\Omega\\ 
-						0, \text{ otherwise.}
-					\end{array} \right.
-				\end{equation*}
-				The variables $q$ are fixed to be their boundary values $q_\infty$ on $d\Omega$. Replacing $q$ by the POD decomposition
-				yields
-				\begin{equation*}
-						G_k(a) = \tau \left( \sum_{i=1}^{r} a_i \int_{d\Omega} \phi_k \cdot \phi_i dS - \int_{d\Omega} \phi_k \cdot q_\infty dS \right)
-				\end{equation*}
-				Note that $\tau$ corresponds to the weight associated with compliance to the boundary condition and is tuned empirically to find the stabilized Galerkin model. 
-				\item \textbf{Calibration} Given the non-calibrated model
-				\begin{equation*}
-					\dot{\mathbf{a}}^*(t) = f^*[\mathbf{a}^*(t)]
-				\end{equation*}
-				prescribed by the Galerkin model in vector form, the calibrated model corresponds to the second-order polynomial $f^\alpha$ minimizing 
+				Given the isentropic Navier Stokes equations from section \ref{sec:INS}, the equations in the two dimensional fluid domain take the variable focused time dynamics form:
+				\begin{align}
+					u_t &= -u u_x - v u_y - \frac{2}{\gamma -1 }a a_x + \mu (u_{xx} + u_{yy}) \nonumber\\
+					v_t &= -u v_x - v v_y - \frac{2}{\gamma -1 }a a_y + \mu (v_{xx} + v_{yy})\label{eq:varisenns}\\
+					a_t &= -u a_x - v a_y - \frac{\gamma -1}{2}a (u_{x} + v_{y}) \nonumber
+				\end{align}
+				Let the dynamic state variable $\mathbf{q} = (u,v,a)$, then equation \ref{eq:varisenns} becomes
 				\begin{equation}
-					J^\alpha = (1 - \alpha) \mathcal{E} + \alpha \mathcal{D}, \label{eq:minpolymod}
+					\dot{\mathbf{q}} = \nu \mathbf{L}(\mathbf{q}) + \mathbf{Q}(\mathbf{q},\mathbf{q}), \label{eq:qdot}
 				\end{equation}
-				where $\alpha$ is a calibration parameter, $\mathcal{E}$ a measure for the normalized error between a new model $f$ with coefficients $a$ and the hypothesized model $f^*$ deducted directly from snapshot data and $\mathcal{D}$ is penalty term for the distance between $f$ and $f^*$. $\mathcal{E}$ is defined as
+				where 
+				\begin{align}
+					\mathbf{L}(\mathbf{q}) &= \begin{pmatrix}
+						u_{xx} + u_{yy} \\ v_{xx} + v_{yy} \\ 0
+					\end{pmatrix} \label{eq:L}\\
+					\mathbf{Q}(\mathbf{q}^1,\mathbf{q}^2) &= - \begin{pmatrix}
+						u^1 u^2_x - v^1 u^2_y - \frac{2}{\gamma - 1}a^1 a^2_x \\
+						u^1 v^2_x - v^1 v^2_y - \frac{2}{\gamma - 1}a^1 a^2_y \\
+						u^1 a^2_x - v^1 a^2_y - \frac{\gamma -1}{2}a^1 (u^2_x + v^2_y).
+					\end{pmatrix} \label{eq:Q}
+				\end{align}
+				The superscript in equation \ref{eq:Q} only denotes the corresponding input state and not an exponent. 
+				\\
+				Using the expansion of state $\mathbf{q}$ in terms of any orthogonal basis functions $\phi$ as
+				\begin{equation}
+					\mathbf{q}(x,t) = \bar{\mathbf{q}}(x) + \sum_{i=1}^{r} a_i(t)\phi_i(x) \label{eq:centdecomp},
+				\end{equation}
+				where $\bar{\mathbf{q}}$ is fixed, typically being the mean of all snapshots used for POD determination. The POD computation is performed on the centered data also known as fluctuating flow 
+				\begin{equation}
+					\tilde{\mathbf{q}} = \mathbf{q} - \bar{\mathbf{q}} = \sum_{i=1}^{r} a_i(t)\phi_i(x).
+				\end{equation}
+				The resulting Galerkin system results from projecting the POD modes $\phi$ onto the governing equations \ref{eq:qdot} as described in section \ref{sec:gp}.
+				\begin{equation}
+					\dot{a}_k = \nu b^1_k + b^2_k + \sum_{i=1}^{r} (\nu L_{ik}^1 + L_{ik}^2)a_i + \sum_{i=1}^{r}\sum_{j=1}^{r} Q_{ijk}a_i a_j
+					\label{eq:galerkinsystem}
+				\end{equation}
+				The coefficients for the system of ordinary differential equations follow by utilizing the distributive property of the inner product to project modes onto single terms of the governing equations s.t.
+				\begin{align*}
+					\begin{split}
+						b_k^1 &= \sprod{\mathbf{L}(\bar{\mathbf{q}})}{\phi_k} \\
+						L_{ik}^1 &= \sprod{\mathbf{L}(\phi_i)}{\phi_k} \\
+						Q_{ijk} &=\sprod{\mathbf{Q}(\phi_i,\phi_j))}{\phi_k}.
+					\end{split}
+					\begin{split}
+						b_k^2 &= \sprod{\mathbf{Q}(\bar{\mathbf{q}},\bar{\mathbf{q}})}{\phi_k} \\
+						L_{ik}^2 &=\sprod{\mathbf{Q}(\bar{\mathbf{q}},\phi_i) + \mathbf{Q}(\phi_i,\bar{\mathbf{q}}))}{\phi_k} \\
+						\phantom{empty}					
+					\end{split}
+				\end{align*}
+				The coefficients of equation \ref{eq:galerkinsystem} are constants which are computed before the reduced system is solved. Note that if $\bar{\mathbf{q}}$ is a steady solution of the Navier-Stokes such that 
 				\begin{equation*}
-					\mathcal{E}(f) = \frac{\overline{\norm{e(f,t)}^2}}{\overline{\norm{e(f^*,t)}^2}},
-				\end{equation*}
-				where $\norm{\cdot}$ denotes a norm of $\R^M$ and $\overline{\cdot}$ denotes arithmetic time average. As choice for $e(f,t)$ the gap between time derivatives of $a^*(t)$ and those obtained of the polynomial model $f$
-				\begin{equation*}
-					e(f,t) = \dot{a}^*(t) - f[a^*(t)]
+					\nu \mathbf{L}(\bar{\mathbf{q}}) + \mathbf{Q}(\bar{\mathbf{q}},\bar{\mathbf{q}}) = 0
 				\end{equation*} 
-				Let
-				\begin{equation*}
-					f = \sum_{k=1}^{P}y_k m_k,
-				\end{equation*}
-				where $y_k \in \R^P$ and $m_k$ form the natural monomial bases of the vector polynomial in $M$ variables of degree 2 $(P = M (M+1)(M+2)/2)$.\\
-				The distance $\mathcal{D}$ is defined as
-				\begin{equation*}
-					\mathcal{D}(f) = \frac{\norm{f - f^*}^2}{\norm{f^*}^2}
-				\end{equation*}
-			where $\norm{f} = \sqrt{y^T y}$ is a seminorm. The minimization of \ref{eq:minpolymod} results in the vector $y^\alpha$ of the polynomial coefficients of $f^\alpha$ in the monomial basis. The calibration procedure amounts to solving a linear system due to choice of $e(f,t)$.
-			\end{itemize}				
+				then the affine terms vanish.  
+				 
+			\subsection{Stabilization}
+				The stability of the POD Galerkin method in the case of incompressible Navier Stokes is well researched. Instability is associated with a lack of inclusion for the pressure term in the projection and truncation errors due to the reduction of degrees of freedom. Considering the compressible Navier Stokes, unstable system behavior is more complex and less well understood. Referring to \cite{Iollo2000StabilityPO}, the inclusion of a stabilization scheme is necessary to form a stable solution to the system of ordinary differential equations. \cite{gloerfelt2008}
+				\begin{itemize}
+					\item \textbf{Artifical Viscosity} The stability of the system of ODEs can be achieved by empirically increasing the viscosity $\nu$ until stable dynamical behavior is achieved. According to \cite{couplet2003} and \cite{gloerfelt2008} the intermodal energy transfer bears similarity with the turbulent transfer and form a model closure problem. The lack of modal interaction produced by truncation and simplification in the projection model necessitates additional diffusive behavior. 
+					\item \textbf{Sobolev Norm}	Choosing the inner product norm in a Sobolev space including a disspative part directly in the inner product evaluation \cite{gloerfelt2008} in the form
+					\begin{align*}
+						\sprod{q_1}{q_2} = &\int_{\Omega}\left( u_1 u_2 + v_1 v_2 + \frac{2 \alpha}{\gamma - 1}a_1 a_2\right) dV + \\
+						&\epsilon \int_{\Omega}\left(\nabla u_1 \nabla u_2 + \nabla v_1 \nabla v_2 + \frac{2 \alpha}{\gamma - 1} \nabla a_1 \nabla a_2\right) dV,
+					\end{align*}
+					where parameter $\epsilon$ is tuned empirically.
+					\item \textbf{Penalty Term} 
+					Enforcing the correct boundary conditions in the Galerkin model by using a penalty term instead of including the pressure term was discussed briefly by \cite{gloerfelt2008}. The extension to the compressible regime consists notes
+					\begin{equation*}
+						\dot{a}_k = f_k(a) - G_k(a)
+					\end{equation*}  
+					where $f_k$ is the quadratic Galerkin projection of the compressible Navier-Stokes equations, $\dot{a}_k$ is the time evolution of mode activation and $G_k$ denotes a boundary penalty term
+					\begin{equation*}
+						G_k(a) = \tau \int_{\Omega} \phi_k \Upsilon (x) (q-q_\infty)dV.
+					\end{equation*}
+					with 
+					\begin{equation*}
+						\Upsilon(x) = \left\{ 
+						\begin{array}{l l}
+							1, \text{ if x is on }d\Omega\\ 
+							0, \text{ otherwise.}
+						\end{array} \right.
+					\end{equation*}
+					The variables $q$ are fixed to be their boundary values $q_\infty$ on $d\Omega$. Replacing $q$ by the POD decomposition
+					yields
+					\begin{equation*}
+							G_k(a) = \tau \left( \sum_{i=1}^{r} a_i \int_{d\Omega} \phi_k \cdot \phi_i dS - \int_{d\Omega} \phi_k \cdot q_\infty dS \right)
+					\end{equation*}
+					Note that $\tau$ corresponds to the weight associated with compliance to the boundary condition and is tuned empirically to find the stabilized Galerkin model. 
+					\item \textbf{Calibration} Given the non-calibrated model
+					\begin{equation*}
+						\dot{\mathbf{a}}^*(t) = f^*[\mathbf{a}^*(t)]
+					\end{equation*}
+					prescribed by the Galerkin model in vector form, the calibrated model corresponds to the second-order polynomial $f^\alpha$ minimizing 
+					\begin{equation}
+						J^\alpha = (1 - \alpha) \mathcal{E} + \alpha \mathcal{D}, \label{eq:minpolymod}
+					\end{equation}
+					where $\alpha$ is a calibration parameter, $\mathcal{E}$ a measure for the normalized error between a new model $f$ with coefficients $a$ and the hypothesized model $f^*$ deducted directly from snapshot data and $\mathcal{D}$ is penalty term for the distance between $f$ and $f^*$. $\mathcal{E}$ is defined as
+					\begin{equation*}
+						\mathcal{E}(f) = \frac{\overline{\norm{e(f,t)}^2}}{\overline{\norm{e(f^*,t)}^2}},
+					\end{equation*}
+					where $\norm{\cdot}$ denotes a norm of $\R^M$ and $\overline{\cdot}$ denotes arithmetic time average. As choice for $e(f,t)$ the gap between time derivatives of $a^*(t)$ and those obtained of the polynomial model $f$
+					\begin{equation*}
+						e(f,t) = \dot{a}^*(t) - f[a^*(t)]
+					\end{equation*} 
+					Let
+					\begin{equation*}
+						f = \sum_{k=1}^{P}y_k m_k,
+					\end{equation*}
+					where $y_k \in \R^P$ and $m_k$ form the natural monomial bases of the vector polynomial in $M$ variables of degree 2 $(P = M (M+1)(M+2)/2)$.\\
+					The distance $\mathcal{D}$ is defined as
+					\begin{equation*}
+						\mathcal{D}(f) = \frac{\norm{f - f^*}^2}{\norm{f^*}^2}
+					\end{equation*}
+				where $\norm{f} = \sqrt{y^T y}$ is a seminorm. The minimization of \ref{eq:minpolymod} results in the vector $y^\alpha$ of the polynomial coefficients of $f^\alpha$ in the monomial basis. The calibration procedure amounts to solving a linear system due to choice of $e(f,t)$.
+				\end{itemize}				
+			\subsection{Control Methods}
+				The methods of application of control for the reduced order model presented here, are proposed by \cite{Peraire2012}.
+				\subsubsection{Control Function Method}
+					The application of a control function is assumed to follow the superposition principle. The control function is simply the velocity field generated by a steady cylinder rotation under zero freestream velocity corresponding to a fixed potential vortex $\mathbf{q}_c$. The angular velocity of the cylinder chosen for the simulation of the potential vortex corresponds to a control input $\gamma = 1$. 
+					Utilizing the POD decomposition \ref{eq:centdecomp} and the control function expansion the flow notes
+					\begin{equation}
+						\mathbf{q}(x,t) = \bar{\mathbf{q}} + \gamma(t)\mathbf{q}_c + \sum_{i=1}^{r} a_i(t)\phi_i(x) \label{eq:cfpoddecmop},
+					\end{equation}
+					where $\gamma(t)$ denotes the control input and $\gamma(t) \mathbf{q}_c$ satisfies the non-homogeneous velocity boundary condition on the cylinder wall and the farfield condition.\\
+					Deploying \ref{eq:cfpoddecmop} in the isentropic formulation of \ref{eq:qdot} gives:
+					\begin{align*}
+						\dot{\mathbf{q}} &= \nu \mathbf{L}(\bar{\mathbf{q}}) + \nu \gamma  \mathbf{L}(\mathbf{q}_c) + \nu \sum_{i=1}^{r} a_i \mathbf{L}(\phi_i) \\ &+ \mathbf{Q}(\bar{\mathbf{q}},\bar{\mathbf{q}}) + \mathbf{Q}(\bar{\mathbf{q}},\mathbf{q}_c ) + \mathbf{Q}(\mathbf{q}_c ,\bar{\mathbf{q}}) + \mathbf{Q}(\mathbf{q}_c,\mathbf{q}_c)\\
+						&+ \sum_{i=1}^{r} \big[\mathbf{Q}(\phi_i,\bar{\mathbf{q}})+\mathbf{Q}(\bar{\mathbf{q}},\phi_i)+\mathbf{Q}(\phi_i,\mathbf{q}_c)+\mathbf{Q}(\mathbf{q}_c,\phi_i)\big]\\
+						&+ \sum_{i=1}^{r}\sum_{j=1}^{r} \mathbf{Q}(\phi_i,\phi_j).
+					\end{align*}
+					Note that the summation can be extended using $\mathbf{q}_c$ and $\bar{\mathbf{q}}$ as modes with activation $\gamma$ or $1$ respectively. Performing a Galerkin projection, described in \ref{sec:gp}, utilizing the control function and POD expansion in \ref{eq:cfpoddecmop} the resulting Galerkin system becomes
+					\begin{align}
+						\dot{a}_k &= \nu b^1_k + b^2_k + \sum_{i=1}^{r} (\nu L_{ik}^1 + L_{ik}^2)a_i + \sum_{i=1}^{r}\sum_{j=1}^{r} Q_{ijk}a_i a_j \nonumber \\
+						&+  \gamma (\nu d_k^1 + d_k^2) + \gamma^2 f_k + \sum_{i=1}^{r} \gamma g_{ik} a_i + h_k \frac{\partial \gamma}{\partial t}
+						\label{eq:cfgalerkinsystem}
+					\end{align}
+					where 
+					\begin{align*}
+						\begin{split}
+							b_k^1 &= \sprod{\mathbf{L}(\bar{\mathbf{q}})}{\phi_k} \\
+							L_{ik}^1 &= \sprod{\mathbf{L}(\phi_i)}{\phi_k} \\
+							d_k^1 &= \sprod{\mathbf{L}(\mathbf{q}_c)}{\phi_k} \\
+							f_k &= \sprod{\mathbf{Q}(\mathbf{q}_c,\mathbf{q}_c)}{\phi_k}\\
+							h_k &= \sprod{\mathbf{q}_c}{\phi_k}
+						\end{split}
+						\begin{split}
+							b_k^2 &= \sprod{\mathbf{Q}(\bar{\mathbf{q}},\bar{\mathbf{q}})}{\phi_k} \\
+							L_{ik}^2 &=\sprod{\mathbf{Q}(\bar{\mathbf{q}},\phi_i) + \mathbf{Q}(\phi_i,\bar{\mathbf{q}})}{\phi_k} \\
+							d_k^2 &= \sprod{\mathbf{Q}(\mathbf{q}_c,\bar{\mathbf{q}}) + \mathbf{Q}(\bar{\mathbf{q}},\mathbf{q}_c)}{\phi_k} \\
+							g_{ik} &= \sprod{\mathbf{Q}(\mathbf{q}_c,\phi_i) + \mathbf{Q}(\phi_i,\mathbf{q}_c)}{\phi_k} \\
+							Q_{ijk} &=\sprod{\mathbf{Q}(\phi_i,\phi_j))}{\phi_k}					
+						\end{split}
+					\end{align*}
+					Note the additional terms in the Galerkin system arise from the addition of the control function and the lack of orthogonality with respect to the POD basis.  				
+				\subsubsection{Penalty Method}
+					Enforcing the boundary condition in a "weak" fashion, the velocity on the cylinder wall may be written as 
+					\begin{equation*}
+						\mathbf{u} = \gamma R e_\theta - \epsilon \frac{\partial u}{\partial n},
+					\end{equation*}
+					where $\mathbf{u}$ is solely the velocity components, $R$ is the cylinder radius, $e_\theta$ the unit tangent vector and $\epsilon$ a weight parameter. Utilizing the alternative boundary condition in its derivative form
+					\begin{equation}
+						\frac{\partial u}{\partial n} = - \frac{\mathbf{u} - \gamma R e_\theta}{\epsilon}, \label{eq:pmboundaryterm}
+					\end{equation}
+					the boundary condition may be imposed in a weak form as surface integral in the Galerkin projection. For $\epsilon \rightarrow 0$ , the cylinder boundary converges to the original cylinder boundary condition. Even though $\phi_i$ are non-zero on the cylinder wall, the flow trough the wall is still $0$, s.t. $\phi_i \cdot n = 0$. 
+					\\
+					The arising penalty term $d_i$ is an additional term in the Galerkin system s.t. \ref{eq:galerkinsystem} yields
+					\begin{equation}
+						\dot{a}_k = \nu b^1_k + b^2_k + \sum_{i=1}^{r} (\nu L_{ik}^1 + L_{ik}^2)a_i + \sum_{i=1}^{r}\sum_{j=1}^{r} Q_{ijk}a_i a_j - (d_k^1 - \gamma d_k^2)
+						\label{eq:pmgalerkinsystem}.
+					\end{equation}
+					The penalty term is prescribed by the integral formulation
+					\begin{equation*}
+						d_k(a) = - \tau \int_{\Omega} \phi_k \cdot \Upsilon(x)(\mathbf{q} - \mathbf{q}_\infty) dV
+					\end{equation*}
+					where 
+					\begin{equation*}
+						\Upsilon(x) = \begin{cases}
+							1, \text{ if x is on } \partial \Omega, \\
+							0, \text{ otherwise.}
+						\end{cases}
+					\end{equation*}
+					and $\mathbf{q}_\infty$ are the set boundary values $\gamma R e_\theta$. It yields
+					\begin{equation}
+						d_k(a) = - \tau \left( \sum_{i=1}^{r} a_i \int_{\partial \Omega} \phi_k \cdot \phi_i dS - \int_{\partial \Omega} \phi_k \cdot \mathbf{q}_\infty dS \right).
+						\label{eq:penalty}
+					\end{equation}
+					where the weight parameter $\tau$ is tuned empirically and determines the strength of the imposition of boundary conditions. With respect to \ref{eq:pmboundaryterm}, the parameter $\epsilon$ is included in the weight $\tau$ in \ref{eq:penalty}. The additional term $d_k^1$ and $d_k^2$ are concluded from \ref{eq:penalty} as
+					\begin{align*}
+						d_k^1 &= - \tau \sum_{i=1}^{r} a_i \int_{\partial \Omega} \phi_k \cdot \phi_i dS\\
+						d_k^2 &= \tau \int_{\partial \Omega} \phi_k \cdot \mathbf{q}_\infty^0 dS.
+					\end{align*}
+					where $\mathbf{q}_\infty^0$	corresponds to the state of a fixed cylinder rotation with $\gamma_0$. 
+					
 			\subsection{Optimal Control}
-			
-			
-	\chapter{Results}
+									
+	\chapter{Results and Discussion}
+		As part of this thesis the construction of a reduced order model is necessary, in which the chosen set of equation is set to be the isentropic navier stokes presented in \ref{sec:INS}. Note the methodological difference in the governing equations between the simulation and the reduced order model. 
+		\section{Simulation}
+			In accordance with chapter \ref{cha:datasets}, datasets were generated for three different mach numbers to compare the presented methods in the general context of the compressible Navier-Stokes. The error estimation according to \cite{compinccomp2013} shows $<3\%$ error in low mach flows ($Ma<0.2$), where the error between incompressible and compressible Navier Stokes is linked to the fluid flows mach number. \\
+			The different configurations were chosen to cover the range of incompressible to fully compressible flows with one case of moderate mach as transition. The differentiation between these cases serves as basis for comparison and validation of the methods. \\
+			The simulation is performed with the software package SU2, Multiphysics Simulation and Design Software. "The SU2 suite is an open-source collection of C++ based software tools for performing Partial Differential Equation (PDE) analysis and solving PDE-constrained optimization problems" \cite{su2code}. For a fixed freestream velocity with given Reynolds number the software automatically adjusted viscosity and pressure to meet the required parameters. \\
+			In the case of the dataset, the simulation is performed by simply fixing the mach number ($Ma = 0.01, 0.1, 0.6$), reynolds number ($Re=100$) and time step. The solver is set to be the general navier stokes solver (compressible) in SU2. The unsteady simulation produce the well known phenomenon known as Van-Karman vortex street or vortex shedding. After some time the simulation approaches a periodic solution representing the vortex shedding with fixed shedding period. The relation between freestream velocity and shedding frequency is given by the Strouhal number, that is dependent on the reynolds number and geometric condition. The time step is chosen with respect to the shedding period by resolving one period with $50-100$ time steps, table \ref{tab:simpara} shows the utilized parameter combination. 
+			\begin{table}[hbt]
+				\centering
+				\begin{tabular}{ l l r }
+					\hline
+					Reynolds Number $Re$ & Mach Number $a_\infty$ & Time Step $\Delta t$ \\
+					\hline
+					$100$ & $0.01$ & $0.02$ \\
+					$100$ & $0.1$  & $0.001$ \\
+					$100$ & $0.6$  & $0.0001$ \\
+					\hline
+				\end{tabular}
+				\caption{Simulation parameters for datasets.}\label{tab:simpara}
+			\end{table} 
 		\section{POD}
+			The proper orthogonal decomposition is performed using a vectorized state representation based on the system dynamic variables. In the case of the assumed isentropic reduced order model the state dependent variable becomes $q=(u,v,a)$, but can be fitted to any set of variables describing the temporal dynamics of the system according to the governing equation. \\
+			Computation via the Method of Snapshots \ref{sec:methodofsnapshots}, employing a centered decomposition 
+			\begin{equation*}
+				\mathbf{q}(x,t) = \bar{\mathbf{q}} + \sum_{i=1}^{r} a_i(t)\phi_i(x),
+			\end{equation*}
+			yields the pod modes $\phi_i$. 
 		\section{POD ROM}
+		
 		\section{Control Application}
 	\chapter{Conclusion}
 			
