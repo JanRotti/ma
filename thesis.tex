@@ -301,9 +301,10 @@
 						\phi_r = \frac{1}{\lambda_r} \sum_{i}^{m} q_i \vec{c}^{\;r}_i
 					\end{equation*}
 					The activations $a_i$ for the reconstruction of $q_k$ are given by
-					\begin{equation*}
+					\begin{equation}
 						a_i^{r} = \sprod{q_i}{\phi_r}
-					\end{equation*}
+						\label{eq:podactcalc}
+					\end{equation}
 					Note that this method of snapshots introduced by Sirovich \cite{sirovich1987turbulence} is advantageous due the reduced dimensions of the eigenvalue problem constructed by the correlation matrix $K$ reducing the complexity from $n \times n$ to $m \times m$. 	
 				\subsubsection{POD and Singular Value Decomposition}
 					Given the ensemble of data $\Q=$\{$q_k \in H|\;k=1,\dots,m$\} with $Q \in \R^{n \times m}$ there exist orthogonal matrices $\Phi \in \R^{n \times n}$ and $V \in \R^{m \times m}$ such that
@@ -614,15 +615,206 @@
 				\end{tabular}
 				\caption{Simulation parameters for datasets.}\label{tab:simpara}
 			\end{table} 
-		\section{POD}
+		\section{Proper Orthogonal Decomposition}\label{sec:solpod}
 			The proper orthogonal decomposition is performed using a vectorized state representation based on the system dynamic variables. In the case of the assumed isentropic reduced order model the state dependent variable becomes $q=(u,v,a)$, but can be fitted to any set of variables describing the temporal dynamics of the system according to the governing equation. \\
-			Computation via the Method of Snapshots \ref{sec:methodofsnapshots}, employing a centered decomposition 
+			Computation via the Method of Snapshots from section \ref{sec:methodofsnapshots} over five vortex shedding periods with the mean subtracted, employing a centered decomposition 
 			\begin{equation*}
 				\mathbf{q}(x,t) = \bar{\mathbf{q}} + \sum_{i=1}^{r} a_i(t)\phi_i(x),
 			\end{equation*}
-			yields the pod modes $\phi_i$. 
+			yields the pod modes $\phi_i$. For visualization and universality the POD modes are computed from normalized data by scaling with the inverse of the freestream velocity. The resulting time averaged flow field is pictured in figure \ref{fig:averageFlow} and shows similarity to a steady solution to low reynolds flow scenario \cite{islam2013}. 
+			\begin{figure}
+				\begin{subfigure}{\textwidth}
+					\centering
+					\includegraphics[width=\linewidth,trim=5cm 1.5cm 8cm 1.5cm,clip]{mach_0.6/mach_0.6_POD_q_avg.png}
+					\caption{$Mach \; 0.6$}
+				\end{subfigure}
+				\newline
+				\begin{subfigure}{\textwidth}
+					\centering
+					\includegraphics[width=\linewidth,trim=5cm 1.5cm 8cm 1.5cm,clip]{mach_0.1/mach_0.1_POD_q_avg.png}
+					\caption{$Mach \; 0.1$}
+				\end{subfigure}
+				\newline
+				\begin{subfigure}{\textwidth}
+					\centering
+					\includegraphics[width=\linewidth,trim=5cm 1.5cm 8cm 1.5cm,clip]{mach_0.01/mach_0.01_POD_q_avg.png}
+					\caption{$Mach \; 0.01$}
+				\end{subfigure}
+				\caption{Normalized average flow field for the flow around a circular cylinder in the vortex shedding region for different mach flows. Note the time averaged flows are mostly similar, while the vortex shedding region differs due to the different scale of vortexes corresponding to the mach number.}
+				\label{fig:averageFlow}
+			\end{figure} \\
+			The first eight POD basis functions, with their x-directional velocity component, are depicted in figure \ref{fig:podma0.01}, \ref{fig:podma0.1} and \ref{fig:podma0.6} for each different mach number. The eigenmodes of the flow clearly group into sets of complementary two, with each group representing a different frequency in flow variation. The system is mostly dependent on the first two eigenmodes oscillating complementary with additional higher frequency oscillations given in the remaining eigenmodes. The difference between the mach datasets corresponds to the velocity variation. With increasing velocity the influence of the central cylinder increases, as such the developing vortexes become larger in structure and the oscillation length behind the cylinder grows.\\
+			The eigenvalues of the leading pod modes are displayed in \ref{fig:podeig}. In the case of nearly incompressible flow, the leading two eigenmodes capture more than $99\%$, the leading four eigenmodes more than $99.99\%$ and the leading six eigenmodes more than $99.9999\%$ from the energy of the full model. At moderate mach number the energy captured is slightly decreased due the more complex flow structure and the developing compressible effects. More than $98\%$ of the energy is captured by the leading two, more than $99.8\%$ by the leading four and more than $99.99\%$ by the leading six eigenmodes. This decrease in energy capture is further intensified for the high mach scenario were compressible effects are amplified. Still, $95\%$ is captured in the leading two eigenmodes, $99.4\%$ is captured in the leading four eigenmodes and $99.6\%$ is captured in the leading six eigenmodes.
+			
+			\begin{figure}[hbt]
+				\begin{subfigure}{0.5\textwidth}
+					\centering
+					\includegraphics[width=\linewidth,trim=5cm 1.5cm 12cm 1.5cm,clip]{mach_0.01/pod_modes/mach_0.01_POD_0.png}
+					\caption{Eigenmode 0}
+				\end{subfigure}
+				\begin{subfigure}{0.5\textwidth}
+					\centering
+					\includegraphics[width=\linewidth,trim=5cm 1.5cm 12cm 1.5cm,clip]{mach_0.01/pod_modes/mach_0.01_POD_1.png}
+					\caption{Eigenmode 1}
+				\end{subfigure}
+				\newline
+				\begin{subfigure}{0.5\textwidth}
+					\centering
+					\includegraphics[width=\linewidth,trim=5cm 1.5cm 12cm 1.5cm,clip]{mach_0.01/pod_modes/mach_0.01_POD_2.png}
+					\caption{Eigenmode 2}
+				\end{subfigure}
+				\begin{subfigure}{0.5\textwidth}
+					\centering
+					\includegraphics[width=\linewidth,trim=5cm 1.5cm 12cm 1.5cm,clip]{mach_0.01/pod_modes/mach_0.01_POD_3.png}
+					\caption{Eigenmode 3}
+				\end{subfigure}
+				\newline
+				\begin{subfigure}{0.5\textwidth}
+					\centering
+					\includegraphics[width=\linewidth,trim=5cm 1.5cm 12cm 1.5cm,clip]{mach_0.01/pod_modes/mach_0.01_POD_4.png}
+					\caption{Eigenmode 4}
+				\end{subfigure}
+				\begin{subfigure}{0.5\textwidth}
+					\centering
+					\includegraphics[width=\linewidth,trim=5cm 1.5cm 12cm 1.5cm,clip]{mach_0.01/pod_modes/mach_0.01_POD_5.png}
+					\caption{Eigenmode 5}
+				\end{subfigure}
+				\newline
+				\begin{subfigure}{0.5\textwidth}
+					\centering
+					\includegraphics[width=\linewidth,trim=5cm 1.5cm 12cm 1.5cm,clip]{mach_0.01/pod_modes/mach_0.01_POD_6.png}
+					\caption{Eigenmode 6}
+				\end{subfigure}
+				\begin{subfigure}{0.5\textwidth}
+					\centering
+					\includegraphics[width=\linewidth,trim=5cm 1.5cm 12cm 1.5cm,clip]{mach_0.01/pod_modes/mach_0.01_POD_7.png}
+					\caption{Eigenmode 7}
+				\end{subfigure}
+				\caption{Leading eight POD basis functions as velocity in x-direction for mach $0.01$ flow with subtracted mean.}
+				\label{fig:podma0.01}
+			\end{figure} 
+			\begin{figure}[hbt]
+				\begin{subfigure}{0.5\textwidth}
+					\centering
+					\includegraphics[width=\linewidth,trim=5cm 1.5cm 12cm 1.5cm,clip]{mach_0.1/pod_modes/mach_0.1_POD_0.png}
+					\caption{Eigenmode 0}
+				\end{subfigure}
+				\begin{subfigure}{0.5\textwidth}
+					\centering
+					\includegraphics[width=\linewidth,trim=5cm 1.5cm 12cm 1.5cm,clip]{mach_0.1/pod_modes/mach_0.1_POD_1.png}
+					\caption{Eigenmode 1}
+				\end{subfigure}
+				\newline
+				\begin{subfigure}{0.5\textwidth}
+					\centering
+					\includegraphics[width=\linewidth,trim=5cm 1.5cm 12cm 1.5cm,clip]{mach_0.1/pod_modes/mach_0.1_POD_2.png}
+					\caption{Eigenmode 2}
+				\end{subfigure}
+				\begin{subfigure}{0.5\textwidth}
+					\centering
+					\includegraphics[width=\linewidth,trim=5cm 1.5cm 12cm 1.5cm,clip]{mach_0.1/pod_modes/mach_0.1_POD_3.png}
+					\caption{Eigenmode 3}
+				\end{subfigure}
+				\newline
+				\begin{subfigure}{0.5\textwidth}
+					\centering
+					\includegraphics[width=\linewidth,trim=5cm 1.5cm 12cm 1.5cm,clip]{mach_0.1/pod_modes/mach_0.1_POD_4.png}
+					\caption{Eigenmode 4}
+				\end{subfigure}
+				\begin{subfigure}{0.5\textwidth}
+					\centering
+					\includegraphics[width=\linewidth,trim=5cm 1.5cm 12cm 1.5cm,clip]{mach_0.1/pod_modes/mach_0.1_POD_5.png}
+					\caption{Eigenmode 5}
+				\end{subfigure}
+				\newline
+				\begin{subfigure}{0.5\textwidth}
+					\centering
+					\includegraphics[width=\linewidth,trim=5cm 1.5cm 12cm 1.5cm,clip]{mach_0.1/pod_modes/mach_0.1_POD_6.png}
+					\caption{Eigenmode 6}
+				\end{subfigure}
+				\begin{subfigure}{0.5\textwidth}
+					\centering
+					\includegraphics[width=\linewidth,trim=5cm 1.5cm 12cm 1.5cm,clip]{mach_0.1/pod_modes/mach_0.1_POD_7.png}
+					\caption{Eigenmode 7}
+				\end{subfigure}
+				\caption{Leading eight POD basis functions as velocity in x-direction for mach $0.1$ flow with subtracted mean.}
+				\label{fig:podma0.1}
+			\end{figure} 			
+			\begin{figure}[hbt]
+				\begin{subfigure}{0.5\textwidth}
+					\centering
+					\includegraphics[width=\linewidth,trim=5cm 1.5cm 12cm 1.5cm,clip]{mach_0.6/pod_modes/mach_0.6_POD_0.png}
+					\caption{Eigenmode 0}
+				\end{subfigure}
+				\begin{subfigure}{0.5\textwidth}
+					\centering
+					\includegraphics[width=\linewidth,trim=5cm 1.5cm 12cm 1.5cm,clip]{mach_0.6/pod_modes/mach_0.6_POD_1.png}
+					\caption{Eigenmode 1}
+				\end{subfigure}
+				\newline
+				\begin{subfigure}{0.5\textwidth}
+					\centering
+					\includegraphics[width=\linewidth,trim=5cm 1.5cm 12cm 1.5cm,clip]{mach_0.6/pod_modes/mach_0.6_POD_2.png}
+					\caption{Eigenmode 2}
+				\end{subfigure}
+				\begin{subfigure}{0.5\textwidth}
+					\centering
+					\includegraphics[width=\linewidth,trim=5cm 1.5cm 12cm 1.5cm,clip]{mach_0.6/pod_modes/mach_0.6_POD_3.png}
+					\caption{Eigenmode 3}
+				\end{subfigure}
+				\newline
+				\begin{subfigure}{0.5\textwidth}
+					\centering
+					\includegraphics[width=\linewidth,trim=5cm 1.5cm 12cm 1.5cm,clip]{mach_0.6/pod_modes/mach_0.6_POD_4.png}
+					\caption{Eigenmode 4}
+				\end{subfigure}
+				\begin{subfigure}{0.5\textwidth}
+					\centering
+					\includegraphics[width=\linewidth,trim=5cm 1.5cm 12cm 1.5cm,clip]{mach_0.6/pod_modes/mach_0.6_POD_5.png}
+					\caption{Eigenmode 5}
+				\end{subfigure}
+				\newline
+				\begin{subfigure}{0.5\textwidth}
+					\centering
+					\includegraphics[width=\linewidth,trim=5cm 1.5cm 12cm 1.5cm,clip]{mach_0.6/pod_modes/mach_0.6_POD_6.png}
+					\caption{Eigenmode 6}
+				\end{subfigure}
+				\begin{subfigure}{0.5\textwidth}
+					\centering
+					\includegraphics[width=\linewidth,trim=5cm 1.5cm 12cm 1.5cm,clip]{mach_0.6/pod_modes/mach_0.6_POD_7.png}
+					\caption{Eigenmode 7}
+				\end{subfigure}
+				\caption{Leading eight POD basis functions as velocity in x-direction for mach $0.6$ flow with subtracted mean.}
+				\label{fig:podma0.6}
+			
+			\end{figure} 
+			\begin{figure}[hbt]
+				\begin{subfigure}{0.45\textwidth}
+					\centering
+					\includegraphics[width=\linewidth]{mach_0.01/POD_Eigenvalues_0.01.png}
+					\caption{Eigenvalues for POD decomposition for dataset with mach $0.01$}
+				\end{subfigure}
+				\quad
+				\begin{subfigure}{0.45\textwidth}
+					\centering
+					\includegraphics[width=\linewidth]{mach_0.1/POD_Eigenvalues_0.1.png}
+					\caption{Eigenvalues for POD decomposition for dataset with mach $0.1$}
+				\end{subfigure}
+				\newline
+				\centering
+				\begin{subfigure}{0.45\textwidth}
+					\centering
+					\includegraphics[width=\linewidth]{mach_0.6/POD_Eigenvalues_0.6.png}
+					\caption{Eigenvalues for POD decomposition for dataset with mach $0.6$}
+				\end{subfigure}
+				\caption{Semi-logarithmic y-axis plots displaying the eigenvalues that correspond to the POD modes ordered by magnitude.}
+				\label{fig:podeig}
+			\end{figure}
+			
+		\section{Optimal Model}
+			Projecting the POD modes from \ref{sec:solpod} onto the simulation snapshots gives rise to the optimal pod model. The optimal POD model is characterized by the periodic activation of modes. The optimal activations can be computed as described in equation \ref{eq:podactcalc}. The optimal activations are computed for the first eight eigenmodes of each dataset.  
 		\section{POD ROM}
-		
+			
 		\section{Control Application}
 	\chapter{Conclusion}
 			
