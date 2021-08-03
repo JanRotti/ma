@@ -247,12 +247,77 @@
 				\item Inverse Reynolds number $$ \frac{1}{Re} = \frac{\mu}{\rho V L}$$
 			\end{itemize}
 			Non-dimensionalization is advantageous as for any value of scaling parameters $L,V,\dots$ equation \ref{eq:nondimns} holds. The non-dimensionalization of the isentropic Navier Stokes \ref{eq:isennsmach} can be performed in similar fashion.  
+		
+		
 		\section{SU2} %tbd
 			\subsection{Finite Volume Method} %tbd
 			\subsection{Time Discretization} %tbd 
 			\subsection{Spatial Gradient} %tbd
 			\subsection{Convective Numerical Method} %tbd
 			\subsection{Solver} %tbd
+		\section{Finite Differences}
+			Let $f(x):\R \rightarrow \R$ be a continuous differentiable function. In the vicinity $h \in \R^{+}$ of $x$, $f(x + h)$ can be expressed as Taylor series 
+			\begin{equation}
+				f(x + h) = f(x) + h \left.\frac{\partial f}{\partial x}\right\vert_{x} + \frac{h^2}{2!} \left.\frac{\partial^2 f}{\partial x^2}\right\vert_{x} +
+				\frac{h^3}{3!} \left.\frac{\partial^3 f}{\partial x^3}\right\vert_{x} + \dots +
+				\frac{h^n}{n!} \left.\frac{\partial^n f}{\partial x^n}\right\vert_{x}
+				\label{eq:taylorseries},
+			\end{equation}
+			where $\left.(\cdot)\right\vert_{x}$ means evaluated at point $(x)$.
+			Higher order derivatives are unknown and as such simply neglected. Because commonly $h << 1$, higher order terms vanish as $h$ is sufficiently small, the factor decreases exponentially with the order of the term and additionally the factorial in the denominator grows. This produces an error of second order in $h$
+			\begin{equation*}
+				f(x + h) = f(x) + h \left.\frac{\partial f}{\partial x}\right\vert_{x} + \mathcal{O}(h^2).
+			\end{equation*}
+			Rearranging gives a first order approximation for the first derivative at $x$.
+			\begin{equation}
+				\left.\frac{\partial f}{\partial x}\right\vert_{x} = \frac{f(x + h) - f(x)}{h} + \mathcal{O}(h)
+				\label{eq:fwdiff}
+			\end{equation}
+			Equation \ref{eq:fwdiff} is known as forward difference scheme.\\
+			Similarly a Taylor series expansion can be used to approximate $f(x - h)$ as
+			\begin{equation}
+				f(x - h) = f(x) - h \left.\frac{\partial f}{\partial x}\right\vert_{x} + \frac{h^2}{2!} \left.\frac{\partial^2 f}{\partial x^2}\right\vert_{x} -
+				\frac{h^3}{3!} \left.\frac{\partial^3 f}{\partial x^3}\right\vert_{x} + \dots +
+				\frac{h^n}{n!} \left.\frac{\partial^n f}{\partial x^n}\right\vert_{x}
+				\label{eq:taylorseriesneg}.
+			\end{equation}
+			Again neglecting higher order terms and rearranging gives   
+			\begin{equation}
+				\left.\frac{\partial f}{\partial x}\right\vert_{x} = \frac{f(x) - f(x - h)}{h} + \mathcal{O}(h)
+				\label{eq:bwdiff}.
+			\end{equation}
+			Equation \ref{eq:bwdiff} is known as backward difference scheme.\\
+			Subtracting equation \ref{eq:taylorseriesneg} from \ref{eq:taylorseries} gives 
+			\begin{equation}
+				f(x + h) - f(x - h) = 2 \left.\frac{\partial f}{\partial x}\right\vert_{x} + \frac{2 h^3}{3!} \left.\frac{\partial^3 f}{\partial x^3}\right\vert_{x}	+ \dots
+				\label{eq:taylorsercent}.
+			\end{equation}
+			Rearranging and neglecting higher order terms gives the central difference scheme
+			\begin{equation}
+				\left.\frac{\partial f}{\partial x}\right\vert_{x} = \frac{f(x + h) - f(x - h)}{2h} + \mathcal{O}(h^2)
+				\label{eq:centdiff}.
+			\end{equation}
+			Note the central difference scheme is second order accurate.\\
+			Adding equation \ref{eq:taylorseriesneg} to \ref{eq:taylorseries} gives 
+			\begin{equation}
+				f(x + h) + f(x - h) = 2 \left.\frac{\partial f}{\partial x}\right\vert_{x} + \frac{2 h^2}{2!} \left.\frac{\partial^2 f}{\partial x^2}\right\vert_{x}	+ \frac{2 h^4}{4!} \left.\frac{\partial^4 f}{\partial x^4}\right\vert_{x} + \dots
+				\label{eq:taylorsecder}.
+			\end{equation}
+			Rearranging for the second derivative gives a finite difference scheme of second order accuracy
+			\begin{equation}
+				\left.\frac{\partial^2 f}{\partial x^2}\right\vert_{x} = \frac{f(x + h) - 2 f(x) + f(x - h)}{h^2} + \mathcal{O}(h^2)
+				\label{eq:secdiff}.
+			\end{equation}
+			
+		\section{Coordinate Transform}
+			As the utilized spatial discretization, given by the mesh in figure \ref{fig:mesh}, inherits rotational symmetry, the coordinate transform from Cartesian to cylinder coordinates is beneficial.
+			
+			
+			
+		
+		
+		
+		
 		\section{Reduced Order Model}
 			This section is formulated in accordance with \cite{ROWLEY2004115}, \cite{Pinnau2008}, \cite{brunton_kutz_2019}, \cite{Arunajatesan20144}, \cite{tubiblio70572} and \cite{tubiblio70572}. 
 			\subsection{Proper Orthogonal Decomposition}
@@ -437,7 +502,7 @@
 					\label{eq:galerkinsystem}
 				\end{equation}
 				The coefficients for the system of ordinary differential equations follow by utilizing the distributive property of the inner product to project modes onto single terms of the governing equations s.t.
-				\begin{align*}
+				\begin{align}
 					\begin{split}
 						b_k^1 &= \sprod{\mathbf{L}(\bar{\mathbf{q}})}{\phi_k} \\
 						L_{ik}^1 &= \sprod{\mathbf{L}(\phi_i)}{\phi_k} \\
@@ -448,7 +513,8 @@
 						L_{ik}^2 &=\sprod{\mathbf{Q}(\bar{\mathbf{q}},\phi_i) + \mathbf{Q}(\phi_i,\bar{\mathbf{q}}))}{\phi_k} \\
 						\phantom{empty}					
 					\end{split}
-				\end{align*}
+					\label{eq:galerkincoeffs}
+				\end{align}
 				The coefficients of equation \ref{eq:galerkinsystem} are constants which are computed before the reduced system is solved. Note that if $\bar{\mathbf{q}}$ is a steady solution of the Navier-Stokes such that 
 				\begin{equation*}
 					\nu \mathbf{L}(\bar{\mathbf{q}}) + \mathbf{Q}(\bar{\mathbf{q}},\bar{\mathbf{q}}) = 0
@@ -622,17 +688,18 @@
 				\mathbf{q}(x,t) = \bar{\mathbf{q}} + \sum_{i=1}^{r} a_i(t)\phi_i(x),
 			\end{equation*}
 			yields the pod modes $\phi_i$. For visualization and universality the POD modes are computed from normalized data by scaling with the inverse of the freestream velocity. The resulting time averaged flow field is pictured in figure \ref{fig:averageFlow} and shows similarity to a steady solution to low reynolds flow scenario \cite{islam2013}. \\
-			The first eight POD basis functions, with their x-directional velocity component, are depicted in figure \ref{fig:podma0.01}, \ref{fig:podma0.1} and \ref{fig:podma0.6} for each different mach number. The eigenmodes of the flow clearly group into sets of complementary two, with each group representing a different frequency in flow variation. The system is mostly dependent on the first two eigenmodes oscillating complementary with additional higher frequency oscillations given in the remaining eigenmodes. The difference between the mach datasets corresponds to the velocity variation. With increasing velocity the influence of the central cylinder increases, as such the developing vortexes become larger in structure and the oscillation length behind the cylinder grows.\\
+			The first eight POD basis functions, with their x-directional velocity component, are depicted in figure \ref{fig:podma0.01}, \ref{fig:podma0.1} and \ref{fig:podma0.6} for each different mach number. The eigenmodes of the flow clearly group into sets of complementary two, with each group representing a different frequency in spatial flow variation. The system is mostly dependent on the first two eigenmodes oscillating complementary with additional higher frequency oscillations given in the remaining eigenmodes. The difference between the mach datasets corresponds to the velocity variation. With increasing velocity the influence of the central cylinder increases, as such the developing vortexes become larger in structure and the oscillation length behind the cylinder changes.\\
 			The eigenvalues of the leading pod modes are displayed in \ref{fig:podeig}. In the case of nearly incompressible flow, the leading two eigenmodes capture more than $99\%$, the leading four eigenmodes more than $99.99\%$ and the leading six eigenmodes more than $99.9999\%$ from the energy of the full model. At moderate mach number the energy captured is slightly decreased due the more complex flow structure and the developing compressible effects. More than $98\%$ of the energy is captured by the leading two, more than $99.8\%$ by the leading four and more than $99.99\%$ by the leading six eigenmodes. This decrease in energy capture is further intensified for the high mach scenario were compressible effects are amplified. Still, $95\%$ is captured in the leading two eigenmodes, $99.4\%$ is captured in the leading four eigenmodes and $99.6\%$ is captured in the leading six eigenmodes.
-			
 
 		\section{Optimal Model} %reconstruction error
 			\subsection{POD Activation}
-				Projecting the POD modes from \ref{sec:solpod} onto the simulation snapshots gives rise to the optimal POD model. The optimal POD model is characterized by the periodic activation of modes, which can be computed as described in equation \ref{eq:podactcalc}. The optimal activations are computed for the first eight eigenmodes of each dataset, depicted in \ref{fig:podactiv0.01},\ref{fig:podactiv0.1},\ref{fig:podactiv0.6} and serve as comparison for the reduced order model.		
-				Note the temporal shift of the complementary modes, the increase in frequency and the decrease in amplitude as the mode number increases.
-			 \subsection{Reconstruction}
-			 	
+				Projecting the POD modes from section \ref{sec:solpod} onto the simulation snapshots \ref{eq:podactcalc} gives rise to the optimal POD model. The optimal activations are computed for the first eight eigenmodes of each dataset and are depicted in \ref{fig:podactiv0.01}, \ref{fig:podactiv0.1}, \ref{fig:podactiv0.6}.\\
+				
+				The activations display the periodic behavior of the solution. In similarity to a Fourier basis, the complementary modes present the spatial shift while with increasing mode number the spatial frequency increases. This behavior transfers to the temporal domain represented by the optimal activations. Here the importance of the modes is measured by the amplitude. With increasing pair of modes the amplitude of activation decreases while the frequency increases. The first pair of modes present the shedding frequency of the dominant vortex pattern, the second pair doubles the shedding frequency and overlay the dominant pattern, the third pair has triple the shedding frequency with further decreased amplitude. This pattern continues with increasing mode pair. This frequency amplitude coherency is similar to a Fourier basis.
+			\subsection{Reconstruction}
+			 	The reconstruction is effectively the potential of the POD modes to describe the dynamics of the reduced order model. By choosing a low number of POD modes, the capability for stable system dynamics becomes increasingly difficult to obtain due to truncation error and the simple reduction in the degrees of freedom of the system dynamics, therefore limiting how the system can propagate in time. This problem does not arise with the optimal model as such the model is directly derived from the full order simulation and therefore does not inherit any approximation error per se. The error in the reconstruction arises from the exclusion of POD modes, effectively excluding the information contained in them. The reconstruction for two snapshots for each dataset with the corresponding reconstruction chosen with two, four and six POD modes is depicted in \ref{fig:podrec0.01},\ref{fig:podrec0.1} and \ref{fig:podrec0.6}. The reconstruction error measured as mean squared error over the number of POD modes utilized for reconstruction is displayed in \ref{fig:podrecerror}. The reconstruction is visually indistinguishable from the real snapshots, after considering 4 or more POD modes. The remaining error is proportional to the amplitude of the activations and the truncated POD modes excluded from the reconstruction. The difference, inherited by the reconstruction with solely two modes, is still visible in the single percent scale and shows a more vortex emphasizing view in which the transition and detachment of vortexes is reduced. Overall the reconstruction capabilities of the POD modes emphasize the approach of the reduced order model by limiting the degrees of freedom of the dynamical system to the mainly contributing modes.
 		\section{POD ROM}
+			For the construction of the reduced order model, the governing equations were chosen to be the isentropic navier stokes introduced in section \ref{sec:INS}. The accompanying simplification in the Galerkin system following the galerkin projection, are quadratic dependencies of the DOF variables instead of the original cubic dependence, derived by projecting onto the fully compressible navier stokes \cite{ROWLEY2004115}, \cite{gloerfelt2008}. The Galerkin system derived for the isentropic model has dependence on the convection and diffusion operators denoted as $\Q$ and $\L$ for computation of coefficients \ref{eq:galerkincoeffs}. The coefficients are computed pre-simulation, as they only depend on the initial data-based decomposition into POD modes and mean flow. The operators necessitate first and second spatial derivatives that need to be computed directly from the discretized snapshots.  
 			
 		\section{Control Application}
 		
@@ -640,7 +707,7 @@
 			
 \appendix
 	\chapter{POD}
-	\begin{figure}
+	\begin{figure}[hbt]
 		\begin{subfigure}{\textwidth}
 			\centering
 			\includegraphics[width=\linewidth,trim=5cm 1.5cm 8cm 1.5cm,clip]{mach_0.6/mach_0.6_POD_q_avg.png}
@@ -803,22 +870,22 @@
 		\label{fig:podma0.6}
 	\end{figure} 
 	\begin{figure}[hbt]
-		\begin{subfigure}{0.45\textwidth}
+		\begin{subfigure}{0.48\textwidth}
 			\centering
-			\includegraphics[width=\linewidth]{mach_0.01/POD_Eigenvalues_0.01.png}
+			\includegraphics[width=\linewidth,trim=0.5 0.5 1.5cm 1.5cm,clip]{mach_0.01/POD_Eigenvalues_0.01.png}
 			\caption{Eigenvalues for POD decomposition for dataset with mach $0.01$}
 		\end{subfigure}
 		\quad
-		\begin{subfigure}{0.45\textwidth}
+		\begin{subfigure}{0.48\textwidth}
 			\centering
-			\includegraphics[width=\linewidth]{mach_0.1/POD_Eigenvalues_0.1.png}
+			\includegraphics[width=\linewidth,trim=0.5 0.5 1.5cm 1.5cm,clip]{mach_0.1/POD_Eigenvalues_0.1.png}
 			\caption{Eigenvalues for POD decomposition for dataset with mach $0.1$}
 		\end{subfigure}
 		\newline
 		\centering
-		\begin{subfigure}{0.45\textwidth}
+		\begin{subfigure}{0.48\textwidth}
 			\centering
-			\includegraphics[width=\linewidth]{mach_0.6/POD_Eigenvalues_0.6.png}
+			\includegraphics[width=\linewidth,trim=0.5 0.5 1.5cm 1.5cm,clip]{mach_0.6/POD_Eigenvalues_0.6.png}
 			\caption{Eigenvalues for POD decomposition for dataset with mach $0.6$}
 		\end{subfigure}
 		\caption{Semi-logarithmic y-axis plots displaying the eigenvalues that correspond to the POD modes ordered by magnitude.}
@@ -826,81 +893,280 @@
 	\end{figure}
 		
 	\chapter{Optimal Model}
-	\begin{figure}[hbt]
-		\begin{subfigure}{0.5\textwidth}
+
+		\begin{figure}[hbt]
+			\begin{subfigure}{0.5\textwidth}
+				\centering
+				\includegraphics[width=\linewidth]{mach_0.01/activation/mach_0.01_pod_activ_eig_0_1.png}
+				\caption{Eigenmode 0 and 1}
+			\end{subfigure}
+			\begin{subfigure}{0.5\textwidth}
+				\centering
+				\includegraphics[width=\linewidth]{mach_0.01/activation/mach_0.01_pod_activ_eig_2_3.png}
+				\caption{Eigenmode 2 and 3}
+			\end{subfigure}
+			\newline
+			\begin{subfigure}{0.5\textwidth}
+				\centering
+				\includegraphics[width=\linewidth]{mach_0.01/activation/mach_0.01_pod_activ_eig_4_5.png}
+				\caption{Eigenmode 4 and 5}
+			\end{subfigure}
+			\begin{subfigure}{0.5\textwidth}
+				\centering
+				\includegraphics[width=\linewidth]{mach_0.01/activation/mach_0.01_pod_activ_eig_6_7.png}
+				\caption{Eigenmode 6 and 7}
+			\end{subfigure}
+			\caption{Optimal activations for the leading eight eigenmodes grouped into complementary pairs for the dataset with $Ma=0.01$.}
+			\label{fig:podactiv0.01}
+		\end{figure}
+		\begin{figure}[hbt]
+			\begin{subfigure}{0.5\textwidth}
+				\centering
+				\includegraphics[width=\linewidth]{mach_0.1/activation/mach_0.1_pod_activ_eig_0_1.png}
+				\caption{Eigenmode 0 and 1}
+			\end{subfigure}
+			\begin{subfigure}{0.5\textwidth}
+				\centering
+				\includegraphics[width=\linewidth]{mach_0.1/activation/mach_0.1_pod_activ_eig_2_3.png}
+				\caption{Eigenmode 2 and 3}
+			\end{subfigure}
+			\newline
+			\begin{subfigure}{0.5\textwidth}
+				\centering
+				\includegraphics[width=\linewidth]{mach_0.1/activation/mach_0.1_pod_activ_eig_4_5.png}
+				\caption{Eigenmode 4 and 5}
+			\end{subfigure}
+			\begin{subfigure}{0.5\textwidth}
+				\centering
+				\includegraphics[width=\linewidth]{mach_0.1/activation/mach_0.1_pod_activ_eig_6_7.png}
+				\caption{Eigenmode 6 and 7}
+			\end{subfigure}
+			\caption{Optimal activations for the leading eight eigenmodes grouped into complementary pairs for the dataset with $Ma=0.1$.}
+			\label{fig:podactiv0.1}
+		\end{figure}
+		\begin{figure}[hbt]
+			
+	\begin{subfigure}{0.5\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{mach_0.6/activation/mach_0.6_pod_activ_eig_0_1.png}
+		\caption{Eigenmode 0 and 1}
+	\end{subfigure}
+	\begin{subfigure}{0.5\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{mach_0.6/activation/mach_0.6_pod_activ_eig_2_3.png}
+		\caption{Eigenmode 2 and 3}
+	\end{subfigure}
+	\newline
+	\begin{subfigure}{0.5\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{mach_0.6/activation/mach_0.6_pod_activ_eig_4_5.png}
+		\caption{Eigenmode 4 and 5}
+	\end{subfigure}
+	\begin{subfigure}{0.5\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{mach_0.6/activation/mach_0.6_pod_activ_eig_6_7.png}
+		\caption{Eigenmode 6 and 7}
+	\end{subfigure}
+	\caption{Optimal activations for the leading eight eigenmodes grouped into complementary pairs for the dataset with $Ma=0.6$.}
+	\label{fig:podactiv0.6}
+\end{figure} 
+			
+		\begin{figure}[hbt]
+			\begin{subfigure}{0.48\textwidth}
+				\centering
+				\includegraphics[width=\linewidth,trim=0.5 0.5 1.5cm 1.5cm,clip]{mach_0.01/reconstruction/mach_0.01_rec_error.png}
+				\caption{Reconstruction error for dataset with $Ma=0.01$}
+			\end{subfigure}
+			\quad
+			\begin{subfigure}{0.48\textwidth}
+				\centering
+				\includegraphics[width=\linewidth,trim=0.5 0.5 1.5cm 1.5cm,clip]{mach_0.1/reconstruction/mach_0.1_rec_error.png}
+				\caption{Reconstruction error for dataset with $Ma=0.1$}
+			\end{subfigure}
+			\newline
 			\centering
-			\includegraphics[width=\linewidth]{mach_0.01/activation/mach_0.01_pod_activ_eig_0_1.png}
-			\caption{Eigenmode 0 and 1}
-		\end{subfigure}
-		\begin{subfigure}{0.5\textwidth}
-			\centering
-			\includegraphics[width=\linewidth]{mach_0.01/activation/mach_0.01_pod_activ_eig_2_3.png}
-			\caption{Eigenmode 2 and 3}
-		\end{subfigure}
-		\newline
-		\begin{subfigure}{0.5\textwidth}
-			\centering
-			\includegraphics[width=\linewidth]{mach_0.01/activation/mach_0.01_pod_activ_eig_4_5.png}
-			\caption{Eigenmode 4 and 5}
-		\end{subfigure}
-		\begin{subfigure}{0.5\textwidth}
-			\centering
-			\includegraphics[width=\linewidth]{mach_0.01/activation/mach_0.01_pod_activ_eig_6_7.png}
-			\caption{Eigenmode 6 and 7}
-		\end{subfigure}
-		\caption{Optimal activations for the leading eight eigenmodes grouped into complementary pairs for the dataset with $Ma=0.01$.}
-		\label{fig:podactiv0.01}
-	\end{figure}
-	\begin{figure}[hbt]
-		\begin{subfigure}{0.5\textwidth}
-			\centering
-			\includegraphics[width=\linewidth]{mach_0.1/activation/mach_0.1_pod_activ_eig_0_1.png}
-			\caption{Eigenmode 0 and 1}
-		\end{subfigure}
-		\begin{subfigure}{0.5\textwidth}
-			\centering
-			\includegraphics[width=\linewidth]{mach_0.1/activation/mach_0.1_pod_activ_eig_2_3.png}
-			\caption{Eigenmode 2 and 3}
-		\end{subfigure}
-		\newline
-		\begin{subfigure}{0.5\textwidth}
-			\centering
-			\includegraphics[width=\linewidth]{mach_0.1/activation/mach_0.1_pod_activ_eig_4_5.png}
-			\caption{Eigenmode 4 and 5}
-		\end{subfigure}
-		\begin{subfigure}{0.5\textwidth}
-			\centering
-			\includegraphics[width=\linewidth]{mach_0.1/activation/mach_0.1_pod_activ_eig_6_7.png}
-			\caption{Eigenmode 6 and 7}
-		\end{subfigure}
-		\caption{Optimal activations for the leading eight eigenmodes grouped into complementary pairs for the dataset with $Ma=0.1$.}
-		\label{fig:podactiv0.1}
-	\end{figure}
-	\begin{figure}[hbt]
-		\begin{subfigure}{0.5\textwidth}
-			\centering
-			\includegraphics[width=\linewidth]{mach_0.6/activation/mach_0.6_pod_activ_eig_0_1.png}
-			\caption{Eigenmode 0 and 1}
-		\end{subfigure}
-		\begin{subfigure}{0.5\textwidth}
-			\centering
-			\includegraphics[width=\linewidth]{mach_0.6/activation/mach_0.6_pod_activ_eig_2_3.png}
-			\caption{Eigenmode 2 and 3}
-		\end{subfigure}
-		\newline
-		\begin{subfigure}{0.5\textwidth}
-			\centering
-			\includegraphics[width=\linewidth]{mach_0.6/activation/mach_0.6_pod_activ_eig_4_5.png}
-			\caption{Eigenmode 4 and 5}
-		\end{subfigure}
-		\begin{subfigure}{0.5\textwidth}
-			\centering
-			\includegraphics[width=\linewidth]{mach_0.6/activation/mach_0.6_pod_activ_eig_6_7.png}
-			\caption{Eigenmode 6 and 7}
-		\end{subfigure}
-		\caption{Optimal activations for the leading eight eigenmodes grouped into complementary pairs for the dataset with $Ma=0.6$.}
-		\label{fig:podactiv0.6}
-	\end{figure} 
+			\begin{subfigure}{0.48\textwidth}
+				\centering
+				\includegraphics[width=\linewidth,trim=0.5 0.5 1.5cm 1.5cm,clip]{mach_0.6/reconstruction/mach_0.6_rec_error.png}
+				\caption{Reconstruction error for dataset with $Ma=0.6$}
+			\end{subfigure}
+			\caption{Semi-logarithmic y-axis plots displaying the reconstruction error, measured as mean squared error, over the number of pod modes chosen for reconstruction of the flow field.}
+			\label{fig:podrecerror}
+		\end{figure}
+		\begin{figure}[hbt]
+			\hspace{3cm} Snapshot $0$ \hfill Snapshot $50$ \hspace{2.2cm}
+			\newline
+			\begin{turn}{90}
+				\hspace{0.1cm}
+				Ground Truth
+			\end{turn}
+			\begin{subfigure}[b]{0.48\textwidth}
+				\centering
+				\includegraphics[width=\linewidth,trim=5cm 1.5cm 11cm 1.5cm,clip]{mach_0.01/reconstruction/mach_0.01_gt_snap_0.png}
+			\end{subfigure}
+			\begin{subfigure}[b]{0.48\textwidth}
+				\centering
+				\includegraphics[width=\linewidth,trim=5cm 1.5cm 11cm 1.5cm,clip]{mach_0.01/reconstruction/mach_0.01_gt_snap_50.png}
+			\end{subfigure}
+			\newline
+			\begin{turn}{90}
+				\hspace{0.6cm}
+				2 Modes
+			\end{turn}
+			\begin{subfigure}[b]{0.48\textwidth}
+				\centering
+				\includegraphics[width=\linewidth,trim=5cm 1.5cm 11cm 1.5cm,clip]{mach_0.01/reconstruction/mach_0.01_rec_2_modes_snap_0.png}
+			\end{subfigure}
+			\begin{subfigure}[b]{0.48\textwidth}
+				\centering
+				\includegraphics[width=\linewidth,trim=5cm 1.5cm 11cm 1.5cm,clip]{mach_0.01/reconstruction/mach_0.01_rec_2_modes_snap_50.png}
+			\end{subfigure}
+			\newline
+			\begin{turn}{90}
+				\hspace{0.6cm}
+				4 Modes
+			\end{turn}
+			\begin{subfigure}[b]{0.48\textwidth}
+				\centering
+				\includegraphics[width=\linewidth,trim=5cm 1.5cm 11cm 1.5cm,clip]{mach_0.01/reconstruction/mach_0.01_rec_4_modes_snap_0.png}
+			\end{subfigure}
+			\begin{subfigure}[b]{0.48\textwidth}
+				\centering
+				\includegraphics[width=\linewidth,trim=5cm 1.5cm 11cm 1.5cm,clip]{mach_0.01/reconstruction/mach_0.01_rec_4_modes_snap_50.png}
+			\end{subfigure}
+			\newline
+			\begin{turn}{90}
+				\hspace{0.6cm}
+				6 Modes
+			\end{turn}
+			\begin{subfigure}[b]{0.48\textwidth}
+				\centering
+				\includegraphics[width=\linewidth,trim=5cm 1.5cm 11cm 1.5cm,clip]{mach_0.01/reconstruction/mach_0.01_rec_6_modes_snap_0.png}
+			\end{subfigure}
+			\begin{subfigure}[b]{0.48\textwidth}
+				\centering
+				\includegraphics[width=\linewidth,trim=5cm 1.5cm 11cm 1.5cm,clip]{mach_0.01/reconstruction/mach_0.01_rec_6_modes_snap_50.png}
+			\end{subfigure}
+			\caption{Snapshots at two time steps in the top with snapshot reconstruction based on two, four and six modes below for the dataset at $Ma=0.01$.}
+			\label{fig:podrec0.01}
+		\end{figure}
+	
+		\begin{figure}[hbt]
+			\hspace{3cm} Snapshot $0$ \hfill Snapshot $50$ \hspace{2.2cm}
+			\newline
+			\begin{turn}{90}
+				\hspace{0.1cm}
+				Ground Truth
+			\end{turn}
+			\begin{subfigure}[b]{0.48\textwidth}
+				\centering
+				\includegraphics[width=\linewidth,trim=5cm 1.5cm 11cm 1.5cm,clip]{mach_0.1/reconstruction/mach_0.1_gt_snap_0.png}
+			\end{subfigure}
+			\begin{subfigure}[b]{0.48\textwidth}
+				\centering
+				\includegraphics[width=\linewidth,trim=5cm 1.5cm 11cm 1.5cm,clip]{mach_0.1/reconstruction/mach_0.1_gt_snap_50.png}
+			\end{subfigure}
+			\newline
+			\begin{turn}{90}
+				\hspace{0.6cm}
+				2 Modes
+			\end{turn}
+			\begin{subfigure}[b]{0.48\textwidth}
+				\centering
+				\includegraphics[width=\linewidth,trim=5cm 1.5cm 11cm 1.5cm,clip]{mach_0.1/reconstruction/mach_0.1_rec_2_modes_snap_0.png}
+			\end{subfigure}
+			\begin{subfigure}[b]{0.48\textwidth}
+				\centering
+				\includegraphics[width=\linewidth,trim=5cm 1.5cm 11cm 1.5cm,clip]{mach_0.1/reconstruction/mach_0.1_rec_2_modes_snap_50.png}
+			\end{subfigure}
+			\newline
+			\begin{turn}{90}
+				\hspace{0.6cm}
+				4 Modes
+			\end{turn}
+			\begin{subfigure}[b]{0.48\textwidth}
+				\centering
+				\includegraphics[width=\linewidth,trim=5cm 1.5cm 11cm 1.5cm,clip]{mach_0.1/reconstruction/mach_0.1_rec_4_modes_snap_0.png}
+			\end{subfigure}
+			\begin{subfigure}[b]{0.48\textwidth}
+				\centering
+				\includegraphics[width=\linewidth,trim=5cm 1.5cm 11cm 1.5cm,clip]{mach_0.1/reconstruction/mach_0.1_rec_4_modes_snap_50.png}
+			\end{subfigure}
+			\newline
+			\begin{turn}{90}
+				\hspace{0.6cm}
+				6 Modes
+			\end{turn}
+			\begin{subfigure}[b]{0.48\textwidth}
+				\centering
+				\includegraphics[width=\linewidth,trim=5cm 1.5cm 11cm 1.5cm,clip]{mach_0.1/reconstruction/mach_0.1_rec_6_modes_snap_0.png}
+			\end{subfigure}
+			\begin{subfigure}[b]{0.48\textwidth}
+				\centering
+				\includegraphics[width=\linewidth,trim=5cm 1.5cm 11cm 1.5cm,clip]{mach_0.1/reconstruction/mach_0.1_rec_6_modes_snap_50.png}
+			\end{subfigure}
+			\caption{Snapshots at two time steps in the top with snapshot reconstruction based on two, four and six modes below for the dataset at $Ma=0.1$.}
+			\label{fig:podrec0.1}
+		\end{figure}
+	
+		\begin{figure}[hbt]
+				\hspace{3cm} Snapshot $0$ \hfill Snapshot $50$ \hspace{2.2cm}
+				\newline
+				\begin{turn}{90}
+					\hspace{0.1cm}
+					Ground Truth
+				\end{turn}
+				\begin{subfigure}[b]{0.48\textwidth}
+					\centering
+					\includegraphics[width=\linewidth,trim=5cm 1.5cm 11cm 1.5cm,clip]{mach_0.6/reconstruction/mach_0.6_gt_snap_0.png}
+				\end{subfigure}
+				\begin{subfigure}[b]{0.48\textwidth}
+					\centering
+					\includegraphics[width=\linewidth,trim=5cm 1.5cm 11cm 1.5cm,clip]{mach_0.6/reconstruction/mach_0.6_gt_snap_50.png}
+				\end{subfigure}
+				\newline
+				\begin{turn}{90}
+					\hspace{0.6cm}
+					2 Modes
+				\end{turn}
+				\begin{subfigure}[b]{0.48\textwidth}
+					\centering
+					\includegraphics[width=\linewidth,trim=5cm 1.5cm 11cm 1.5cm,clip]{mach_0.6/reconstruction/mach_0.6_rec_2_modes_snap_0.png}
+				\end{subfigure}
+				\begin{subfigure}[b]{0.48\textwidth}
+					\centering
+					\includegraphics[width=\linewidth,trim=5cm 1.5cm 11cm 1.5cm,clip]{mach_0.6/reconstruction/mach_0.6_rec_2_modes_snap_50.png}
+				\end{subfigure}
+				\newline
+				\begin{turn}{90}
+					\hspace{0.6cm}
+					4 Modes
+				\end{turn}
+				\begin{subfigure}[b]{0.48\textwidth}
+					\centering
+					\includegraphics[width=\linewidth,trim=5cm 1.5cm 11cm 1.5cm,clip]{mach_0.6/reconstruction/mach_0.6_rec_4_modes_snap_0.png}
+				\end{subfigure}
+				\begin{subfigure}[b]{0.48\textwidth}
+					\centering
+					\includegraphics[width=\linewidth,trim=5cm 1.5cm 11cm 1.5cm,clip]{mach_0.6/reconstruction/mach_0.6_rec_4_modes_snap_50.png}
+				\end{subfigure}
+				\newline
+				\begin{turn}{90}
+					\hspace{0.6cm}
+					6 Modes
+				\end{turn}
+				\begin{subfigure}[b]{0.48\textwidth}
+					\centering
+					\includegraphics[width=\linewidth,trim=5cm 1.5cm 11cm 1.5cm,clip]{mach_0.6/reconstruction/mach_0.6_rec_6_modes_snap_0.png}
+				\end{subfigure}
+				\begin{subfigure}[b]{0.48\textwidth}
+					\centering
+					\includegraphics[width=\linewidth,trim=5cm 1.5cm 11cm 1.5cm,clip]{mach_0.6/reconstruction/mach_0.6_rec_6_modes_snap_50.png}
+				\end{subfigure}
+				\caption{Snapshots at two time steps in the top with snapshot reconstruction based on two, four and six modes below for the dataset at $Ma=0.6$.}
+				\label{fig:podrec0.6}
+			\end{figure}
+			
 %look at first bib entry
 \nocite{*}
 \bibliography{bibliography}
