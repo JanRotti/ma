@@ -46,14 +46,40 @@
 		\section{Problem}
 		\section{Task}
 	\chapter{Datasets}\label{cha:datasets}
-		\section{Mesh}
-			\begin{figure}[htbp]
+		\section{Spatial Discretization}
+			\begin{figure}[h!]
 				\centering
 				\includegraphics[width=0.5\linewidth]{mesh}
 				\caption{Rotational symmetric Mesh with a grid constructed of 200 equidistant angular levels and 112 almost logarithmic scaled radii with a central cylinder cutout.}
 				\label{fig:mesh}
-			\end{figure}		
-			The elementary geometry is depicted in \ref{fig:mesh}. The mesh is constructed from a central cylinder with radius $0.5$ as inner wall boundary and a outer circle with radius $20.5$. The grid is spanned on 112 different radii and 200 angular levels including the cylinder wall. The angular spacing is equidistant, while radial spacing is  logarithmic in the region of high radius with mesh refinement and linear spacing near the cylinder. The grid is offset by a cylinder radius such that the mesh origin lies on the left most point of the inner cylinder. The grid originates from one of the SU2 test cases, namely the "moving wall" case, where the function of virtual grid movement is tested corresponding to a set wall velocity. 
+			\end{figure}
+			The fluid domain $\Omega$ is constructed of quadrilateral cells. The cells are arranged in a rotational symmetric pattern around a central cylindrical cutout with radius $R = 0.5$. The cells are arranged such that the nodes coincide on fixed levels with respect to the center. They form a finite potential map in terms of radial coordinate $r$ and angular coordinate $\phi$. The discretization produces $200$ equidistant angular levels and $112$ radius levels that are linearly spaced near the central cylinder and logarithmic spaced towards the outer boundary. \\
+			The elementary geometry is depicted in figure \ref{fig:mesh}.
+			
+		\section{Boundary Conditions}
+			The numerical simulation of flow problems require the confinement of a
+			conceptually unbounded flow domain to a bounded computational domain,
+			thereby introducing artificial boundaries, along which a set of boundary
+			conditions can be enforced. \cite{Rannacher2000}	\\
+			Most commonly a boundary integral arises when solving the governing partial differential equation by integration by parts. The boundary integral may be fixed to enforce a set of boundary condition. The first-type boundary condition, more well known as Dirichlet condition, enforces fixed values on the system variables along the boundary $\partial \Omega$. The second-type boundary, known as Neumann condition, enforces a fixed normal derivative to the boundary and has shown to be less intrusive to the solution inside the computational domain. \\ 
+			Let $\mathbf{q} \in \R^n$ denote the state described by an arbitrary partial differential equation, then the \emph{Dirichlet} boundary yields
+			\begin{equation*}
+				\mathbf{q}(x) = f(x)\qquad \forall x \in \partial \Omega,
+			\end{equation*}
+			where $x$ denotes the spatial coordinate and $f(x)$ is a known function defined on the boundary. \\
+			Similarly the \emph{Neumann} boundary condition yields
+			\begin{equation}
+				\frac{\partial \mathbf{q}(x)}{\partial \vec{n}} = \sprod{\nabla \mathbf{q}(x)}{\vec{n}(x)} = f(x) \qquad \forall x \in \partial \Omega,
+				\label{eq:neumann}
+			\end{equation}
+			where $\vec{n}$ denotes the normal to the boundary $\partial \Omega$, $f(x)$ is a known scalar function and $\sprod{\cdot}{\cdot}$ denotes the inner product operator.\\
+			In regards to the given geometry \ref{fig:mesh} two boundaries are present. The central cylinder is treated as no-slip wall condition, posing the special Dirichlet condition 
+			\begin{equation*}
+				\mathbf{q}(x) \times \vec{n} = U \times  \vec{n} \qquad \forall x \in \partial \Omega,
+			\end{equation*}
+			where $U$ denotes the wall velocity. \\
+			The outer boundary is treated as Neumann boundary as prescribed in equation \ref{eq:neumann}.  
+			
 		\section{Simulation Parameters}
 			The simulation was performed with SU2 7.1.1 Blackbird implementing the finite volume method. The simulation considers laminar flow at $Re=100$ around a circular cylinder at $mach$ $0.6$ ($\mathbf{u} = 204.178\frac{m}{s}$), $0.1$ ($\mathbf{u} = 34.0297\frac{m}{s}$) and $0.01$ ($\mathbf{u} = 3.40297\frac{m}{s}$). The parameter adaptation of density and static pressure in SU2 is used to achieve the overall setting. The computation is performed in a non-dimensionalized compressible Navier-Stokes scheme. Constant viscosity is assumed. The spatial gradients necessary in the Navier Stokes are computed via a weighted least-square cell average \cite{white2019} combined with Vankats limiter \cite{VENKATAKRISHNAN1995120}. The convection term is solved via a ROE scheme \cite{Toro2009}. The time discretization chosen is the backward Euler method or implicit Euler with dual time-stepping method of second order \cite{Nordstroem_Ruggiu_2019}. Although the density and static pressure parameters are non-physical, the non-dimensionalization of the Navier-Stokes computation allows arbitrary scaling. 
 		\section{Potential Vortex}
@@ -62,7 +88,7 @@
 		\section{Navier Stokes Equation}
 			The derivation of Navier Stokes equations follows \cite{bing_han_2019}.
 			\subsection{Reynolds Transport Theorem}
-				\begin{figure}[htbp]
+				\begin{figure}[h!]
 					\centering
 					\includegraphics[width=0.5\linewidth]{ReynoldsTransportTheorem}
 					\caption{Material and control volume moving over time.\cite{bing_han_2019}}
@@ -249,12 +275,7 @@
 			Non-dimensionalization is advantageous as for any value of scaling parameters $L,V,\dots$ equation \ref{eq:nondimns} holds. The non-dimensionalization of the isentropic Navier Stokes \ref{eq:isennsmach} can be performed in similar fashion.  
 		
 		
-		\section{SU2} %tbd
-			\subsection{Finite Volume Method} %tbd
-			\subsection{Time Discretization} %tbd 
-			\subsection{Spatial Gradient} %tbd
-			\subsection{Convective Numerical Method} %tbd
-			\subsection{Solver} %tbd
+
 		\section{Finite Differences}
 			Let $f(x):\R \rightarrow \R$ be a continuous differentiable function. In the vicinity $h \in \R^{+}$ of $x$, $f(x + h)$ can be expressed as Taylor series 
 			\begin{equation}
@@ -310,13 +331,54 @@
 			\end{equation}
 			
 		\section{Coordinate Transform}
-			As the utilized spatial discretization, given by the mesh in figure \ref{fig:mesh}, inherits rotational symmetry, the coordinate transform from Cartesian to cylinder coordinates is beneficial.
-			
-			
-			
-		
-		
-		
+			As the utilized spatial discretization, given by the mesh in figure \ref{fig:mesh}, inherits rotational symmetry, the coordinate transform from Cartesian to cylinder coordinates is beneficial. In two dimensions cylinder coordinates coincide with polar coordinates. \\
+			\begin{figure}[h!]
+				\centering
+				\includegraphics[width=0.5\linewidth]{polar_cartesian.png}
+				\caption{Relation of cartesian coordinate system to polar coordinate system. In three dimensions, the $z$-axis remains unchanged to achieve the cylinder coordinate system.}
+				\label{fig:polar}
+			\end{figure}
+			The general polar coordinates $r \in \R^{+}$ and $\phi \in (-\pi,\pi]$,can be transformed to Cartesians $x$ and $y$ trough the geometric relation depicted in \ref{fig:polar}.  
+			\begin{align}
+				\begin{split}
+					x &= r \cos{\phi} \\
+					y &= r \sin{\phi} \\
+					r &= \sqrt{x^2 + y^2} \\
+					\phi &= arctan2(y,x)
+				\end{split}\label{eq:geodep}
+			\end{align}
+			The transformation includes partial derivatives. The cartesian derivatives $\frac{\partial }{\partial x}$ and $\frac{\partial }{\partial y}$ can be expressed in terms of the polar coordinate derivatives:
+			\begin{align*}
+				\frac{\partial }{\partial x} &= \frac{\partial }{\partial \phi}\frac{\partial  \phi}{\partial x}+\frac{\partial }{\partial r}\frac{\partial r}{\partial x}\\
+				\frac{\partial }{\partial y} &= \frac{\partial }{\partial \phi}\frac{\partial  \phi}{\partial y}+\frac{\partial }{\partial r}\frac{\partial r}{\partial y},
+			\end{align*}
+			where the geometric relation \ref{eq:geodep} yield:
+			\begin{align*}
+				\frac{\partial \phi}{\partial x} &= -\frac{y}{x^2+y^2} \:= -\frac{y}{r^2}\\
+				\frac{\partial \phi}{\partial y} &= \frac{x}{x^2+y^2} \quad= \frac{y}{r^2}\\
+				\frac{\partial r}{\partial x} &= \frac{x}{\sqrt{x^2+y^2}} = \frac{x}{r}\\
+				\frac{\partial r}{\partial y} &= \frac{y}{\sqrt{x^2+y^2}} = \frac{y}{r}
+			\end{align*}
+			Similarly second derivatives can be derived as
+			\begin{align}
+				\begin{split}
+					\frac{\partial^2}{\partial x^2} &= \frac{\partial^2}{\partial \phi^2}\frac{\partial^2 \phi}{\partial x^2} + \frac{\partial^2}{\partial r^2}\frac{\partial^2 r}{\partial x^2} + 2 \frac{\partial}{\partial \phi}\frac{\partial \phi}{\partial x}\frac{\partial}{\partial r}\frac{\partial r}{\partial x}\\
+					\frac{\partial^2}{\partial y^2} &= \frac{\partial^2}{\partial \phi^2}\frac{\partial^2 \phi}{\partial y^2} + \frac{\partial^2}{\partial r^2}\frac{\partial^2 r}{\partial y^2} + 2 \frac{\partial}{\partial \phi}\frac{\partial \phi}{\partial y}\frac{\partial}{\partial r}\frac{\partial r}{\partial y}.
+				\end{split}
+				\label{eq:polsecder}
+			\end{align}
+			Note the mixed terms $\frac{\partial^2}{\partial r \partial \phi}$ arising in \ref{eq:polsecder}. As these are more difficult to compute, and the second derivatives are not individually required in this thesis, the Laplacian was chosen to obtain the sum of second derivatives. \\
+			The Laplacian is the differential operator describing the divergence of the the gradient. Since the Navier-Stokes include the Laplacian operator, a direct treatment is beneficial.
+			In two dimensional Cartesian's the Laplacian notes
+			\begin{equation*}
+				\Delta = \frac{\partial^2}{\partial x^2} + \frac{\partial^2}{\partial y^2}
+			\end{equation*} 
+			In polar coordinates the Laplacian becomes 
+			\begin{equation}
+				\Delta = \frac{\partial^2}{\partial r^2} + \frac{1}{r} \frac{\partial}{\partial r}+ \frac{1}{r^2} \frac{\partial^2}{\partial \phi^2}
+				\label{eq:pollaplace}
+			\end{equation}	
+			Note that \ref{eq:pollaplace} has only single variable partial derivatives. 
 		
 		\section{Reduced Order Model}
 			This section is formulated in accordance with \cite{ROWLEY2004115}, \cite{Pinnau2008}, \cite{brunton_kutz_2019}, \cite{Arunajatesan20144}, \cite{tubiblio70572} and \cite{tubiblio70572}. 
@@ -372,7 +434,7 @@
 					\end{equation}
 					Note that this method of snapshots introduced by Sirovich \cite{sirovich1987turbulence} is advantageous due the reduced dimensions of the eigenvalue problem constructed by the correlation matrix $K$ reducing the complexity from $n \times n$ to $m \times m$. 	
 				\subsubsection{POD and Singular Value Decomposition}
-					Given the ensemble of data $\Q=$\{$q_k \in H|\;k=1,\dots,m$\} with $Q \in \R^{n \times m}$ there exist orthogonal matrices $\Phi \in \R^{n \times n}$ and $V \in \R^{m \times m}$ such that
+					Given the ensemble of data $\Q=$\{$q_k \in H|\;k=1,\dots,m$\} with $\Q \in \R^{n \times m}$ there exist orthogonal matrices $\Phi \in \R^{n \times n}$ and $V \in \R^{m \times m}$ such that
 					\begin{equation*}
 						\Q = \Phi \Sigma V^T,
 					\end{equation*}
@@ -699,7 +761,7 @@
 			\subsection{Reconstruction}
 			 	The reconstruction is effectively the potential of the POD modes to describe the dynamics of the reduced order model. By choosing a low number of POD modes, the capability for stable system dynamics becomes increasingly difficult to obtain due to truncation error and the simple reduction in the degrees of freedom of the system dynamics, therefore limiting how the system can propagate in time. This problem does not arise with the optimal model as such the model is directly derived from the full order simulation and therefore does not inherit any approximation error per se. The error in the reconstruction arises from the exclusion of POD modes, effectively excluding the information contained in them. The reconstruction for two snapshots for each dataset with the corresponding reconstruction chosen with two, four and six POD modes is depicted in \ref{fig:podrec0.01},\ref{fig:podrec0.1} and \ref{fig:podrec0.6}. The reconstruction error measured as mean squared error over the number of POD modes utilized for reconstruction is displayed in \ref{fig:podrecerror}. The reconstruction is visually indistinguishable from the real snapshots, after considering 4 or more POD modes. The remaining error is proportional to the amplitude of the activations and the truncated POD modes excluded from the reconstruction. The difference, inherited by the reconstruction with solely two modes, is still visible in the single percent scale and shows a more vortex emphasizing view in which the transition and detachment of vortexes is reduced. Overall the reconstruction capabilities of the POD modes emphasize the approach of the reduced order model by limiting the degrees of freedom of the dynamical system to the mainly contributing modes.
 		\section{POD ROM}
-			For the construction of the reduced order model, the governing equations were chosen to be the isentropic navier stokes introduced in section \ref{sec:INS}. The accompanying simplification in the Galerkin system following the galerkin projection, are quadratic dependencies of the DOF variables instead of the original cubic dependence, derived by projecting onto the fully compressible navier stokes \cite{ROWLEY2004115}, \cite{gloerfelt2008}. The Galerkin system derived for the isentropic model has dependence on the convection and diffusion operators denoted as $\Q$ and $\L$ for computation of coefficients \ref{eq:galerkincoeffs}. The coefficients are computed pre-simulation, as they only depend on the initial data-based decomposition into POD modes and mean flow. The operators necessitate first and second spatial derivatives that need to be computed directly from the discretized snapshots.  
+			For the construction of the reduced order model, the governing equations were chosen to be the isentropic navier stokes introduced in section \ref{sec:INS}. The accompanying simplification in the Galerkin system following the galerkin projection, are quadratic dependencies of the DOF variables instead of the original cubic dependence, derived by projecting onto the fully compressible navier stokes \cite{ROWLEY2004115}, \cite{gloerfelt2008}. The Galerkin system derived for the isentropic model has dependence on the convection and diffusion operators denoted as $\Q$ and $\mathbf{L}$ for computation of coefficients \ref{eq:galerkincoeffs}. The coefficients are computed pre-simulation, as they only depend on the initial data-based decomposition into POD modes and mean flow. The operators necessitate first and second spatial derivatives that need to be computed directly from the discretized snapshots.  
 			
 		\section{Control Application}
 		
@@ -707,7 +769,7 @@
 			
 \appendix
 	\chapter{POD}
-	\begin{figure}[hbt]
+	\begin{figure}[h!]
 		\begin{subfigure}{\textwidth}
 			\centering
 			\includegraphics[width=\linewidth,trim=5cm 1.5cm 8cm 1.5cm,clip]{mach_0.6/mach_0.6_POD_q_avg.png}
@@ -728,7 +790,7 @@
 		\caption{Normalized average flow field for the flow around a circular cylinder in the vortex shedding region for different mach flows. Note the time averaged flows are mostly similar, while the vortex shedding region differs due to the different scale of vortexes corresponding to the mach number.}
 		\label{fig:averageFlow}
 	\end{figure}
-	\begin{figure}[hbt]
+	\begin{figure}[h!]
 		\begin{subfigure}{0.5\textwidth}
 			\centering
 			\includegraphics[width=\linewidth,trim=5cm 1.5cm 12cm 1.5cm,clip]{mach_0.01/pod_modes/mach_0.01_POD_0.png}
@@ -775,7 +837,7 @@
 		\caption{Leading eight POD basis functions as velocity in x-direction for mach $0.01$ flow with subtracted mean.}
 		\label{fig:podma0.01}
 	\end{figure} 
-	\begin{figure}[hbt]
+	\begin{figure}[h!]
 		\begin{subfigure}{0.5\textwidth}
 			\centering
 			\includegraphics[width=\linewidth,trim=5cm 1.5cm 12cm 1.5cm,clip]{mach_0.1/pod_modes/mach_0.1_POD_0.png}
@@ -822,7 +884,7 @@
 		\caption{Leading eight POD basis functions as velocity in x-direction for mach $0.1$ flow with subtracted mean.}
 		\label{fig:podma0.1}
 	\end{figure} 			
-	\begin{figure}[hbt]
+	\begin{figure}[h!]
 		\begin{subfigure}{0.5\textwidth}
 			\centering
 			\includegraphics[width=\linewidth,trim=5cm 1.5cm 12cm 1.5cm,clip]{mach_0.6/pod_modes/mach_0.6_POD_0.png}
@@ -869,7 +931,7 @@
 		\caption{Leading eight POD basis functions as velocity in x-direction for mach $0.6$ flow with subtracted mean.}
 		\label{fig:podma0.6}
 	\end{figure} 
-	\begin{figure}[hbt]
+	\begin{figure}[h!]
 		\begin{subfigure}{0.48\textwidth}
 			\centering
 			\includegraphics[width=\linewidth,trim=0.5 0.5 1.5cm 1.5cm,clip]{mach_0.01/POD_Eigenvalues_0.01.png}
@@ -894,7 +956,7 @@
 		
 	\chapter{Optimal Model}
 
-		\begin{figure}[hbt]
+		\begin{figure}[h!]
 			\begin{subfigure}{0.5\textwidth}
 				\centering
 				\includegraphics[width=\linewidth]{mach_0.01/activation/mach_0.01_pod_activ_eig_0_1.png}
@@ -919,7 +981,7 @@
 			\caption{Optimal activations for the leading eight eigenmodes grouped into complementary pairs for the dataset with $Ma=0.01$.}
 			\label{fig:podactiv0.01}
 		\end{figure}
-		\begin{figure}[hbt]
+		\begin{figure}[h!]
 			\begin{subfigure}{0.5\textwidth}
 				\centering
 				\includegraphics[width=\linewidth]{mach_0.1/activation/mach_0.1_pod_activ_eig_0_1.png}
@@ -944,7 +1006,7 @@
 			\caption{Optimal activations for the leading eight eigenmodes grouped into complementary pairs for the dataset with $Ma=0.1$.}
 			\label{fig:podactiv0.1}
 		\end{figure}
-		\begin{figure}[hbt]
+		\begin{figure}[h!]
 			
 	\begin{subfigure}{0.5\textwidth}
 		\centering
@@ -971,7 +1033,7 @@
 	\label{fig:podactiv0.6}
 \end{figure} 
 			
-		\begin{figure}[hbt]
+		\begin{figure}[h!]
 			\begin{subfigure}{0.48\textwidth}
 				\centering
 				\includegraphics[width=\linewidth,trim=0.5 0.5 1.5cm 1.5cm,clip]{mach_0.01/reconstruction/mach_0.01_rec_error.png}
@@ -993,7 +1055,7 @@
 			\caption{Semi-logarithmic y-axis plots displaying the reconstruction error, measured as mean squared error, over the number of pod modes chosen for reconstruction of the flow field.}
 			\label{fig:podrecerror}
 		\end{figure}
-		\begin{figure}[hbt]
+		\begin{figure}[h!]
 			\hspace{3cm} Snapshot $0$ \hfill Snapshot $50$ \hspace{2.2cm}
 			\newline
 			\begin{turn}{90}
@@ -1051,7 +1113,7 @@
 			\label{fig:podrec0.01}
 		\end{figure}
 	
-		\begin{figure}[hbt]
+		\begin{figure}[h!]
 			\hspace{3cm} Snapshot $0$ \hfill Snapshot $50$ \hspace{2.2cm}
 			\newline
 			\begin{turn}{90}
@@ -1109,7 +1171,7 @@
 			\label{fig:podrec0.1}
 		\end{figure}
 	
-		\begin{figure}[hbt]
+		\begin{figure}[h!]
 				\hspace{3cm} Snapshot $0$ \hfill Snapshot $50$ \hspace{2.2cm}
 				\newline
 				\begin{turn}{90}
