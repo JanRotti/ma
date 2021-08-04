@@ -45,45 +45,7 @@
 		\section{Motivation}
 		\section{Problem}
 		\section{Task}
-	\chapter{Datasets}\label{cha:datasets}
-		\section{Spatial Discretization}
-			\begin{figure}[h!]
-				\centering
-				\includegraphics[width=0.5\linewidth]{mesh}
-				\caption{Rotational symmetric Mesh with a grid constructed of 200 equidistant angular levels and 112 almost logarithmic scaled radii with a central cylinder cutout.}
-				\label{fig:mesh}
-			\end{figure}
-			The fluid domain $\Omega$ is constructed of quadrilateral cells. The cells are arranged in a rotational symmetric pattern around a central cylindrical cutout with radius $R = 0.5$. The cells are arranged such that the nodes coincide on fixed levels with respect to the center. They form a finite potential map in terms of radial coordinate $r$ and angular coordinate $\phi$. The discretization produces $200$ equidistant angular levels and $112$ radius levels that are linearly spaced near the central cylinder and logarithmic spaced towards the outer boundary. \\
-			The elementary geometry is depicted in figure \ref{fig:mesh}.
-			
-		\section{Boundary Conditions}
-			The numerical simulation of flow problems require the confinement of a
-			conceptually unbounded flow domain to a bounded computational domain,
-			thereby introducing artificial boundaries, along which a set of boundary
-			conditions can be enforced. \cite{Rannacher2000}	\\
-			Most commonly a boundary integral arises when solving the governing partial differential equation by integration by parts. The boundary integral may be fixed to enforce a set of boundary condition. The first-type boundary condition, more well known as Dirichlet condition, enforces fixed values on the system variables along the boundary $\partial \Omega$. The second-type boundary, known as Neumann condition, enforces a fixed normal derivative to the boundary and has shown to be less intrusive to the solution inside the computational domain. \\ 
-			Let $\mathbf{q} \in \R^n$ denote the state described by an arbitrary partial differential equation, then the \emph{Dirichlet} boundary yields
-			\begin{equation*}
-				\mathbf{q}(x) = f(x)\qquad \forall x \in \partial \Omega,
-			\end{equation*}
-			where $x$ denotes the spatial coordinate and $f(x)$ is a known function defined on the boundary. \\
-			Similarly the \emph{Neumann} boundary condition yields
-			\begin{equation}
-				\frac{\partial \mathbf{q}(x)}{\partial \vec{n}} = \sprod{\nabla \mathbf{q}(x)}{\vec{n}(x)} = f(x) \qquad \forall x \in \partial \Omega,
-				\label{eq:neumann}
-			\end{equation}
-			where $\vec{n}$ denotes the normal to the boundary $\partial \Omega$, $f(x)$ is a known scalar function and $\sprod{\cdot}{\cdot}$ denotes the inner product operator.\\
-			In regards to the given geometry \ref{fig:mesh} two boundaries are present. The central cylinder is treated as no-slip wall condition, posing the special Dirichlet condition 
-			\begin{equation*}
-				\mathbf{q}(x) \times \vec{n} = U \times  \vec{n} \qquad \forall x \in \partial \Omega,
-			\end{equation*}
-			where $U$ denotes the wall velocity. \\
-			The outer boundary is treated as Neumann boundary as prescribed in equation \ref{eq:neumann}.  
-			
-		\section{Simulation Parameters}
-			The simulation was performed with SU2 7.1.1 Blackbird implementing the finite volume method. The simulation considers laminar flow at $Re=100$ around a circular cylinder at $mach$ $0.6$ ($\mathbf{u} = 204.178\frac{m}{s}$), $0.1$ ($\mathbf{u} = 34.0297\frac{m}{s}$) and $0.01$ ($\mathbf{u} = 3.40297\frac{m}{s}$). The parameter adaptation of density and static pressure in SU2 is used to achieve the overall setting. The computation is performed in a non-dimensionalized compressible Navier-Stokes scheme. Constant viscosity is assumed. The spatial gradients necessary in the Navier Stokes are computed via a weighted least-square cell average \cite{white2019} combined with Vankats limiter \cite{VENKATAKRISHNAN1995120}. The convection term is solved via a ROE scheme \cite{Toro2009}. The time discretization chosen is the backward Euler method or implicit Euler with dual time-stepping method of second order \cite{Nordstroem_Ruggiu_2019}. Although the density and static pressure parameters are non-physical, the non-dimensionalization of the Navier-Stokes computation allows arbitrary scaling. 
-		\section{Potential Vortex}
-			For the application of control a potential vortex is required, serving as additional basis of the control affine system. The potential vortex is simulated using a steady Navier Stokes solver with a freestream velocity $0.0\frac{m}{s}$ with only fixed wall movement for the cylinder wall defined by its angular velocity. The magnitude of the potential vortex is defined by the speed of the moving wall and corresponds to a control application of magnitude $1$. The angular velocity is chosen to be according to the freestream velocity. %tbc with details to wall speed
+
 	\chapter{Methodology}
 		\section{Navier Stokes Equation}
 			The derivation of Navier Stokes equations follows \cite{bing_han_2019}.
@@ -274,8 +236,40 @@
 			\end{itemize}
 			Non-dimensionalization is advantageous as for any value of scaling parameters $L,V,\dots$ equation \ref{eq:nondimns} holds. The non-dimensionalization of the isentropic Navier Stokes \ref{eq:isennsmach} can be performed in similar fashion.  
 		
+		\section{Spatial Discretization}\label{sec:spacediscr}
+			\begin{figure}[h!]
+				\centering
+				\includegraphics[width=0.5\linewidth]{mesh}
+				\caption{Rotational symmetric Mesh with a grid constructed of 200 equidistant angular levels and 112 almost logarithmic scaled radii with a central cylinder cutout.}
+				\label{fig:mesh}
+			\end{figure}
+			The fluid domain $\Omega$ is constructed of quadrilateral cells. The cells are arranged in a rotational symmetric pattern around a central cylindrical cutout with radius $R = 0.5$. The cells are arranged such that the nodes coincide on fixed levels with respect to the center. They form a finite potential map in terms of radial coordinate $r$ and angular coordinate $\phi$. The discretization produces $200$ equidistant angular levels and $112$ radius levels that are linearly spaced near the central cylinder and logarithmic spaced towards the outer boundary. \\
+			The elementary geometry is depicted in figure \ref{fig:mesh}.
+	
+		\section{Boundary Conditions}
+			The numerical simulation of flow problems require the confinement of a
+			conceptually unbounded flow domain to a bounded computational domain,
+			thereby introducing artificial boundaries, along which a set of boundary
+			conditions can be enforced. \cite{Rannacher2000}	\\
+			Most commonly a boundary integral arises when solving the governing partial differential equation by integration by parts. The boundary integral may be fixed to enforce a set of boundary condition. The first-type boundary condition, more well known as Dirichlet condition, enforces fixed values on the system variables along the boundary $\partial \Omega$. The second-type boundary, known as Neumann condition, enforces a fixed normal derivative to the boundary and has shown to be less intrusive to the solution inside the computational domain. \\ 
+			Let $\mathbf{q} \in \R^n$ denote the state described by an arbitrary partial differential equation, then the \emph{Dirichlet} boundary yields
+			\begin{equation*}
+				\mathbf{q}(x) = f(x)\qquad \forall x \in \partial \Omega,
+			\end{equation*}
+			where $x$ denotes the spatial coordinate and $f(x)$ is a known function defined on the boundary. \\
+			Similarly the \emph{Neumann} boundary condition yields
+			\begin{equation}
+				\frac{\partial \mathbf{q}(x)}{\partial \vec{n}} = \sprod{\nabla \mathbf{q}(x)}{\vec{n}(x)} = f(x) \qquad \forall x \in \partial \Omega,
+				\label{eq:neumann}
+			\end{equation}
+			where $\vec{n}$ denotes the normal to the boundary $\partial \Omega$, $f(x)$ is a known scalar function and $\sprod{\cdot}{\cdot}$ denotes the inner product operator.\\
+			In regards to the given geometry \ref{fig:mesh} two boundaries are present. The central cylinder is treated as no-slip wall condition, posing the special Dirichlet condition 
+			\begin{equation*}
+				\mathbf{q}(x) \times \vec{n} = U \times  \vec{n} \qquad \forall x \in \partial \Omega,
+			\end{equation*}
+			where $U$ denotes the wall velocity. \\
+			The outer boundary is treated as Neumann boundary as prescribed in equation \ref{eq:neumann}. 
 		
-
 		\section{Finite Differences}
 			Let $f(x):\R \rightarrow \R$ be a continuous differentiable function. In the vicinity $h \in \R^{+}$ of $x$, $f(x + h)$ can be expressed as Taylor series 
 			\begin{equation}
@@ -381,7 +375,7 @@
 			Note that \ref{eq:pollaplace} has only single variable partial derivatives. 
 		
 		\section{Reduced Order Model}
-			This section is formulated in accordance with \cite{ROWLEY2004115}, \cite{Pinnau2008}, \cite{brunton_kutz_2019}, \cite{Arunajatesan20144}, \cite{tubiblio70572} and \cite{tubiblio70572}. 
+			This section is formulated in accordance with \cite{ROWLEY2004115, Pinnau2008, brunton_kutz_2019, Arunajatesan20144, tubiblio70572}.
 			\subsection{Proper Orthogonal Decomposition}
 				Proper Orthogonal Decomposition, abbreviated POD, is a projection method finding a reduced order subspace in an optimal least square approximation. 
 				\\
@@ -527,7 +521,7 @@
 				\end{equation}
 			
 			\subsection{Galerkin Systems}	
-				Given the isentropic Navier Stokes equations from section \ref{sec:INS}, the equations in the two dimensional fluid domain take the variable focused time dynamics form:
+				Given the isentropic Navier Stokes equations from section \ref{sec:INS}, the equations in the two dimensional fluid domain, with respect to the mach number as thermodynamic variable, write:
 				\begin{align}
 					u_t &= -u u_x - v u_y - \frac{2}{\gamma -1 }a a_x + \mu (u_{xx} + u_{yy}) \nonumber\\
 					v_t &= -u v_x - v v_y - \frac{2}{\gamma -1 }a a_y + \mu (v_{xx} + v_{yy})\label{eq:varisenns}\\
@@ -548,7 +542,7 @@
 						u^1 a^2_x - v^1 a^2_y - \frac{\gamma -1}{2}a^1 (u^2_x + v^2_y).
 					\end{pmatrix} \label{eq:Q}
 				\end{align}
-				The superscript in equation \ref{eq:Q} only denotes the corresponding input state and not an exponent. 
+				The superscript in equation \ref{eq:Q} only denotes the corresponding input state and not an exponent.  
 				\\
 				Using the expansion of state $\mathbf{q}$ in terms of any orthogonal basis functions $\phi$ as
 				\begin{equation}
@@ -583,6 +577,7 @@
 				\end{equation*} 
 				then the affine terms vanish.  
 				 
+			
 			\subsection{Stabilization}
 				The stability of the POD Galerkin method in the case of incompressible Navier Stokes is well researched. Instability is associated with a lack of inclusion for the pressure term in the projection and truncation errors due to the reduction of degrees of freedom. Considering the compressible Navier Stokes, unstable system behavior is more complex and less well understood. Referring to \cite{Iollo2000StabilityPO}, the inclusion of a stabilization scheme is necessary to form a stable solution to the system of ordinary differential equations. \cite{gloerfelt2008}
 				\begin{itemize}
@@ -722,8 +717,19 @@
 					where $\mathbf{q}_\infty^0$	corresponds to the state of a fixed cylinder rotation with $\gamma_0$. 
 					
 			\subsection{Optimal Control}
-									
-	\chapter{Results and Discussion}
+			
+	
+	\chapter{Data Generation}
+		\section{Vortex Shedding}
+			The fluid flow around a two dimensional circular cylinder is well studied benchmark problem utilized for validation and methodological development. Given the spatial discretization \ref{sec:spacediscr}, the simulation data is generated with SU2 7.1.1 Blackbird utilizing the implemented compressible finite volume Navier Stokes solver.\\
+			The problem simulated considers laminar flow at $Re=100$, producing the well known vortex shedding behavior. For comparison purposes and generalization, the fluid velocity is altered to three different settings differentiating the influence of compressible effects in the flow solution. For this purposes the mach number was chosen to span $Ma \in [0.01,0.1,0.6]$ with the respective freestream velocity $u_\infty \in [3.40297\frac{m}{s}, 34.0297\frac{m}{s}, 204.178\frac{m}{s}]$.\\
+			Since the discussion and questioning of the simulation configuration is not the primary focus of this thesis, only a brief description of the simulation setup is given here. \\		
+			The parameter adaptation of density and static pressure in SU2 is used to achieve the overall problem setting. As part of the fluid model, a constant viscosity air model is assumed. The spatial gradients necessary in the Navier Stokes are computed via a weighted least-square cell average \cite{white2019} combined with Vankats limiter \cite{VENKATAKRISHNAN1995120}. The convection term is solved via a ROE scheme \cite{Toro2009}. The time discretization chosen is the backward Euler method or implicit Euler with dual time-stepping method of second order \cite{Nordstroem_Ruggiu_2019}. Although the static pressure is adopted to meet the problem definition, non-dimensionalization of the Navier-Stokes computation allows arbitrary scaling. 
+		\section{Potential Vortex}
+			For the application of the control function method a potential vortex is required, serving as additional basis of the control affine system. The potential vortex is simulated using a steady Navier Stokes solver with a freestream velocity $0.0\frac{m}{s}$, where only the steady wall velocity is specified defined by its angular velocity. The magnitude of the potential vortex is defined by the speed of the moving wall and corresponds to a control application of magnitude $1$. 
+			%tbd angular velocity of potential vortex
+				
+	\chapter{Results}
 		As part of this thesis the construction of a reduced order model is necessary, in which the chosen set of equation is set to be the isentropic navier stokes presented in \ref{sec:INS}. Note the methodological difference in the governing equations between the simulation and the reduced order model. 
 		\section{Simulation}
 			In accordance with chapter \ref{cha:datasets}, datasets were generated for three different mach numbers to compare the presented methods in the general context of the compressible Navier-Stokes. The error estimation according to \cite{compinccomp2013} shows $<3\%$ error in low mach flows ($Ma<0.2$), where the error between incompressible and compressible Navier Stokes is linked to the fluid flows mach number. \\
@@ -753,7 +759,7 @@
 			The first eight POD basis functions, with their x-directional velocity component, are depicted in figure \ref{fig:podma0.01}, \ref{fig:podma0.1} and \ref{fig:podma0.6} for each different mach number. The eigenmodes of the flow clearly group into sets of complementary two, with each group representing a different frequency in spatial flow variation. The system is mostly dependent on the first two eigenmodes oscillating complementary with additional higher frequency oscillations given in the remaining eigenmodes. The difference between the mach datasets corresponds to the velocity variation. With increasing velocity the influence of the central cylinder increases, as such the developing vortexes become larger in structure and the oscillation length behind the cylinder changes.\\
 			The eigenvalues of the leading pod modes are displayed in \ref{fig:podeig}. In the case of nearly incompressible flow, the leading two eigenmodes capture more than $99\%$, the leading four eigenmodes more than $99.99\%$ and the leading six eigenmodes more than $99.9999\%$ from the energy of the full model. At moderate mach number the energy captured is slightly decreased due the more complex flow structure and the developing compressible effects. More than $98\%$ of the energy is captured by the leading two, more than $99.8\%$ by the leading four and more than $99.99\%$ by the leading six eigenmodes. This decrease in energy capture is further intensified for the high mach scenario were compressible effects are amplified. Still, $95\%$ is captured in the leading two eigenmodes, $99.4\%$ is captured in the leading four eigenmodes and $99.6\%$ is captured in the leading six eigenmodes.
 
-		\section{Optimal Model} %reconstruction error
+		\section{Optimal Model}
 			\subsection{POD Activation}
 				Projecting the POD modes from section \ref{sec:solpod} onto the simulation snapshots \ref{eq:podactcalc} gives rise to the optimal POD model. The optimal activations are computed for the first eight eigenmodes of each dataset and are depicted in \ref{fig:podactiv0.01}, \ref{fig:podactiv0.1}, \ref{fig:podactiv0.6}.\\
 				
