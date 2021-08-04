@@ -719,8 +719,8 @@
 			\subsection{Optimal Control}
 			
 	
-	\chapter{Data Generation}
-		\section{Vortex Shedding}
+	\chapter{Data Generation}\label{cha:datagen}
+		\section{Vortex Shedding}\label{sec:vortshed}
 			The fluid flow around a two dimensional circular cylinder is well studied benchmark problem utilized for validation and methodological development. Given the spatial discretization \ref{sec:spacediscr}, the simulation data is generated with SU2 7.1.1 Blackbird utilizing the implemented compressible finite volume Navier Stokes solver.\\
 			The problem simulated considers laminar flow at $Re=100$, producing the well known vortex shedding behavior. For comparison purposes and generalization, the fluid velocity is altered to three different settings differentiating the influence of compressible effects in the flow solution. For this purposes the mach number was chosen to span $Ma \in [0.01,0.1,0.6]$ with the respective freestream velocity $u_\infty \in [3.40297\frac{m}{s}, 34.0297\frac{m}{s}, 204.178\frac{m}{s}]$.\\
 			Since the discussion and questioning of the simulation configuration is not the primary focus of this thesis, only a brief description of the simulation setup is given here. \\		
@@ -730,11 +730,14 @@
 			%tbd angular velocity of potential vortex
 				
 	\chapter{Results}
-		As part of this thesis the construction of a reduced order model is necessary, in which the chosen set of equation is set to be the isentropic navier stokes presented in \ref{sec:INS}. Note the methodological difference in the governing equations between the simulation and the reduced order model. 
+		Since this thesis is focused on the application of reduced order models accompanied by methodological verification and validation, multiple free stream velocities were chosen as ground of comparison. Due to the general homogeneous results, only results corresponding to $Ma = 0.6$ are depicted in this section although conclusions are drawn from all three velocity configurations.   
 		\section{Simulation}
-			In accordance with chapter \ref{cha:datasets}, datasets were generated for three different mach numbers to compare the presented methods in the general context of the compressible Navier-Stokes. The error estimation according to \cite{compinccomp2013} shows $<3\%$ error in low mach flows ($Ma<0.2$), where the error between incompressible and compressible Navier Stokes is linked to the fluid flows mach number. \\
-			The different configurations were chosen to cover the range of incompressible to fully compressible flows with one case of moderate mach as transition. The differentiation between these cases serves as basis for comparison and validation of the methods. \\
-			The simulation is performed with the software package SU2, Multiphysics Simulation and Design Software. "The SU2 suite is an open-source collection of C++ based software tools for performing Partial Differential Equation (PDE) analysis and solving PDE-constrained optimization problems" \cite{su2code}. For a fixed freestream velocity with given Reynolds number the software automatically adjusted viscosity and pressure to meet the required parameters. \\
+			In accordance with chapter \ref{cha:datagen}, datasets were generated for three different mach numbers to compare the presented methods in the general context of the compressible Navier-Stokes. The error estimation according to \cite{compinccomp2013} shows $<3\%$ error in low mach flows ($Ma<0.2$), where the error between incompressible and compressible Navier Stokes is linked directly the fluid velocity. \\
+			The different configurations were chosen to cover the range of incompressible to fully compressible flows with one case of transitional mach. The differentiation between these cases serves as basis for comparison and validation of the methods. \\
+			The simulation is performed with the software package SU2, Multiphysics Simulation and Design Software. "The SU2 suite is an open-source collection of C++ based software tools for performing Partial Differential Equation (PDE) analysis and solving PDE-constrained optimization problems" \cite{su2code}. For a fixed freestream velocity with given Reynolds number, the software acts on the idea of a free variable, here the static pressure, to meet the required fluid problem. \\ 
+			The initialization is with respect to the freestream condition and thermodynamic variables. Due to the unsteady setting, initially the solution approaches the steady solution found at $Re = \infty$ or $Re \approx 0$. After some time, the fluid solution behind the cylinder starts deflecting either upwards or downwards until a vortex detaches and the deflection drifts in the opposite direction. The alternately clockwise and counter-clockwise rotating vortexes detach in fixed time intervals and remain dissipating momentum until they disappear in the boundary or fade out. The temporal solution converges towards a periodic oscillation displayed by the vortex shedding. \\
+			%Ma, timestep, strouhal etc. tbd
+			
 			In the case of the dataset, the simulation is performed by simply fixing the mach number ($Ma = 0.01, 0.1, 0.6$), reynolds number ($Re=100$) and time step. The solver is set to be the general navier stokes solver (compressible) in SU2. The unsteady simulation produce the well known phenomenon known as Van-Karman vortex street or vortex shedding. After some time the simulation approaches a periodic solution representing the vortex shedding with fixed shedding period. The relation between freestream velocity and shedding frequency is given by the Strouhal number, that is dependent on the reynolds number and geometric condition. The time step is chosen with respect to the shedding period by resolving one period with $50-100$ time steps, table \ref{tab:simpara} shows the utilized parameter combination. 
 			\begin{table}[hbt]
 				\centering
