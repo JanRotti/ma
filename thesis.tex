@@ -736,22 +736,33 @@
 			The different configurations were chosen to cover the range of incompressible to fully compressible flows with one case of transitional mach. The differentiation between these cases serves as basis for comparison and validation of the methods. \\
 			The simulation is performed with the software package SU2, Multiphysics Simulation and Design Software. "The SU2 suite is an open-source collection of C++ based software tools for performing Partial Differential Equation (PDE) analysis and solving PDE-constrained optimization problems" \cite{su2code}. For a fixed freestream velocity with given Reynolds number, the software acts on the idea of a free variable, here the static pressure, to meet the required fluid problem. \\ 
 			The initialization is with respect to the freestream condition and thermodynamic variables. Due to the unsteady setting, initially the solution approaches the steady solution found at $Re = \infty$ or $Re \approx 0$. After some time, the fluid solution behind the cylinder starts deflecting either upwards or downwards until a vortex detaches and the deflection drifts in the opposite direction. The alternately clockwise and counter-clockwise rotating vortexes detach in fixed time intervals and remain dissipating momentum until they disappear in the boundary or fade out. The temporal solution converges towards a periodic oscillation displayed by the vortex shedding. \\
-			%Ma, timestep, strouhal etc. tbd
-			
-			In the case of the dataset, the simulation is performed by simply fixing the mach number ($Ma = 0.01, 0.1, 0.6$), reynolds number ($Re=100$) and time step. The solver is set to be the general navier stokes solver (compressible) in SU2. The unsteady simulation produce the well known phenomenon known as Van-Karman vortex street or vortex shedding. After some time the simulation approaches a periodic solution representing the vortex shedding with fixed shedding period. The relation between freestream velocity and shedding frequency is given by the Strouhal number, that is dependent on the reynolds number and geometric condition. The time step is chosen with respect to the shedding period by resolving one period with $50-100$ time steps, table \ref{tab:simpara} shows the utilized parameter combination. 
-			\begin{table}[hbt]
+			Since the simulation in SU2 requires time stepping, a well-considered choice comes from established knowledge about the connection of geometric and freestream fluid parameters regarding the vortex shedding frequency determined by the Strouhal number.\\
+			For a given Reynolds number $Re=100$ and the geometric setting, the Strouhal number yields $St = 0.16$ \cite{jiang_cheng_2017}. The general relation is
+			\begin{equation*}
+				St = \frac{f L}{u_\infty},
+			\end{equation*}
+			where $f$ is the vortex shedding frequency, $L$ is the characteristic length and $u_\infty$ the freestream velocity. The characteristic length is given by the cylinders diameter $L = 1m$, while the freestream velocity is given for each configuration by the mach number described in section \ref{sec:vortshed}. The Strouhal number is fixed due to the reynolds configuration, therefore 
+			\begin{equation*}
+				f = \frac{St \cdot u_\infty}{L} = \frac{1}{T},
+			\end{equation*}
+			where $T$ is the time for one shedding period.
+			Supplementary, the assumption is made that each vortex shedding period is  resolved with $> 50-100$ time steps to accurately portray the complex flow interaction. The chosen time steps, frequencies and shedding period are depicted in table \ref{tab:simpara}. The finer temporal resolution for the high mach cases were chosen to guarantee a sufficient accuracy. 
+			\begin{table}[h!]
 				\centering
-				\begin{tabular}{ l l r }
+				\begin{tabular}{ l l l r }
 					\hline
-					Reynolds Number $Re$ & Mach Number $a_\infty$ & Time Step $\Delta t$ \\
+					Frequency $f$ & Time period $T$& Freestream Velocity $u_\infty$ & Time Step $\Delta t$ \\
 					\hline
-					$100$ & $0.01$ & $0.02$ \\
-					$100$ & $0.1$  & $0.001$ \\
-					$100$ & $0.6$  & $0.0001$ \\
+					$0.54448 s^-1$ & $1.83661 s$ & $3.40297\frac{m}{s}$  & $0.02 s$ \\
+					$5.44475 s^-1$ & $0.18366 s$ & $34.0297\frac{m}{s}$  & $0.001 s$ \\
+					$32.66848 s^-1$ & $0.03061 s$ & $204.178\frac{m}{s}$  & $0.0001 s$ \\
 					\hline
 				\end{tabular}
 				\caption{Simulation parameters for datasets.}\label{tab:simpara}
-			\end{table} 
+			\end{table}
+			
+			
+			 
 		\section{Proper Orthogonal Decomposition}\label{sec:solpod}
 			The proper orthogonal decomposition is performed using a vectorized state representation based on the system dynamic variables. In the case of the assumed isentropic reduced order model the state dependent variable becomes $q=(u,v,a)$, but can be fitted to any set of variables describing the temporal dynamics of the system according to the governing equation. \\
 			Computation via the Method of Snapshots from section \ref{sec:methodofsnapshots} over five vortex shedding periods with the mean subtracted, employing a centered decomposition 
