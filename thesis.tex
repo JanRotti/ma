@@ -746,40 +746,191 @@
 				f = \frac{St \cdot u_\infty}{L} = \frac{1}{T},
 			\end{equation*}
 			where $T$ is the time for one shedding period.
-			Supplementary, the assumption is made that each vortex shedding period is  resolved with $> 50-100$ time steps to accurately portray the complex flow interaction. The chosen time steps, frequencies and shedding period are depicted in table \ref{tab:simpara}. The finer temporal resolution for the high mach cases were chosen to guarantee a sufficient accuracy. 
+			Supplementary, the assumption is made that each vortex shedding period is  resolved with greater than $ 50-100$ time steps to accurately portray the complex flow interaction. The chosen time steps, frequencies and shedding period are depicted in table \ref{tab:simpara}. The finer temporal resolution for the high mach cases were chosen to guarantee a sufficient accuracy. 
 			\begin{table}[h!]
 				\centering
 				\begin{tabular}{ l l l r }
 					\hline
 					Frequency $f$ & Time period $T$& Freestream Velocity $u_\infty$ & Time Step $\Delta t$ \\
 					\hline
-					$0.54448 s^-1$ & $1.83661 s$ & $3.40297\frac{m}{s}$  & $0.02 s$ \\
-					$5.44475 s^-1$ & $0.18366 s$ & $34.0297\frac{m}{s}$  & $0.001 s$ \\
-					$32.66848 s^-1$ & $0.03061 s$ & $204.178\frac{m}{s}$  & $0.0001 s$ \\
+					$0.54448 s^{-1}$ & $1.83661 s$ & $3.40297\frac{m}{s}$  & $0.02 s$ \\
+					$5.44475 s^{-1}$ & $0.18366 s$ & $34.0297\frac{m}{s}$  & $0.001 s$ \\
+					$32.66848 s^{-1}$ & $0.03061 s$ & $204.178\frac{m}{s}$  & $0.0001 s$ \\
 					\hline
 				\end{tabular}
-				\caption{Simulation parameters for datasets.}\label{tab:simpara}
+				\caption{Simulation parameters for datasets at $Ma \in [0.01,0.1,0.6]$ with correspond velocities.}\label{tab:simpara}
 			\end{table}
 			
-			
 			 
-		\section{Proper Orthogonal Decomposition}\label{sec:solpod}
-			The proper orthogonal decomposition is performed using a vectorized state representation based on the system dynamic variables. In the case of the assumed isentropic reduced order model the state dependent variable becomes $q=(u,v,a)$, but can be fitted to any set of variables describing the temporal dynamics of the system according to the governing equation. \\
+		\section[POD]{Proper Orthogonal Decomposition}\label{sec:solpod}
+			The proper orthogonal decomposition is performed using a vectorized state representation based on the system dynamic variables. 
+			The state vector is achieved by flattening the solution according to the number of grid points $n$ and joining the state dependent variable solution along the existing axis, resulting in a $3n$ long state vector for each time step $t$. Choosing the isentropic Navier-Stokes as governing equations for the constructed reduced order model, the state variable becomes $q=(u,v,a)$, but can be fitted to any set of variables describing the temporal dynamics of the system according to the governing equation. \\
 			Computation via the Method of Snapshots from section \ref{sec:methodofsnapshots} over five vortex shedding periods with the mean subtracted, employing a centered decomposition 
 			\begin{equation*}
 				\mathbf{q}(x,t) = \bar{\mathbf{q}} + \sum_{i=1}^{r} a_i(t)\phi_i(x),
 			\end{equation*}
-			yields the pod modes $\phi_i$. For visualization and universality the POD modes are computed from normalized data by scaling with the inverse of the freestream velocity. The resulting time averaged flow field is pictured in figure \ref{fig:averageFlow} and shows similarity to a steady solution to low reynolds flow scenario \cite{islam2013}. \\
-			The first eight POD basis functions, with their x-directional velocity component, are depicted in figure \ref{fig:podma0.01}, \ref{fig:podma0.1} and \ref{fig:podma0.6} for each different mach number. The eigenmodes of the flow clearly group into sets of complementary two, with each group representing a different frequency in spatial flow variation. The system is mostly dependent on the first two eigenmodes oscillating complementary with additional higher frequency oscillations given in the remaining eigenmodes. The difference between the mach datasets corresponds to the velocity variation. With increasing velocity the influence of the central cylinder increases, as such the developing vortexes become larger in structure and the oscillation length behind the cylinder changes.\\
-			The eigenvalues of the leading pod modes are displayed in \ref{fig:podeig}. In the case of nearly incompressible flow, the leading two eigenmodes capture more than $99\%$, the leading four eigenmodes more than $99.99\%$ and the leading six eigenmodes more than $99.9999\%$ from the energy of the full model. At moderate mach number the energy captured is slightly decreased due the more complex flow structure and the developing compressible effects. More than $98\%$ of the energy is captured by the leading two, more than $99.8\%$ by the leading four and more than $99.99\%$ by the leading six eigenmodes. This decrease in energy capture is further intensified for the high mach scenario were compressible effects are amplified. Still, $95\%$ is captured in the leading two eigenmodes, $99.4\%$ is captured in the leading four eigenmodes and $99.6\%$ is captured in the leading six eigenmodes.
+			yields the pod modes $\phi_i$. For visualization and universality the POD modes are computed from normalized data by scaling with the inverse of the freestream velocity. The resulting time averaged flow fields are pictured in figure \ref{fig:flowavg0.6} and \ref{fig:averageFlow}. The time average shows similarity to a steady solution found in the case of $Re = \infty$ or $Re \approx 0$\cite{islam2013}. \\
+			\begin{figure}
+				\centering
+				\includegraphics[width=\linewidth,trim=5cm 1.5cm 8cm 1.5cm,clip]{mach_0.6/mach_0.6_POD_q_avg.png}
+				\caption{Normalized, time average flow at mach $0.6$.}
+				\label{fig:flowavg0.6}
+			\end{figure}
+			The first eight POD basis functions, with their x-directional velocity component, are depicted in figure \ref{fig:podma0.01}, \ref{fig:podma0.1} and \ref{fig:podma0.6}.
+			\begin{figure}[h!]
+				\begin{subfigure}{0.5\textwidth}
+					\centering
+					\includegraphics[width=\linewidth,trim=5cm 1.5cm 12cm 1.5cm,clip]{mach_0.6/pod_modes/mach_0.6_POD_0.png}
+					\caption{Eigenmode 0}
+				\end{subfigure}
+				\begin{subfigure}{0.5\textwidth}
+					\centering
+					\includegraphics[width=\linewidth,trim=5cm 1.5cm 12cm 1.5cm,clip]{mach_0.6/pod_modes/mach_0.6_POD_1.png}
+					\caption{Eigenmode 1}
+				\end{subfigure}
+				\newline
+				\begin{subfigure}{0.5\textwidth}
+					\centering
+					\includegraphics[width=\linewidth,trim=5cm 1.5cm 12cm 1.5cm,clip]{mach_0.6/pod_modes/mach_0.6_POD_2.png}
+					\caption{Eigenmode 2}
+				\end{subfigure}
+				\begin{subfigure}{0.5\textwidth}
+					\centering
+					\includegraphics[width=\linewidth,trim=5cm 1.5cm 12cm 1.5cm,clip]{mach_0.6/pod_modes/mach_0.6_POD_3.png}
+					\caption{Eigenmode 3}
+				\end{subfigure}
+				\newline
+				\begin{subfigure}{0.5\textwidth}
+					\centering
+					\includegraphics[width=\linewidth,trim=5cm 1.5cm 12cm 1.5cm,clip]{mach_0.6/pod_modes/mach_0.6_POD_4.png}
+					\caption{Eigenmode 4}
+				\end{subfigure}
+				\begin{subfigure}{0.5\textwidth}
+					\centering
+					\includegraphics[width=\linewidth,trim=5cm 1.5cm 12cm 1.5cm,clip]{mach_0.6/pod_modes/mach_0.6_POD_5.png}
+					\caption{Eigenmode 5}
+				\end{subfigure}
+				\newline
+				\begin{subfigure}{0.5\textwidth}
+					\centering
+					\includegraphics[width=\linewidth,trim=5cm 1.5cm 12cm 1.5cm,clip]{mach_0.6/pod_modes/mach_0.6_POD_6.png}
+					\caption{Eigenmode 6}
+				\end{subfigure}
+				\begin{subfigure}{0.5\textwidth}
+					\centering
+					\includegraphics[width=\linewidth,trim=5cm 1.5cm 12cm 1.5cm,clip]{mach_0.6/pod_modes/mach_0.6_POD_7.png}
+					\caption{Eigenmode 7}
+				\end{subfigure}
+				\caption{Leading eight POD basis functions depicted by the velocity in x-direction for mach $0.6$ flow with centered data.}
+				\label{fig:podma0.6}
+			\end{figure} 
+			The POD eigenmodes of the flow field are categorized in complementary sets consisting of two subsequent eigenvectors. The spatial patterns displayed in the POD modes resemble multiples of the vortex length. The leading two eigenmodes resemble the coarse vortex shape with a spatial drift differentiating them, the following eigenmodes resemble higher frequency oscillation complementing the main flow structure. The modes display clear boundaries between the flow structures and with increasing complementary set, the region of influence of the mode shrinks in length, but also detaches further from the cylinder structure. \\
+			Comparing the different mach datasets, the vortex scale increases with decreasing freestream velocity. The influence length of POD modes behind the cylinder decreases since the momentum of vortexes is smaller with lower velocity magnitude therefore the disturbances fades away faster. \\   
+			\begin{figure}[h!]
+				\includegraphics[width=0.6\linewidth,trim=0.5 0.5 1.5cm 1.5cm,clip]{mach_0.6/POD_Eigenvalues_0.6.png}
+				\caption{Eigenvalues corresponding to POD modes computed in decomposition at mach $0.6$}
+				\label{fig:eig0.6}
+			\end{figure}
+			The eigenvalues of the leading pod modes are displayed in \ref{fig:eig0.6} and \ref{fig:podeig}. The eigenvalues follow a typical eigendecomposition distribution decreasing logarithmically. The complementary sets are standing out by producing a slight staircase pattern in the logarithmic eigenvalue plots. \\			
+			In the case of nearly incompressible flow, the leading two eigenmodes capture more than $99\%$, the leading four eigenmodes more than $99.99\%$ and the leading six eigenmodes more than $99.9999\%$ from the energy of the full model. At moderate mach number the energy captured is slightly decreased due the more complex flow structure and the developing compressible effects. More than $98\%$ of the energy is captured by the leading two, more than $99.8\%$ by the leading four and more than $99.99\%$ by the leading six eigenmodes. This decrease in energy capture is further intensified for the high mach scenario were compressible effects are amplified. Still, $95\%$ is captured in the leading two eigenmodes, $99.4\%$ is captured in the leading four eigenmodes and $99.6\%$ is captured in the leading six eigenmodes.\\
 
 		\section{Optimal Model}
 			\subsection{POD Activation}
-				Projecting the POD modes from section \ref{sec:solpod} onto the simulation snapshots \ref{eq:podactcalc} gives rise to the optimal POD model. The optimal activations are computed for the first eight eigenmodes of each dataset and are depicted in \ref{fig:podactiv0.01}, \ref{fig:podactiv0.1}, \ref{fig:podactiv0.6}.\\
-				
-				The activations display the periodic behavior of the solution. In similarity to a Fourier basis, the complementary modes present the spatial shift while with increasing mode number the spatial frequency increases. This behavior transfers to the temporal domain represented by the optimal activations. Here the importance of the modes is measured by the amplitude. With increasing pair of modes the amplitude of activation decreases while the frequency increases. The first pair of modes present the shedding frequency of the dominant vortex pattern, the second pair doubles the shedding frequency and overlay the dominant pattern, the third pair has triple the shedding frequency with further decreased amplitude. This pattern continues with increasing mode pair. This frequency amplitude coherency is similar to a Fourier basis.
+				Projecting the POD modes from section \ref{sec:solpod} onto the simulation snapshots \ref{eq:podactcalc} gives rise to the optimal POD model. The optimal activations are computed for the leading eight eigenmodes of each dataset and are depicted in \ref{fig:podactiv0.01}, \ref{fig:podactiv0.1} and \ref{fig:podactiv0.6}.\\
+				\begin{figure}[h!]
+					\begin{subfigure}{0.5\textwidth}
+						\centering
+						\includegraphics[width=\linewidth]{mach_0.6/activation/mach_0.6_pod_activ_eig_0_1.png}
+						\caption{Eigenmode 0 and 1}
+					\end{subfigure}
+					\begin{subfigure}{0.5\textwidth}
+						\centering
+						\includegraphics[width=\linewidth]{mach_0.6/activation/mach_0.6_pod_activ_eig_2_3.png}
+						\caption{Eigenmode 2 and 3}
+					\end{subfigure}
+					\newline
+					\begin{subfigure}{0.5\textwidth}
+						\centering
+						\includegraphics[width=\linewidth]{mach_0.6/activation/mach_0.6_pod_activ_eig_4_5.png}
+						\caption{Eigenmode 4 and 5}
+					\end{subfigure}
+					\begin{subfigure}{0.5\textwidth}
+						\centering
+						\includegraphics[width=\linewidth]{mach_0.6/activation/mach_0.6_pod_activ_eig_6_7.png}
+						\caption{Eigenmode 6 and 7}
+					\end{subfigure}
+					\caption{Optimal activations for the leading eight eigenmodes grouped into complementary pairs for the dataset with $Ma=0.6$.}
+					\label{fig:podactiv0.6}
+				\end{figure} 
+				The activations inherit the periodic behavior of the solution. In similarity to a Fourier basis, the complementary modes present the spatial shift while with increasing mode number the spatial frequency increases. This behavior transfers to the temporal domain represented by the optimal activations. Here the importance of the modes is measured by the amplitude. With increasing complementary set the amplitudes decreases while the frequency increases. The first pair of modes present activations according to the shedding frequency of the dominant vortex pattern, the second pair doubles the shedding frequency, the third pair  triples the shedding frequency. While the shedding frequency increases the amplitude decreases logarithmically. This pattern continues with increasing mode pair. Especially in eigenmode $6$ and $7$, the broad vortex shedding period is additionally visible in the activations, manifesting as limiting amplitude oscillation.  
 			\subsection{Reconstruction}
-			 	The reconstruction is effectively the potential of the POD modes to describe the dynamics of the reduced order model. By choosing a low number of POD modes, the capability for stable system dynamics becomes increasingly difficult to obtain due to truncation error and the simple reduction in the degrees of freedom of the system dynamics, therefore limiting how the system can propagate in time. This problem does not arise with the optimal model as such the model is directly derived from the full order simulation and therefore does not inherit any approximation error per se. The error in the reconstruction arises from the exclusion of POD modes, effectively excluding the information contained in them. The reconstruction for two snapshots for each dataset with the corresponding reconstruction chosen with two, four and six POD modes is depicted in \ref{fig:podrec0.01},\ref{fig:podrec0.1} and \ref{fig:podrec0.6}. The reconstruction error measured as mean squared error over the number of POD modes utilized for reconstruction is displayed in \ref{fig:podrecerror}. The reconstruction is visually indistinguishable from the real snapshots, after considering 4 or more POD modes. The remaining error is proportional to the amplitude of the activations and the truncated POD modes excluded from the reconstruction. The difference, inherited by the reconstruction with solely two modes, is still visible in the single percent scale and shows a more vortex emphasizing view in which the transition and detachment of vortexes is reduced. Overall the reconstruction capabilities of the POD modes emphasize the approach of the reduced order model by limiting the degrees of freedom of the dynamical system to the mainly contributing modes.
+			 	The reconstruction is effectively the potential of the POD modes to describe the dynamics of the reduced order model. By choosing a low number of POD modes, the capability for stable system dynamics becomes increasingly difficult to obtain due to truncation error and the simple reduction in the degrees of freedom for the system to propagate. \\
+			 	This problem does not arise with the optimal model since the model is directly derived from the full order simulation and therefore does not inherit any approximation error per se. The error in the reconstruction arises solely from the exclusion of POD modes, effectively excluding the information contained in them. 
+			 	For comparison, two snapshots and the associated reconstruction with two, four and six POD modes is displayed for each dataset in figures \ref{fig:podrec0.01},\ref{fig:podrec0.1} and \ref{fig:podrec0.6}. \\
+			 	\begin{figure}[h!]
+			 		\hspace{3cm} Snapshot $0$ \hfill Snapshot $50$ \hspace{2.2cm}
+			 		\newline
+			 		\begin{turn}{90}
+			 			\hspace{0.1cm}
+			 			Ground Truth
+			 		\end{turn}
+			 		\begin{subfigure}[b]{0.48\textwidth}
+			 			\centering
+			 			\includegraphics[width=\linewidth,trim=5cm 1.5cm 11cm 1.5cm,clip]{mach_0.6/reconstruction/mach_0.6_gt_snap_0.png}
+			 		\end{subfigure}
+			 		\begin{subfigure}[b]{0.48\textwidth}
+			 			\centering
+			 			\includegraphics[width=\linewidth,trim=5cm 1.5cm 11cm 1.5cm,clip]{mach_0.6/reconstruction/mach_0.6_gt_snap_50.png}
+			 		\end{subfigure}
+			 		\newline
+			 		\begin{turn}{90}
+			 			\hspace{0.6cm}
+			 			2 Modes
+			 		\end{turn}
+			 		\begin{subfigure}[b]{0.48\textwidth}
+			 			\centering
+			 			\includegraphics[width=\linewidth,trim=5cm 1.5cm 11cm 1.5cm,clip]{mach_0.6/reconstruction/mach_0.6_rec_2_modes_snap_0.png}
+			 		\end{subfigure}
+			 		\begin{subfigure}[b]{0.48\textwidth}
+			 			\centering
+			 			\includegraphics[width=\linewidth,trim=5cm 1.5cm 11cm 1.5cm,clip]{mach_0.6/reconstruction/mach_0.6_rec_2_modes_snap_50.png}
+			 		\end{subfigure}
+			 		\newline
+			 		\begin{turn}{90}
+			 			\hspace{0.6cm}
+			 			4 Modes
+			 		\end{turn}
+			 		\begin{subfigure}[b]{0.48\textwidth}
+			 			\centering
+			 			\includegraphics[width=\linewidth,trim=5cm 1.5cm 11cm 1.5cm,clip]{mach_0.6/reconstruction/mach_0.6_rec_4_modes_snap_0.png}
+			 		\end{subfigure}
+			 		\begin{subfigure}[b]{0.48\textwidth}
+			 			\centering
+			 			\includegraphics[width=\linewidth,trim=5cm 1.5cm 11cm 1.5cm,clip]{mach_0.6/reconstruction/mach_0.6_rec_4_modes_snap_50.png}
+			 		\end{subfigure}
+			 		\newline
+			 		\begin{turn}{90}
+			 			\hspace{0.6cm}
+			 			6 Modes
+			 		\end{turn}
+			 		\begin{subfigure}[b]{0.48\textwidth}
+			 			\centering
+			 			\includegraphics[width=\linewidth,trim=5cm 1.5cm 11cm 1.5cm,clip]{mach_0.6/reconstruction/mach_0.6_rec_6_modes_snap_0.png}
+			 		\end{subfigure}
+			 		\begin{subfigure}[b]{0.48\textwidth}
+			 			\centering
+			 			\includegraphics[width=\linewidth,trim=5cm 1.5cm 11cm 1.5cm,clip]{mach_0.6/reconstruction/mach_0.6_rec_6_modes_snap_50.png}
+			 		\end{subfigure}
+			 		\caption{Snapshots at two time steps in the top with snapshot reconstruction based on two, four and six modes below for the dataset at $Ma=0.6$.}
+			 		\label{fig:podrec0.6}
+			 	\end{figure}
+		 	 	Choosing the the number of POD modes for reconstruction to be greater than four, results in visibly no distinction to the ground truth. Taking only the leading two modes for reconstruction the differences are visible in the bend of vortex detachment. The vortex structure near the cylinder is more defined than the ground truth, the missing information is completely contained in further modes as including additional modes proofs. \\
+		 	 	The reconstruction error measured as mean squared error over the number of POD modes utilized for reconstruction is displayed in \ref{fig:podrecerror}.
+		 	 	\begin{figure}
+		 	 		\includegraphics[width=\linewidth,trim=0.5 0.5 1.5cm 1.5cm,clip]{mach_0.6/reconstruction/mach_0.6_rec_error.png}
+		 	 		\caption{Semi-logarithmic y-axis plots displaying the reconstruction error at $Ma=0.6$, measured as mean squared error, over the number of pod modes chosen for reconstruction of the flow field.}
+		 	 	\end{figure}
+	 	 		The reconstruction is visually indistinguishable from the real snapshots, after considering 4 or more POD modes. The remaining error is proportional to the amplitude of the activations and the truncated POD modes. Overall the reconstruction capabilities of the POD modes emphasize the approach of the reduced order model by limiting the degrees of freedom of the dynamical system to the mainly contributing flow modes.
 		\section{POD ROM}
 			For the construction of the reduced order model, the governing equations were chosen to be the isentropic navier stokes introduced in section \ref{sec:INS}. The accompanying simplification in the Galerkin system following the galerkin projection, are quadratic dependencies of the DOF variables instead of the original cubic dependence, derived by projecting onto the fully compressible navier stokes \cite{ROWLEY2004115}, \cite{gloerfelt2008}. The Galerkin system derived for the isentropic model has dependence on the convection and diffusion operators denoted as $\Q$ and $\mathbf{L}$ for computation of coefficients \ref{eq:galerkincoeffs}. The coefficients are computed pre-simulation, as they only depend on the initial data-based decomposition into POD modes and mean flow. The operators necessitate first and second spatial derivatives that need to be computed directly from the discretized snapshots.  
 			
@@ -792,8 +943,8 @@
 	\begin{figure}[h!]
 		\begin{subfigure}{\textwidth}
 			\centering
-			\includegraphics[width=\linewidth,trim=5cm 1.5cm 8cm 1.5cm,clip]{mach_0.6/mach_0.6_POD_q_avg.png}
-			\caption{$Mach \; 0.6$}
+			\includegraphics[width=\linewidth,trim=5cm 1.5cm 8cm 1.5cm,clip]{mach_0.01/mach_0.01_POD_q_avg.png}
+			\caption{$Mach \; 0.01$}
 		\end{subfigure}
 		\newline
 		\begin{subfigure}{\textwidth}
@@ -801,15 +952,10 @@
 			\includegraphics[width=\linewidth,trim=5cm 1.5cm 8cm 1.5cm,clip]{mach_0.1/mach_0.1_POD_q_avg.png}
 			\caption{$Mach \; 0.1$}
 		\end{subfigure}
-		\newline
-		\begin{subfigure}{\textwidth}
-			\centering
-			\includegraphics[width=\linewidth,trim=5cm 1.5cm 8cm 1.5cm,clip]{mach_0.01/mach_0.01_POD_q_avg.png}
-			\caption{$Mach \; 0.01$}
-		\end{subfigure}
 		\caption{Normalized average flow field for the flow around a circular cylinder in the vortex shedding region for different mach flows. Note the time averaged flows are mostly similar, while the vortex shedding region differs due to the different scale of vortexes corresponding to the mach number.}
 		\label{fig:averageFlow}
 	\end{figure}
+
 	\begin{figure}[h!]
 		\begin{subfigure}{0.5\textwidth}
 			\centering
@@ -905,53 +1051,6 @@
 		\label{fig:podma0.1}
 	\end{figure} 			
 	\begin{figure}[h!]
-		\begin{subfigure}{0.5\textwidth}
-			\centering
-			\includegraphics[width=\linewidth,trim=5cm 1.5cm 12cm 1.5cm,clip]{mach_0.6/pod_modes/mach_0.6_POD_0.png}
-			\caption{Eigenmode 0}
-		\end{subfigure}
-		\begin{subfigure}{0.5\textwidth}
-			\centering
-			\includegraphics[width=\linewidth,trim=5cm 1.5cm 12cm 1.5cm,clip]{mach_0.6/pod_modes/mach_0.6_POD_1.png}
-			\caption{Eigenmode 1}
-		\end{subfigure}
-		\newline
-		\begin{subfigure}{0.5\textwidth}
-			\centering
-			\includegraphics[width=\linewidth,trim=5cm 1.5cm 12cm 1.5cm,clip]{mach_0.6/pod_modes/mach_0.6_POD_2.png}
-			\caption{Eigenmode 2}
-		\end{subfigure}
-		\begin{subfigure}{0.5\textwidth}
-			\centering
-			\includegraphics[width=\linewidth,trim=5cm 1.5cm 12cm 1.5cm,clip]{mach_0.6/pod_modes/mach_0.6_POD_3.png}
-			\caption{Eigenmode 3}
-		\end{subfigure}
-		\newline
-		\begin{subfigure}{0.5\textwidth}
-			\centering
-			\includegraphics[width=\linewidth,trim=5cm 1.5cm 12cm 1.5cm,clip]{mach_0.6/pod_modes/mach_0.6_POD_4.png}
-			\caption{Eigenmode 4}
-		\end{subfigure}
-		\begin{subfigure}{0.5\textwidth}
-			\centering
-			\includegraphics[width=\linewidth,trim=5cm 1.5cm 12cm 1.5cm,clip]{mach_0.6/pod_modes/mach_0.6_POD_5.png}
-			\caption{Eigenmode 5}
-		\end{subfigure}
-		\newline
-		\begin{subfigure}{0.5\textwidth}
-			\centering
-			\includegraphics[width=\linewidth,trim=5cm 1.5cm 12cm 1.5cm,clip]{mach_0.6/pod_modes/mach_0.6_POD_6.png}
-			\caption{Eigenmode 6}
-		\end{subfigure}
-		\begin{subfigure}{0.5\textwidth}
-			\centering
-			\includegraphics[width=\linewidth,trim=5cm 1.5cm 12cm 1.5cm,clip]{mach_0.6/pod_modes/mach_0.6_POD_7.png}
-			\caption{Eigenmode 7}
-		\end{subfigure}
-		\caption{Leading eight POD basis functions as velocity in x-direction for mach $0.6$ flow with subtracted mean.}
-		\label{fig:podma0.6}
-	\end{figure} 
-	\begin{figure}[h!]
 		\begin{subfigure}{0.48\textwidth}
 			\centering
 			\includegraphics[width=\linewidth,trim=0.5 0.5 1.5cm 1.5cm,clip]{mach_0.01/POD_Eigenvalues_0.01.png}
@@ -962,13 +1061,6 @@
 			\centering
 			\includegraphics[width=\linewidth,trim=0.5 0.5 1.5cm 1.5cm,clip]{mach_0.1/POD_Eigenvalues_0.1.png}
 			\caption{Eigenvalues for POD decomposition for dataset with mach $0.1$}
-		\end{subfigure}
-		\newline
-		\centering
-		\begin{subfigure}{0.48\textwidth}
-			\centering
-			\includegraphics[width=\linewidth,trim=0.5 0.5 1.5cm 1.5cm,clip]{mach_0.6/POD_Eigenvalues_0.6.png}
-			\caption{Eigenvalues for POD decomposition for dataset with mach $0.6$}
 		\end{subfigure}
 		\caption{Semi-logarithmic y-axis plots displaying the eigenvalues that correspond to the POD modes ordered by magnitude.}
 		\label{fig:podeig}
@@ -1025,34 +1117,7 @@
 			\end{subfigure}
 			\caption{Optimal activations for the leading eight eigenmodes grouped into complementary pairs for the dataset with $Ma=0.1$.}
 			\label{fig:podactiv0.1}
-		\end{figure}
-		\begin{figure}[h!]
-			
-	\begin{subfigure}{0.5\textwidth}
-		\centering
-		\includegraphics[width=\linewidth]{mach_0.6/activation/mach_0.6_pod_activ_eig_0_1.png}
-		\caption{Eigenmode 0 and 1}
-	\end{subfigure}
-	\begin{subfigure}{0.5\textwidth}
-		\centering
-		\includegraphics[width=\linewidth]{mach_0.6/activation/mach_0.6_pod_activ_eig_2_3.png}
-		\caption{Eigenmode 2 and 3}
-	\end{subfigure}
-	\newline
-	\begin{subfigure}{0.5\textwidth}
-		\centering
-		\includegraphics[width=\linewidth]{mach_0.6/activation/mach_0.6_pod_activ_eig_4_5.png}
-		\caption{Eigenmode 4 and 5}
-	\end{subfigure}
-	\begin{subfigure}{0.5\textwidth}
-		\centering
-		\includegraphics[width=\linewidth]{mach_0.6/activation/mach_0.6_pod_activ_eig_6_7.png}
-		\caption{Eigenmode 6 and 7}
-	\end{subfigure}
-	\caption{Optimal activations for the leading eight eigenmodes grouped into complementary pairs for the dataset with $Ma=0.6$.}
-	\label{fig:podactiv0.6}
-\end{figure} 
-			
+		\end{figure}	
 		\begin{figure}[h!]
 			\begin{subfigure}{0.48\textwidth}
 				\centering
@@ -1064,13 +1129,6 @@
 				\centering
 				\includegraphics[width=\linewidth,trim=0.5 0.5 1.5cm 1.5cm,clip]{mach_0.1/reconstruction/mach_0.1_rec_error.png}
 				\caption{Reconstruction error for dataset with $Ma=0.1$}
-			\end{subfigure}
-			\newline
-			\centering
-			\begin{subfigure}{0.48\textwidth}
-				\centering
-				\includegraphics[width=\linewidth,trim=0.5 0.5 1.5cm 1.5cm,clip]{mach_0.6/reconstruction/mach_0.6_rec_error.png}
-				\caption{Reconstruction error for dataset with $Ma=0.6$}
 			\end{subfigure}
 			\caption{Semi-logarithmic y-axis plots displaying the reconstruction error, measured as mean squared error, over the number of pod modes chosen for reconstruction of the flow field.}
 			\label{fig:podrecerror}
@@ -1132,7 +1190,6 @@
 			\caption{Snapshots at two time steps in the top with snapshot reconstruction based on two, four and six modes below for the dataset at $Ma=0.01$.}
 			\label{fig:podrec0.01}
 		\end{figure}
-	
 		\begin{figure}[h!]
 			\hspace{3cm} Snapshot $0$ \hfill Snapshot $50$ \hspace{2.2cm}
 			\newline
@@ -1190,64 +1247,6 @@
 			\caption{Snapshots at two time steps in the top with snapshot reconstruction based on two, four and six modes below for the dataset at $Ma=0.1$.}
 			\label{fig:podrec0.1}
 		\end{figure}
-	
-		\begin{figure}[h!]
-				\hspace{3cm} Snapshot $0$ \hfill Snapshot $50$ \hspace{2.2cm}
-				\newline
-				\begin{turn}{90}
-					\hspace{0.1cm}
-					Ground Truth
-				\end{turn}
-				\begin{subfigure}[b]{0.48\textwidth}
-					\centering
-					\includegraphics[width=\linewidth,trim=5cm 1.5cm 11cm 1.5cm,clip]{mach_0.6/reconstruction/mach_0.6_gt_snap_0.png}
-				\end{subfigure}
-				\begin{subfigure}[b]{0.48\textwidth}
-					\centering
-					\includegraphics[width=\linewidth,trim=5cm 1.5cm 11cm 1.5cm,clip]{mach_0.6/reconstruction/mach_0.6_gt_snap_50.png}
-				\end{subfigure}
-				\newline
-				\begin{turn}{90}
-					\hspace{0.6cm}
-					2 Modes
-				\end{turn}
-				\begin{subfigure}[b]{0.48\textwidth}
-					\centering
-					\includegraphics[width=\linewidth,trim=5cm 1.5cm 11cm 1.5cm,clip]{mach_0.6/reconstruction/mach_0.6_rec_2_modes_snap_0.png}
-				\end{subfigure}
-				\begin{subfigure}[b]{0.48\textwidth}
-					\centering
-					\includegraphics[width=\linewidth,trim=5cm 1.5cm 11cm 1.5cm,clip]{mach_0.6/reconstruction/mach_0.6_rec_2_modes_snap_50.png}
-				\end{subfigure}
-				\newline
-				\begin{turn}{90}
-					\hspace{0.6cm}
-					4 Modes
-				\end{turn}
-				\begin{subfigure}[b]{0.48\textwidth}
-					\centering
-					\includegraphics[width=\linewidth,trim=5cm 1.5cm 11cm 1.5cm,clip]{mach_0.6/reconstruction/mach_0.6_rec_4_modes_snap_0.png}
-				\end{subfigure}
-				\begin{subfigure}[b]{0.48\textwidth}
-					\centering
-					\includegraphics[width=\linewidth,trim=5cm 1.5cm 11cm 1.5cm,clip]{mach_0.6/reconstruction/mach_0.6_rec_4_modes_snap_50.png}
-				\end{subfigure}
-				\newline
-				\begin{turn}{90}
-					\hspace{0.6cm}
-					6 Modes
-				\end{turn}
-				\begin{subfigure}[b]{0.48\textwidth}
-					\centering
-					\includegraphics[width=\linewidth,trim=5cm 1.5cm 11cm 1.5cm,clip]{mach_0.6/reconstruction/mach_0.6_rec_6_modes_snap_0.png}
-				\end{subfigure}
-				\begin{subfigure}[b]{0.48\textwidth}
-					\centering
-					\includegraphics[width=\linewidth,trim=5cm 1.5cm 11cm 1.5cm,clip]{mach_0.6/reconstruction/mach_0.6_rec_6_modes_snap_50.png}
-				\end{subfigure}
-				\caption{Snapshots at two time steps in the top with snapshot reconstruction based on two, four and six modes below for the dataset at $Ma=0.6$.}
-				\label{fig:podrec0.6}
-			\end{figure}
 			
 %look at first bib entry
 \nocite{*}
