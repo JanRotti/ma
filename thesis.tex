@@ -270,7 +270,7 @@
 			where $U$ denotes the wall velocity. \\
 			The outer boundary is treated as Neumann boundary as prescribed in equation \ref{eq:neumann}. 
 		
-		\section{Finite Differences}
+		\section{Finite Differences}\label{sec:finitedifferences}
 			Let $f(x):\R \rightarrow \R$ be a continuous differentiable function. In the vicinity $h \in \R^{+}$ of $x$, $f(x + h)$ can be expressed as Taylor series 
 			\begin{equation}
 				f(x + h) = f(x) + h \left.\frac{\partial f}{\partial x}\right\vert_{x} + \frac{h^2}{2!} \left.\frac{\partial^2 f}{\partial x^2}\right\vert_{x} +
@@ -653,7 +653,7 @@
 						&+ \sum_{i=1}^{r} \big[\mathbf{Q}(\phi_i,\bar{\mathbf{q}})+\mathbf{Q}(\bar{\mathbf{q}},\phi_i)+\mathbf{Q}(\phi_i,\mathbf{q}_c)+\mathbf{Q}(\mathbf{q}_c,\phi_i)\big]\\
 						&+ \sum_{i=1}^{r}\sum_{j=1}^{r} \mathbf{Q}(\phi_i,\phi_j).
 					\end{align*}
-					Note that the summation can be extended using $\mathbf{q}_c$ and $\bar{\mathbf{q}}$ as modes with activation $\gamma$ or $1$ respectively. Performing a Galerkin projection, described in \ref{sec:gp}, utilizing the control function and POD expansion in \ref{eq:cfpoddecmop} the resulting Galerkin system becomes
+					Note that the summation can be extended using $\mathbf{q}_c$ and $\bar{\mathbf{q}}$ as modes with activation $\gamma$ or $1$ respectively. Performing a Galerkin projection, described in \ref{sec:gp}, utilizing the control function and POD expansion in equation \ref{eq:cfpoddecmop} the resulting Galerkin system becomes
 					\begin{align}
 						\dot{a}_k &= \nu b^1_k + b^2_k + \sum_{i=1}^{r} (\nu L_{ik}^1 + L_{ik}^2)a_i + \sum_{i=1}^{r}\sum_{j=1}^{r} Q_{ijk}a_i a_j \nonumber \\
 						&+  \gamma (\nu d_k^1 + d_k^2) + \gamma^2 f_k + \sum_{i=1}^{r} \gamma g_{ik} a_i + h_k \frac{\partial \gamma}{\partial t}
@@ -765,7 +765,7 @@
 		\section[POD]{Proper Orthogonal Decomposition}\label{sec:solpod}
 			The proper orthogonal decomposition is performed using a vectorized state representation based on the system dynamic variables. 
 			The state vector is achieved by flattening the solution according to the number of grid points $n$ and joining the state dependent variable solution along the existing axis, resulting in a $3n$ long state vector for each time step $t$. Choosing the isentropic Navier-Stokes as governing equations for the constructed reduced order model, the state variable becomes $q=(u,v,a)$, but can be fitted to any set of variables describing the temporal dynamics of the system according to the governing equation. \\
-			Computation via the Method of Snapshots from section \ref{sec:methodofsnapshots} over five vortex shedding periods with the mean subtracted, employing a centered decomposition 
+			Computation via the Method of Snapshots from section \ref{sec:methodofsnapshots} and the inner product of equation \ref{eq:inprodmach} over five vortex shedding periods with the mean subtracted, employing a centered decomposition 
 			\begin{equation*}
 				\mathbf{q}(x,t) = \bar{\mathbf{q}} + \sum_{i=1}^{r} a_i(t)\phi_i(x),
 			\end{equation*}
@@ -932,8 +932,41 @@
 		 	 	\end{figure}
 	 	 		The reconstruction is visually indistinguishable from the real snapshots, after considering 4 or more POD modes. The remaining error is proportional to the amplitude of the activations and the truncated POD modes. Overall the reconstruction capabilities of the POD modes emphasize the approach of the reduced order model by limiting the degrees of freedom of the dynamical system to the mainly contributing flow modes.
 		\section{POD ROM}
-			For the construction of the reduced order model, the governing equations were chosen to be the isentropic navier stokes introduced in section \ref{sec:INS}. The accompanying simplification in the Galerkin system following the galerkin projection, are quadratic dependencies of the DOF variables instead of the original cubic dependence, derived by projecting onto the fully compressible navier stokes \cite{ROWLEY2004115}, \cite{gloerfelt2008}. The Galerkin system derived for the isentropic model has dependence on the convection and diffusion operators denoted as $\Q$ and $\mathbf{L}$ for computation of coefficients \ref{eq:galerkincoeffs}. The coefficients are computed pre-simulation, as they only depend on the initial data-based decomposition into POD modes and mean flow. The operators necessitate first and second spatial derivatives that need to be computed directly from the discretized snapshots.  
-			
+			For the construction of the reduced order model, the governing equations were chosen to be the isentropic navier stokes introduced in section \ref{sec:INS}. The accompanying simplification in the Galerkin system following the galerkin projection, are quadratic dependencies of the DOF variables instead of the original cubic dependence, derived by projecting onto the fully compressible navier stokes \cite{ROWLEY2004115, gloerfelt2008}. The Galerkin system derived for the isentropic model is subject to convection and diffusion operators denoted as $\Q$ and $\mathbf{L}$ for the computation of coefficients \ref{eq:galerkincoeffs}. The coefficients are computed pre-simulation, as they only depend on the initial data-based decomposition into POD modes, mean flow and a defined inner product. 
+			\subsection{Galerkin Coefficients}
+				The convection and diffusion operators require first and second spatial derivatives for computation. These have to be obtained directly from the spatial discretized snapshot data and the geometric context of grid points. The method chosen for determining spatial derivatives is the finite differences method introduced in section \ref{sec:finitedifferences}. Although further methods were considered, namely polynomial fitting and compact schemes, due to the simplicity of the method, utilizing a four point stencil and coordinate transform, and the initial success, the central finite difference scheme was deployed for first and second spatial derivatives. For completion, the boundary conditions on $\partial \Omega_{cyl}$ and $\partial \Omega_{far}$ are known and can be set manually. The transformation to polar coordinates allows the simple finite difference method to be applied over the whole mesh structure. \\
+				For each grid point, except wall and farfield nodes, the four point stencil yields neighboring nodes in $\pm$ radial and angular direction. The central difference scheme can be applied in angular direction at the farfield boundary as the boundary condition states the normal derivative to be zero (Neumann boundary).
+				\begin{equation}
+					\frac{\partial \mathbf{q}(x)}{\partial \vec{n}} = \sprod{\nabla \mathbf{q}(x)}{\vec{n}(x)} = 0 \qquad \forall x \in \partial \Omega_{far},
+					\label{eq:farfieldbound}
+				\end{equation}
+				Since the unit normal is given as radial component all around the farfield boundary, compliance with \ref{eq:farfieldbound} is achieved trough 
+				\begin{equation*}
+				 	\frac{\partial \mathbf{q}(x)}{\partial r} = 0 \qquad \forall x \in \partial \Omega_{far}.
+				\end{equation*}
+			 	The treatment of the cylinder boundary $\partial \Omega_{cyl}$ is more simple as the no-slip wall condition concludes
+			 	\begin{equation*}
+			 		\begin{split}
+			 			\mathbf{q}(x) &= 0 \qquad \\
+			 			\frac{\partial \mathbf{q}(x)}{\partial r} &= 0 \\
+			 			\frac{\partial \mathbf{q}(x)}{\partial \phi} &= 0
+			 		\end{split}
+		 			\quad
+		 			\begin{split}
+		 				\forall x \in \partial \Omega_{cyl}
+		 			\end{split}.
+			 	\end{equation*}
+				Given the centered POD decomposition of section \ref{sec:solpod}, the 
+				Galerkin system can be constructed by computing the POD based coefficients, noted in equation \ref{eq:galerkincoeffs}, belonging to the ODE system in equation \ref{eq:galerkinsystem} with the inner product definition of equation \ref{eq:inprodmach}.\\
+				The resulting coefficients are not interpretable by themselves as they only present the projected relation of the governing equations. The system of ODE's is solved using LSODA, an adaptive ODE solver first proposed by \cite{lsoda1983} and implemented into Fortran by \cite{lsoda2010}. \\
+				The temporal solution to the Galerkin system initially drifts towards an erroneous limit cycle depicted in figure \ref{fig:0.6unstablegalerkin}.
+				\begin{figure}[h!]
+					\includegraphics[width=\linewidth]{mach_0.6/mach_0.6_unstabilized.png}
+					\caption{Temporal solution to the Galerkin system obtained with LSODA ODE solver. The solution drifts towards an erroneous state solution. }
+					\label{fig:0.6unstablegalerkin}
+				\end{figure} 
+				%tbd 
+				
 		\section{Control Application}
 		
 	\chapter{Conclusion}
