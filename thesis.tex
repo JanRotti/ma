@@ -222,7 +222,7 @@
 			\end{aligned}
 			\label{eq:nondimvar}
 			\end{equation*}
-			As example for the non-dimensionalization equation \ref{eq:compmomentum} is considered. Every term in equation \ref{eq:compmomentum} has primary dimensions [$\frac{kg}{m^2 s^2}$], s.t. multiplication by constant $\frac{L}{\rho V^2} = [\frac{m^2 s^2}{kg}]$ cancels the dimension. Additionally substituting \ref{eq:nondimvar} yields the non-dimensionalized compressible Navier Stokes
+			As example for the non-dimensionalization equation \ref{eq:compmomentum} is considered without external forces $f$. Every term in equation \ref{eq:compmomentum} has primary dimensions [$\frac{kg}{m^2 s^2}$], s.t. multiplication by constant $\frac{L}{\rho V^2} = [\frac{m^2 s^2}{kg}]$ cancels the dimension. Additionally substituting \ref{eq:nondimvar} yields the non-dimensionalized compressible Navier Stokes
 			\begin{equation}
 				[\frac{f L}{V}] \frac{\partial \vec{V}^*}{\partial t^*} + (\vec{V}^* \cdot \vec{\nabla}^*)\vec{V}^* = - [\frac{p_0 -p_{\infty}}{pV^2}]\vec{\nabla}^* p^* + [\frac{\mu}{\rho V L}] \nabla^{*2}\vec{V}^*
 				\label{eq:nondimns}
@@ -324,8 +324,8 @@
 				\label{eq:secdiff}.
 			\end{equation}
 			
-		\section{Coordinate Transform}
-			As the utilized spatial discretization, given by the mesh in figure \ref{fig:mesh}, inherits rotational symmetry, the coordinate transform from Cartesian to cylinder coordinates is beneficial. In two dimensions cylinder coordinates coincide with polar coordinates. \\
+		\section{Polar Coordinates}
+			As the utilized spatial discretization, given by the mesh in figure \ref{fig:mesh}, inherits rotational symmetry, the coordinate transform from Cartesian to polar coordinates is beneficial. In two dimensions cylinder coordinates coincide with polar coordinates as the non existing $z$ axis remains non transformed. \\
 			\begin{figure}[h!]
 				\centering
 				\includegraphics[width=0.5\linewidth]{polar_cartesian.png}
@@ -578,7 +578,7 @@
 				then the affine terms vanish.  
 				 
 			
-			\subsection{Stabilization}
+			\subsection{Stabilization}\label{sec:stabilization}
 				The stability of the POD Galerkin method in the case of incompressible Navier Stokes is well researched. Instability is associated with a lack of inclusion for the pressure term in the projection and truncation errors due to the reduction of degrees of freedom. Considering the compressible Navier Stokes, unstable system behavior is more complex and less well understood. Referring to \cite{Iollo2000StabilityPO}, the inclusion of a stabilization scheme is necessary to form a stable solution to the system of ordinary differential equations. \cite{gloerfelt2008}
 				\begin{itemize}
 					\item \textbf{Artifical Viscosity} The stability of the system of ODEs can be achieved by empirically increasing the viscosity $\nu$ until stable dynamical behavior is achieved. According to \cite{couplet2003} and \cite{gloerfelt2008} the intermodal energy transfer bears similarity with the turbulent transfer and form a model closure problem. The lack of modal interaction produced by truncation and simplification in the projection model necessitates additional diffusive behavior. 
@@ -957,17 +957,68 @@
 		 			\end{split}.
 			 	\end{equation*}
 				Given the centered POD decomposition of section \ref{sec:solpod}, the 
-				Galerkin system can be constructed by computing the POD based coefficients, noted in equation \ref{eq:galerkincoeffs}, belonging to the ODE system in equation \ref{eq:galerkinsystem} with the inner product definition of equation \ref{eq:inprodmach}.\\
+				Galerkin system can be constructed by computing the POD based coefficients, noted in equation \ref{eq:galerkincoeffs}, belonging to the ODE system in equation \ref{eq:galerkinsystem} with the inner product definition of equation \ref{eq:inprodmach}. The number of POD modes chosen as DOF's for the reduced order model was four. \\
+			\subsection{POD-ROM Solution}
 				The resulting coefficients are not interpretable by themselves as they only present the projected relation of the governing equations. The system of ODE's is solved using LSODA, an adaptive ODE solver first proposed by \cite{lsoda1983} and implemented into Fortran by \cite{lsoda2010}. \\
 				The temporal solution to the Galerkin system initially drifts towards an erroneous limit cycle depicted in figure \ref{fig:0.6unstablegalerkin}.
 				\begin{figure}[h!]
-					\includegraphics[width=\linewidth]{mach_0.6/mach_0.6_unstabilized.png}
+					\includegraphics[width=\linewidth]{mach_0.6/rom/mach_0.6_unstabilized.png}
 					\caption{Temporal solution to the Galerkin system obtained with LSODA ODE solver. The solution drifts towards an erroneous state solution. }
 					\label{fig:0.6unstablegalerkin}
 				\end{figure} 
-				%tbd 
-				
+				The convergence towards an faulty state is present for all three datasets at, although the behavior changes with increasing number of DOF's. Choosing two or four modes, results in convergence to a stable limit cycle. Choosing six or more DOF's to represent the system dynamics, results initially in the drift to a faulty limit cycle followed by a sporadic disturbance negating the periodic solution to a randomly actuated unstable system. \\
+				In agreement with \cite{gloerfelt2008}, the incorrect convergence is expected and a stabilizing method needs to be employed for proper system progression. The deviation of system dynamics is due the lack of intrinsic dissipation, originating from the differences between the simulated equations and projected equations as well as differences in numerical treatment. The differences between the methods for obtaining the simulation data and the reduced order model are denoted in table \ref{tab:methoddiff}. 
+				\begin{table}[h!]
+					\centering
+					\begin{tabular}{ l | m{4.9cm} | m{4.9cm} }
+						\hline
+						 & Full Order Model & Reduced Order Model \\
+						\hline
+						Governing Equation & Compressible NS & Isentropic NS \\
+						Spatial Discretization & Finite Volume & FEM based Galerkin Projection \\
+						Time Discretization & Euler Backward & Backward Differentiation \& Adam \\
+						Derivative Scheme & Weighted Least Square Cell Average & Finite Difference \\
+						\hline
+					\end{tabular}
+					\caption{General methodical differences of full and reduced order model leading to instability in ROM system propagation.}\label{tab:methoddiff}
+				\end{table}
+				The methods of both models differ in nearly every aspect, therefore the drift and deviation to the simulated behavior is expected and confirmed by the findings of \cite{gloerfelt2008}. \\ 
+				Stabilization is achieved trough artificial viscosity from section  \ref{sec:stabilization} since it presents the simplest approach to achieve stability. By empirically determining the artificial viscosity it was found that system dynamics become stable near the desired limit cycle for $\nu_{stab} = 4 \; \nu_\infty$. The stabilized ROM solution is depicted in figure \ref{fig:0.6stablegalerkin}.
+				\begin{figure}[h!]
+					\includegraphics[width=\linewidth]{mach_0.6/rom/mach_0.6_stabilized_av.png}
+					\caption{Solution to the Galerkin system stabilized with artificial viscosity for $Ma=0.6$. }
+					\label{fig:0.6stablegalerkin}
+				\end{figure} 
+				The model needs about five shedding periods to reach the stable limit cycle. The settling time arises due to the differences in treatment between the models. The stable periodic solution matches the shedding frequency and the amplitudal limit, though the oscillation, apart from the main modes, show signs of coupled oscillation. This coupling is certainly due to the simplifications made in the derivation of the isentropic governing equations.\\
+				The reconstruction of the solution is depicted in \ref{fig:0.6recgalerkin}. 
+				\begin{figure}[h!]
+					\begin{subfigure}[b]{0.5\textwidth}
+						\centering
+						\includegraphics[width=\linewidth,trim=5cm 1.5cm 11cm 1.5cm,clip]{mach_0.6/rom/reconstruction/18.png}
+						\caption{Snapshot 1}
+					\end{subfigure}
+					\begin{subfigure}[b]{0.5\textwidth}
+						\centering
+						\includegraphics[width=\linewidth,trim=5cm 1.5cm 11cm 1.5cm,clip]{mach_0.6/rom/reconstruction/25.png}
+						\caption{Snapshot 2}
+					\end{subfigure}
+					\newline
+					\begin{subfigure}[b]{0.5\textwidth}
+						\centering
+						\includegraphics[width=\linewidth,trim=5cm 1.5cm 11cm 1.5cm,clip]{mach_0.6/rom/reconstruction/32.png}
+						\caption{Snapshot 3}
+					\end{subfigure}
+					\begin{subfigure}[b]{0.5\textwidth}
+						\centering
+						\includegraphics[width=\linewidth,trim=5cm 1.5cm 11cm 1.5cm,clip]{mach_0.6/rom/reconstruction/39.png}
+						\caption{Snapshot 4}
+					\end{subfigure}
+					\caption{Snapshots of reconstruction based on the ROM solution for the $Ma = 0.6$ dataset with four POD modes and artifical viscosity stabilization. }
+					\label{fig:0.6recgalerkin}
+				\end{figure}
+				The reconstruction is clearly showing differences to the optimal model, although the solution matches in frequency and the amplitudal limit. The vortex detachment is more pronounced in the POD ROM. In the region of vorticity reversal the delimitation appears reinforced. This certainly shows the limitation of POD modes derived from the fully compressible simulation to be used in methodologically different reduced order models, like the isentropic used throughout this thesis.
 		\section{Control Application}
+		
 		
 	\chapter{Conclusion}
 			
