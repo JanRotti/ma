@@ -485,8 +485,7 @@
 				\end{equation}
 				The given nonlinear nature of $\mathbf{N}$ determines the mode-coupling that occurs between basis functions $\phi_i$ whereas the modal mixing is primarily produced by non-linearity.
 				Note that the Galerkin method prescribed here can also be deployed for full order simulations such as Finite Element Simulation where spatial discretization is performed using linear shape functions resulting in the FEM-Galerkin method \cite{Asadzadeh_2020}. 
-			
-				%Due to spatial discretization $q$ in defined points e.g. \ref{fig:mesh} the spatial derivatives of first and second order can be specified using finite-difference differentiation schemes. 
+		. 
 				
 				
 				
@@ -717,6 +716,10 @@
 					where $\mathbf{q}_\infty^0$	corresponds to the state of a fixed cylinder rotation with $\gamma_0$. 
 					
 			\subsection{Optimal Control}
+				
+			
+			
+			
 			
 	
 	\chapter{Data Generation}\label{cha:datagen}
@@ -927,7 +930,8 @@
 		 	 	Choosing the the number of POD modes for reconstruction to be greater than four, results in visibly no distinction to the ground truth. Taking only the leading two modes for reconstruction the differences are visible in the bend of vortex detachment. The vortex structure near the cylinder is more defined than the ground truth, the missing information is completely contained in further modes as including additional modes proofs. \\
 		 	 	The reconstruction error measured as mean squared error over the number of POD modes utilized for reconstruction is displayed in \ref{fig:podrecerror}.
 		 	 	\begin{figure}
-		 	 		\includegraphics[width=\linewidth,trim=0.5 0.5 1.5cm 1.5cm,clip]{mach_0.6/reconstruction/mach_0.6_rec_error.png}
+		 	 		\centering
+		 	 		\includegraphics[width=0.7\linewidth,trim=0.5 0.5 1.5cm 1.5cm,clip]{mach_0.6/reconstruction/mach_0.6_rec_error.png}
 		 	 		\caption{Semi-logarithmic y-axis plots displaying the reconstruction error at $Ma=0.6$, measured as mean squared error, over the number of pod modes chosen for reconstruction of the flow field.}
 		 	 	\end{figure}
 	 	 		The reconstruction is visually indistinguishable from the real snapshots, after considering 4 or more POD modes. The remaining error is proportional to the amplitude of the activations and the truncated POD modes. Overall the reconstruction capabilities of the POD modes emphasize the approach of the reduced order model by limiting the degrees of freedom of the dynamical system to the mainly contributing flow modes.
@@ -957,7 +961,7 @@
 		 			\end{split}.
 			 	\end{equation*}
 				Given the centered POD decomposition of section \ref{sec:solpod}, the 
-				Galerkin system can be constructed by computing the POD based coefficients, noted in equation \ref{eq:galerkincoeffs}, belonging to the ODE system in equation \ref{eq:galerkinsystem} with the inner product definition of equation \ref{eq:inprodmach}. The number of POD modes chosen as DOF's for the reduced order model was four. \\
+				Galerkin system can be constructed by computing the POD based coefficients, noted in equation \ref{eq:galerkincoeffs}, belonging to the ODE system in equation \ref{eq:galerkinsystem} with the inner product definition of equation \ref{eq:inprodmach}. The number of POD modes chosen as DOF for the reduced order model was four. \\
 			\subsection{POD-ROM Solution}
 				The resulting coefficients are not interpretable by themselves as they only present the projected relation of the governing equations. The system of ODE's is solved using LSODA, an adaptive ODE solver first proposed by \cite{lsoda1983} and implemented into Fortran by \cite{lsoda2010}. \\
 				The temporal solution to the Galerkin system initially drifts towards an erroneous limit cycle depicted in figure \ref{fig:0.6unstablegalerkin}.
@@ -966,7 +970,7 @@
 					\caption{Temporal solution to the Galerkin system obtained with LSODA ODE solver. The solution drifts towards an erroneous state solution. Activations are scaled with freestream velocity s.t. $a_s = \frac{a}{u_\infty}$.}
 					\label{fig:0.6unstablegalerkin}
 				\end{figure} 
-				The convergence towards an faulty state is present for all three datasets at, although the behavior changes with increasing number of DOF's. Choosing two or four modes, results in convergence to a stable limit cycle. Choosing six or more DOF's to represent the system dynamics, results initially in the drift to a faulty limit cycle followed by a sporadic disturbance negating the periodic solution to a randomly actuated unstable system. \\
+				The convergence towards an faulty state is present for all three datasets at, although the behavior changes with increasing number of DOF. Choosing two or four modes, results in convergence to a stable limit cycle. Choosing six or more DOF to represent the system dynamics, results initially in the drift to a faulty limit cycle followed by a sporadic disturbance negating the periodic solution to a randomly actuated unstable system. \\
 				In agreement with \cite{gloerfelt2008}, the incorrect convergence is expected and a stabilizing method needs to be employed for proper system progression. The deviation of system dynamics is due the lack of intrinsic dissipation, originating from the differences between the simulated equations and projected equations as well as differences in numerical treatment. The differences between the methods for obtaining the simulation data and the reduced order model are denoted in table \ref{tab:methoddiff}. 
 				\begin{table}[h!]
 					\centering
@@ -983,8 +987,8 @@
 					\caption{General methodical differences of full and reduced order model leading to instability in ROM system propagation.}\label{tab:methoddiff}
 				\end{table}
 				The methods of both models differ in nearly every aspect, therefore the drift and deviation to the simulated behavior is expected and confirmed by the findings of \cite{gloerfelt2008}. \\ 
-				Stabilization is achieved trough artificial viscosity from section  \ref{sec:stabilization} since it presents the simplest approach to achieve stability. The empirical tuning of artificial viscosity was found to be dependent on the number of DOF's in the Galerkin system although there was no strict rule found. Stabilization with respect to suitable reconstruction quality was found in a small band of values for $\nu$ around some optimal $\nu_{opt}$. The tendency towards an erroneous limit cycle increases with the distance to $\nu_{opt}$ until the system becomes unstable. The ROM model is only considered at the optimal stabilizing viscosity with respect to reconstruction quality.\\
-				By empirically determining the artificial viscosity, it was found that system dynamics become stable near the desired limit cycle for  combinations of mach and number of DOF's depicted in table \ref{tab:stablecomb}. 
+				Stabilization is achieved trough artificial viscosity from section  \ref{sec:stabilization} since it presents the simplest approach to achieve stability. The empirical tuning of artificial viscosity was found to be dependent on the number of DOF in the Galerkin system although there was no strict rule found. Stabilization with respect to suitable reconstruction quality was found in a small band of values for $\nu$ around some optimal $\nu_{opt}$. The tendency towards an erroneous limit cycle increases with the distance to $\nu_{opt}$ until the system becomes unstable. The ROM model is only considered at the optimal stabilizing viscosity with respect to reconstruction quality.\\
+				By empirically determining the artificial viscosity, it was found that system dynamics become stable near the desired limit cycle for  combinations of mach and number of DOF depicted in table \ref{tab:stablecomb}. 
 				\begin{table}[h!]
 					\centering
 					\begin{tabular}{ l | r | r | r | r | r }
@@ -1032,7 +1036,7 @@
 					\label{fig:0.6recgalerkin}
 				\end{figure}
 				The reconstruction is clearly showing differences to the optimal model, although the solution matches closely in frequency and the amplitudal limit. \\
-				The differences to the simulation data arise from two main causes, truncation error and methodical difference. The snapshots POD modes fail to capture the main POD modes for the isentropic ROM fully, therefore producing mode coupling, represented in the coupled oscillations of DOF. Secondly the truncation error shifts modal energy into latter DOF's. This can clearly be shown by using $6$ or $8$ POD modes for ROM construction. The visualization of flow reconstruction from the eight POD solution to the Galerkin system are depicted in \ref{fig:0.6recgalerkin_add}.
+				The differences to the simulation data arise from two main causes, truncation error and methodical difference. The snapshot POD modes fail to capture the flow tendencies of the isentropic problem fully, therefore producing mode coupling, represented in the coupled oscillations of DOF. Secondly the truncation error shifts modal energy into latter DOF. This can clearly be shown by using $6$ or $8$ POD modes for ROM construction. The visualization of flow reconstruction from the eight POD solution to the Galerkin system are depicted in \ref{fig:0.6recgalerkin_add}.
 				\begin{figure}[h!]
 					\begin{subfigure}[b]{0.5\textwidth}
 						\centering
@@ -1062,7 +1066,7 @@
 				
 				
 		\section{Control Application}
-		
+			
 		
 	\chapter{Conclusion}
 			
@@ -1387,6 +1391,57 @@
 			\caption{Solution to the stabilized Galerkin system with artificial viscosity for $Ma=0.1$.}
 			\label{fig:0.1stablegalerkin}
 		\end{figure} 
+		\begin{figure}[h!]
+			\begin{subfigure}[b]{0.5\textwidth}
+				\centering
+				\includegraphics[width=\linewidth,trim=5cm 1.5cm 11cm 1.5cm,clip]{mach_0.01/rom/reconstruction/4/1.png}
+				\caption{Snapshot 1}
+			\end{subfigure}
+			\begin{subfigure}[b]{0.5\textwidth}
+				\centering
+				\includegraphics[width=\linewidth,trim=5cm 1.5cm 11cm 1.5cm,clip]{mach_0.01/rom/reconstruction/4/6.png}
+				\caption{Snapshot 2}
+			\end{subfigure}
+			\newline
+			\begin{subfigure}[b]{0.5\textwidth}
+				\centering
+				\includegraphics[width=\linewidth,trim=5cm 1.5cm 11cm 1.5cm,clip]{mach_0.01/rom/reconstruction/4/11.png}
+				\caption{Snapshot 3}
+			\end{subfigure}
+			\begin{subfigure}[b]{0.5\textwidth}
+				\centering
+				\includegraphics[width=\linewidth,trim=5cm 1.5cm 11cm 1.5cm,clip]{mach_0.01/rom/reconstruction/4/17.png}
+				\caption{Snapshot 4}
+			\end{subfigure}
+			\caption{Snapshots of reconstruction based on the ROM solution for the $Ma = 0.01$ dataset with four POD modes and artifical viscosity stabilization.}
+			\label{fig:0.01recgalerkin}
+		\end{figure}
+		\begin{figure}[h!]
+			\begin{subfigure}[b]{0.5\textwidth}
+				\centering
+				\includegraphics[width=\linewidth,trim=5cm 1.5cm 11cm 1.5cm,clip]{mach_0.1/rom/reconstruction/4/1.png}
+				\caption{Snapshot 1}
+			\end{subfigure}
+			\begin{subfigure}[b]{0.5\textwidth}
+				\centering
+				\includegraphics[width=\linewidth,trim=5cm 1.5cm 11cm 1.5cm,clip]{mach_0.1/rom/reconstruction/4/6.png}
+				\caption{Snapshot 2}
+			\end{subfigure}
+			\newline
+			\begin{subfigure}[b]{0.5\textwidth}
+				\centering
+				\includegraphics[width=\linewidth,trim=5cm 1.5cm 11cm 1.5cm,clip]{mach_0.1/rom/reconstruction/4/11.png}
+				\caption{Snapshot 3}
+			\end{subfigure}
+			\begin{subfigure}[b]{0.5\textwidth}
+				\centering
+				\includegraphics[width=\linewidth,trim=5cm 1.5cm 11cm 1.5cm,clip]{mach_0.1/rom/reconstruction/4/17.png}
+				\caption{Snapshot 4}
+			\end{subfigure}
+			\caption{Snapshots of reconstruction based on the ROM solution for the $Ma = 0.1$ dataset with four POD modes and artifical viscosity stabilization.}
+			\label{fig:0.1recgalerkin}
+		\end{figure}
+		
 			
 %look at first bib entry
 \nocite{*}
