@@ -761,7 +761,7 @@
 					) \partial \gamma dt \\ &- \sum_{k=1}^{R} ([ \phi_k \delta a_k ]_0^T + [h_k \phi_k \delta \gamma ]_0^T).
 				\end{split}
 			\end{align*} 
-			Since initial conditions $a_k^0$ and $\gamma^0$ are given, only variations satisfying $\delta y_k(0)=0$ and $\delta \gamma(0)=0$ are considered. Therefore if $\phi_k$ is constrained to satisfy 
+			Since initial conditions $a_k^0$ and $\gamma^0$ are given, only variations satisfying $\delta a_k(0)=0$ and $\delta \gamma(0)=0$ are considered. Therefore if $\phi_k$ is constrained to satisfy 
 			\begin{equation}
 				\begin{split}
 					\frac{d \phi_k}{d t} = \sum_{i=1}^{R} A_{ik} \phi_i - \frac{\partial f}{\partial a_k},
@@ -773,9 +773,12 @@
 					k = 1,\dots,R
 				\end{split}\label{eq:constraintproblem}
 			\end{equation}
-			where $A_{ik} = - [\nu L^1_{ik} + L^2_{ik} + \sum_{j=1}^{R} (Q_{ijk} + Q_{jik}) a_j + \sum_{i=1}^{R} \gamma g_{ik} a_i ]$, equation \ref{eq:deltaE} reduces to 
+			where 
 			\begin{equation*}
-				\delta E(\vec{a},\gamma) = \int_{0}^{T} (\sum_{k=1}^{R}( [h_k \sum_{i=1}^{R} A_{ik} + \nu d^1_k + d^2_k + \sum_{i=1}^{R} g_{ik} a_i + 2 \gamma f_k] - h_k \frac{\partial f}{\partial a_k})+ 
+				A_{ik} = - [\nu L^1_{ik} + L^2_{ik} + \sum_{j=1}^{R} (Q_{ijk} + Q_{jik}) a_j + \sum_{i=1}^{R} \gamma g_{ik}],
+			\end{equation*} equation \ref{eq:deltaE} reduces to 
+			\begin{equation*}
+				\delta E(\vec{a},\gamma) = \int_{0}^{T} (\sum_{k=1}^{R}( h_k \sum_{i=1}^{R} A_{ik} \phi_i + [\nu d^1_k + d^2_k + \sum_{i=1}^{R} g_{ik} a_i + 2 \gamma f_k]\phi_k - h_k \frac{\partial f}{\partial a_k})+ 
 				\frac{\partial f}{\partial \gamma} )\delta \gamma d t.
 			\end{equation*}
 			The problem employed as constraint on $\phi_k$, given in equation \ref{eq:constraintproblem}, describes a linear initial value problem that needs to be solved in reverse time for the $R$ co-state functions $\phi_k(t)$.\\
@@ -789,7 +792,7 @@
 			\end{equation*}
 			where the components $G_m^n$ of the discrete gradient vector $G^n$ are computed as
 			\begin{align*}
-				G_m^s &= \Delta t \sum_{n=0}^{N_t}\{(\sum_{k=1}^{R}([h_k \sum_{i=1}^{R} A_{ik}^{sn} + \nu d^1_k + d^2_k + \sum_{i=1}^{R} g_{ik} a_i^{sn} + 2 \gamma^{sn} f_k] \phi_k^{sn} \\
+				G_m^s &= \Delta t \sum_{n=0}^{N_t}\{(\sum_{k=1}^{R}(h_k \sum_{i=1}^{R} A_{ik}^{sn} \phi_i + [\nu d^1_k + d^2_k + \sum_{i=1}^{R} g_{ik} a_i^{sn} + 2 \gamma^{sn} f_k] \phi_k^{sn} \\
 				&- h_k (\frac{\partial f}{\partial a_k})^{sn}) + (\frac{\partial f}{\partial \gamma})^{sn}) \sin({\frac{m \pi n \Delta t }{2 T}}) \}
 			\end{align*}
 			where superscript $s$ denotes the update step, $n$ denotes time level and $N_t = \frac{T}{\Delta t}$.
