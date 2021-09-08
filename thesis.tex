@@ -39,86 +39,82 @@
 	\end{titlepage}
 	
 	
-	
-	
-	\chapter{Introduction}
-		\section{Motivation}
-		\section{Problem}
-		\section{Task}
-
+		
 	\chapter{Methodology}
 		\section{Navier Stokes Equation}
 			The derivation of Navier Stokes equations follows \cite{bing_han_2019}.
 			\subsection{Reynolds Transport Theorem}
 				\begin{figure}[h!]
 					\centering
-					\includegraphics[width=0.5\linewidth]{ReynoldsTransportTheorem}
+					\includegraphics[width=0.6\linewidth]{ReynoldsTransportTheorem}
 					\caption{Material and control volume moving over time.\cite{bing_han_2019}}
 					\label{fig:rtt}
 				\end{figure}
-				Reynolds transport theorem (RTT) provides the conversion formulation between the Lagrangian fluid and the Eulerian fluid description. 
-				\begin{equation*}
+				Reynolds transport theorem (RTT) provides the formulation connecting the Lagrangian description to the Eulerian description. 
+				\begin{equation}
 					\frac{D}{Dt} \int_{MV(t)} F(\vec{r},t)\;d\Omega = \frac{d}{dt} \int_{CV(t)} F(\vec{r},t)\;d\Omega +  \oint_{CS(t)} F(\vec{r},t)\vec{V} \cdot \vec{n}\;dS
-				\end{equation*}
-				where the material derivative is defined as operator 
-				\begin{equation*}
-					\frac{D}{Dt} \defgr \frac{\partial}{\partial t} + \vec{V} \cdot \nabla
-				\end{equation*}
-				with subscript $MV$ indicating material volume, $CV$ indicating control volume, $CS$ indication control surface, $\vec{V}$ being the velocity vector and $\Omega$ being the fluid volume. Applying the divergence theorem
+					\label{eq:rttgeneral}
+				\end{equation}
+				with subscript $MV$ indicating material volume, $CV$ indicating control volume, $CS$ indication control surface, $\vec{V}$ being the velocity vector and $\Omega$ being the fluid volume.
+				Let the material or total derivative $\frac{D}{Dt}$ be defined as 
+				\begin{equation}
+					\frac{D}{Dt} \defgr \frac{\partial}{\partial t} + \vec{V} \cdot \nabla.
+					\label{eq:totalderivative}
+				\end{equation}
+				Applying the divergence theorem
 				\begin{equation}
 					\int \vec{A}\cdot \vec{n} \; dS = \int \nabla \cdot \vec{A} \; d\Omega
 					\label{eq:divtheorem}
 				\end{equation} 
-				the surface integrals are converted into volume integrals. This yields
-				\begin{equation*}
-					\frac{D}{Dt} \int_{MV} F\;d\Omega = \frac{d}{dt} \int_{CV} F\;d\Omega +  \int_{CV}\nabla \cdot  (F\vec{V}) \;d\Omega
-				\end{equation*}
-				Let $F = \rho \phi$, then 
+				to \eqref{eq:rttgeneral}, the surface integral becomes a volume integral resulting in 
 				\begin{equation}
-					\frac{D}{Dt} \int_{MV} \rho \phi\;d\Omega = \frac{d}{dt} \int_{CV} \rho \phi\;d\Omega +  \int_{CV}\nabla \cdot  (\rho \phi \vec{V}) \;d\Omega
-					\label{eq:rttvolume}
+					\frac{D}{Dt} \int_{MV} F\;d\Omega = \frac{d}{dt} \int_{CV} F\;d\Omega +  \int_{CV}\nabla \cdot  (F\vec{V}) \;d\Omega.
+					\label{eq:rttvolgeneral}
 				\end{equation}
-				Given a control volume in form and volume arbitrary but fixed in time the additional constraint 
+				Given a control volume, in form and volume arbitrary but fixed in time, the additional constraint 
 				\begin{equation}
 					\frac{d}{dt} \int_{CV} F\;d\Omega = \int_{CV} \frac{\partial F}{\partial t} \;d\Omega
 					\label{eq:rttcontraint}
 				\end{equation}
-				is necessary. Taking constraint \ref{eq:rttcontraint} into equation \ref{eq:rttvolume} it yields:
+				holds. Applying \eqref{eq:rttcontraint} to \eqref{eq:rttvolgeneral} yields
 				\begin{equation*}
-					\frac{D}{Dt} \int_{MV} F\;d\Omega = \int_{CV} [\frac{\partial F}{\partial t} + \nabla \cdot (F \vec{V})] d\Omega
+					\frac{D}{Dt} \int_{MV} F\;d\Omega = \int_{CV} [\frac{\partial F}{\partial t} + \nabla \cdot (F \vec{V})] d\Omega.
 				\end{equation*}
 				Due to 
 				\begin{equation*}
 					\nabla \cdot (F\vec{V}) = \vec{V} \cdot \nabla F + F \nabla \cdot \vec{V}
 				\end{equation*}
-				s.t.
+				it follows
 				\begin{equation*}
 						\frac{\partial F}{\partial t} + \nabla \cdot (F\vec{V}) = (\frac{\partial F}{\partial t} + \vec{V} \cdot \nabla F) + F \nabla \cdot \vec{V} = \frac{D F}{Dt} + F \nabla \cdot \vec{V}
 				\end{equation*}
-				and finally the Reynolds transport theorem within the fixed control volume is derived
-				\begin{align*}
-					\frac{D}{Dt} \int_{MV} F\;d\Omega &= \int_{CV} \frac{D F}{D t} \;d\Omega + \int_{CV} F \nabla \cdot \vec{V} \; d\Omega \\
-					\frac{D}{Dt} \int_{MV} \rho \phi\;d\Omega &= \int_{CV} \frac{D (\rho \phi)}{D t} \;d\Omega + \int_{CV} \rho \phi \nabla \cdot \vec{V} \; d\Omega 
-				\end{align*}
+				Finally Reynolds transport theorem for fixed control volumes is obtained in the general form
+				\begin{equation*}
+					\frac{D}{Dt} \int_{MV} F\;d\Omega = \int_{CV} \frac{D F}{D t} \;d\Omega + \int_{CV} F \nabla \cdot \vec{V} \; d\Omega,
+				\end{equation*}
+				and in its momenta formulation with $F = \rho \phi$
+				\begin{equation}
+					\frac{D}{Dt} \int_{MV} \rho \phi\;d\Omega = \int_{CV} \frac{D (\rho \phi)}{D t} \;d\Omega + \int_{CV} \rho \phi \nabla \cdot \vec{V} \; d\Omega.
+					\label{eq:rttfixedmomentum}
+				\end{equation}	
 			\subsection{Conservation of Mass}
 				Let $\phi=1$, the mass $m$ can be represented as 
 				\begin{equation*}
 					m = \int_{MV} \rho \; d\Omega.
 				\end{equation*}
-				The Lagrangian description yields the equation for conservation of mass as
+				The equation for conservation of mass in Lagrangian description gives
 				\begin{equation*}
 					\frac{D m}{D t} = \frac{D}{D t} \int_{MV} \rho \; d\Omega = 0.
 				\end{equation*}
-				For the constraint of arbitrary but fixed control volume the conservation of mass writes
-				\begin{align*}
+				Under the constraint of arbitrary but fixed control volume \eqref{eq:rttcontraint} the conservation of mass notes
+				\begin{align}
 					\frac{D}{D t} \int_{MV} \rho \; d\Omega &= \frac{d}{d t} \int_{CV} \rho \;d\Omega + \int_{CV} \nabla \cdot (\rho\vec{V})\;d\Omega\\
-					&= \int_{CV}[ \frac{\partial \rho}{\partial t} + \nabla \cdot (\rho\vec{V})]\;d\Omega = 0
-				\end{align*} 
-				Finally the differential form of the continuity equation in the Eulerian description writes:
-				\begin{align*}
-					\frac{\partial \rho}{\partial t} + \nabla \cdot (\rho\vec{V}) &= \frac{\partial \rho}{\partial t} + \rho (\nabla \cdot \vec{V}) + \vec{V} \cdot (\nabla \rho) = 0 \\
-					\nabla \cdot (\rho\vec{V}) &= \rho (\nabla \cdot \vec{V}) + \vec{V} \cdot (\nabla \rho) = 0
-				\end{align*}  
+					&= \int_{CV}[ \frac{\partial \rho}{\partial t} + \nabla \cdot (\rho\vec{V})]\;d\Omega = 0.
+				\end{align} 
+				Employing this in \eqref{eq:rttfixedmomentum} gives the differential form of the continuity equation in the Eulerian description
+				\begin{equation}
+					\frac{\partial \rho}{\partial t} + \nabla \cdot (\rho\vec{V}) = \frac{\partial \rho}{\partial t} + \rho (\nabla \cdot \vec{V}) + \vec{V} \cdot (\nabla \rho) = 0 .\label{eq:conservationmass}
+				\end{equation}  
 			\subsection{Conservation of Momentum}
 				Let $\phi = \vec{V}$, the momentum $\vec{M}$ is given as 
 				\begin{equation*}
@@ -129,18 +125,18 @@
 					\underbrace{\frac{D}{D t} \int_{MV} \vec{V} \rho \; d\Omega}_{\text{Rate of change of momentum}} = \underbrace{\int_{MV} \vec{f} \rho \; d\Omega}_{\text{Body force}} + \underbrace{\int_{MS} \bar{T} \cdot \vec{n} \; dS}_{\text{Surface force}}
 					\label{eq:consmass}
 				\end{equation}
-				where $\bar{T}$ is the stress tensor and $\vec{f}$ is the body force. Applying Reynolds transport theorem to \ref{eq:consmass} the equation yields
+				where $\bar{T}$ is the stress tensor and $\vec{f}$ is the body force. Applying Reynolds transport theorem gives
 				\begin{equation*}
 					\frac{d}{d t} \int_{CV} \vec{V} \rho \; d\Omega + \int_{CS} \vec{V} \rho \vec{V} \cdot \vec{n} \; dS = \int_{CV} \vec{f} \rho \; d\Omega + \int_{CS} \bar{T} \cdot \vec{n} \; dS.
 				\end{equation*}
-				Utilizing \ref{eq:divtheorem} to transform the surface integrals to volume integrals the equation notes:
+				Utilizing \eqref{eq:divtheorem} to transform surface integrals to volume integrals yields
 				\begin{equation}
 					\frac{d}{d t} \int_{CV} \vec{V} \rho \; d\Omega + \int_{CV} \nabla \cdot (\vec{V} \rho \vec{V}) \; d\Omega = \int_{CV} \vec{f} \rho \; d\Omega + \int_{CV} \nabla \cdot \bar{T} \; d\Omega.
 					\label{eq:intmom}
 				\end{equation}
-				For arbitrary, but fixed control volumes equation \ref{eq:intmom} becomes
+				For arbitrary, but fixed control volumes after rearranging \eqref{eq:intmom} reduces to
 				\begin{equation*}
-					\int_{CV} [ \frac{\partial}{\partial t} (\rho \vec{V}) + \nabla \cdot (\rho \vec{V} \vec{V}) - \rho \vec{f} - \nabla \cdot \bar{T}] \; d\Omega = 0.
+					\int_{CV} \left[ \frac{\partial}{\partial t} (\rho \vec{V}) + \nabla \cdot (\rho \vec{V} \vec{V}) - \rho \vec{f} - \nabla \cdot \bar{T}\right] \; d\Omega = 0.
 				\end{equation*}
 				The final differential form of the momentum equation in Eulerian description notes:
 				\begin{equation}
@@ -149,7 +145,7 @@
 				\end{equation}
 			
 			\subsection{Compressible Navier Stokes}
-				The stress tensor $\bar{T}$ can be expressed as sum of the hydrostatic stress tensor and the deviatoric stress tensor. Under the assumptions:
+				The stress tensor $\bar{T}$ can be expressed as sum of the hydrostatic stress tensor and the deviatoric stress tensor. Under the assumptions for a Newtonian fluid:
 				\begin{itemize}
 					\setlength\itemsep{-0.5em}
 					\item The stress tensor is a linear function of the strain rates.
@@ -169,31 +165,53 @@
 					\bar{T} = (-p + \lambda \nabla \cdot \vec{V}) \bar{I} + 2 \mu \bar{D},
 					\label{eq:newtstressten}
 				\end{equation}
-				where $\bar{D} = D_{ij} = \frac{1}{2}(\frac{\partial u_i}{\partial x_j} + \frac{\partial u_j}{\partial x_i})$. Substituting \ref{eq:newtstressten} into the momentum equation \ref{eq:momentum} yields the momentum equation for Newtonian fluids known as compressible Navier Stokes:
+				where $\bar{D} = D_{ij} = \frac{1}{2}(\frac{\partial u_i}{\partial x_j} + \frac{\partial u_j}{\partial x_i})$. Substituting \eqref{eq:newtstressten} into the momentum equation \eqref{eq:momentum} yields the momentum equation for Newtonian fluids known as compressible Navier Stokes:
 				\begin{equation}
 					\frac{\partial}{\partial t} (\rho \vec{V}) + \nabla \cdot (\rho \vec{V} \vec{V}) = \rho \vec{f} - \nabla p + \mu \nabla^2 \vec{V}
 					\label{eq:compmomentum}
 				\end{equation}
+			
 			\subsection{Isentropic Navier Stokes}\label{sec:INS}
-				Under the assumptions of a cold flow ($T_{wall} = T_{\infty}$) and moderate mach number, the density gradients remain small and dominated by pressure changes. This is consistent with neglect of the viscous dissipation and heat conduction in the conservation of energy, thus the flow can be treated as reversible or isentropic ($ds = 0$). Additionally constant kinematic and dynamic viscosity is assumed s.t. the equations of motion become
+				Under the assumptions of a cold flow and moderate mach number, the density gradients remain small and dominated by pressure changes.
+				\begin{align}
+					\begin{split}
+					T(\vec{x},t) = T_{\infty}\\
+					0.3 < Ma < 0.8 
+					\end{split}\label{eq:isnsassumpt}
+				\end{align}
+				\begin{equation}
+					\Rightarrow \nabla \rho \ll \nabla p
+				\end{equation}
+				This is consistent with the neglect of viscous dissipation and heat conduction in the conservation of energy, thus the flow can be treated as reversible or isentropic ($ds = 0$). \\
+				Additionally in agreement with \eqref{eq:isnsassumpt}, constant kinematic and dynamic viscosity is assumed, s.t. the equations of motion \eqref{eq:compmomentum}, \eqref{eq:conservationmass} become
 				\begin{align}
 					\frac{D \vec{V}}{D t} + \frac{1}{\rho} \nabla p &= \nu \nabla^2 \vec{V} \nonumber\\
 					\frac{D \rho}{D t} + \rho (\nabla \cdot \vec{V}) &= 0 \label{eq:isennsass}\\
-					ds &= 0 \nonumber
+					ds &= 0, \nonumber
 				\end{align}
-				where $\nu = \frac{\mu}{\rho}$ and $s$ is the entropy. Utilizing the ideal gas law $p = \rho R T$ and the Gibbs equation $dh = T\; ds + \frac{1}{\rho}\;dp$ the set of equations \ref{eq:isennsass} can be written in terms of the enthalpy $h$ instead of the pressure:
+				where $\nu = \mu/\bar{\rho}$ is the kinematic viscosity and $s$ is the entropy.\\ 
+				Utilizing the ideal gas law 
+				\begin{equation*}
+					p = \rho R T
+				\end{equation*} and Gibbs equation
+				\begin{equation*}
+					dh = T\; ds + \frac{1}{\rho}\;dp,
+				\end{equation*} 
+				the set of equations \eqref{eq:isennsass} can be written in terms of the enthalpy $h$ instead of pressure, becoming
 				\begin{align}
 					\frac{D \vec{V}}{D t} + \nabla h &= \nu \nabla^2 \vec{V} \label{eq:isennsenth}\\
 					\frac{D h}{D t} + (\gamma - 1 )h (\nabla \cdot \vec{V}) &= 0, \nonumber
 				\end{align}
-				where $\gamma$ is the isentropic coefficient. This procedure can be done with any thermodynamic variable, but the choice of enthalpy is particularly convenient as the resulting equation \ref{eq:isennsenth} is quadratic. Using the ideal gas relation $a^2 = (\gamma - 1)h$ equation \ref{eq:isennsass} becomes:
+				where $\gamma$ is the isentropic coefficient. This procedure can be done with any thermodynamic variable, but the choice of enthalpy is particularly convenient as the resulting equation \eqref{eq:isennsenth} is quadratic. Further using the ideal gas relation $a^2 = (\gamma - 1)h$, \eqref{eq:isennsass} becomes:
 				\begin{align}
 					\frac{D \vec{V}}{D t} + \frac{2}{\gamma - 1}a \nabla a &= \nu \nabla^2 \vec{V} \label{eq:isennsmach}\\
-					\frac{D a}{D t} + \frac{\gamma - 1 }{2}a (\nabla \cdot \vec{V}) &= 0 \nonumber
+					\frac{D a}{D t} + \frac{\gamma - 1 }{2}a (\nabla \cdot \vec{V}) &= 0. \nonumber
 				\end{align}
-				Note equation \ref{eq:isennsenth} and \ref{eq:isennsmach} are equivalent and both are referred to as isentropic Navier-Stokes equations.			
+				Note equation \eqref{eq:isennsenth} and \eqref{eq:isennsmach} are equivalent and both are referred to as isentropic Navier-Stokes equations.			
+			
 			\subsection{Non-dimensionalization} 
-				For the non-dimensionalization of flow variables the freestream conditions are used to scale the problem accordingly.\\
+				Non-dimensionalization of governing equations give rise to transfer and compare case specific solutions and methods by making governing equations dimensionless. 
+				The choice for non-dimensionalization variables is essential to the dependent methods such as inner product space and the results. As popular choice freestream conditions $(\cdot)_{\infty}$ are used to non-dimensionalize flow equations. \\
 				\begin{table}[hbt]
 					\centering
 					\begin{tabular}{ l l r }
@@ -203,13 +221,14 @@
 						$L$ & Characteristic length & [$m$] \\
 						$V$ & Characteristic velocity & [$\frac{m}{s}$] \\
 						$f$ & Characteristic frequency & [$\frac{1}{s}$] \\
-						$p_0 - P_{\infty}$ & Reference pressure difference & [$\frac{kg}{m s^2}$] \\
+						$p_0 - p_{\infty}$ & Reference pressure difference & [$\frac{kg}{m s^2}$] \\
 						\hline
 					\end{tabular}
 					\caption{Scaling parameters with their primary dimensions.}\label{tab:nondim}
 				\end{table}
+			
 			The non-dimensional variables using the scaling parameters of \ref{tab:nondim} yield:
-			\begin{equation*}
+			\begin{equation}
 			\begin{aligned}[c]
 				t^* &= f t \\
 				p^* &= \frac{p - p_{\infty}}{p_0 - p_{\infty}}\\
@@ -221,8 +240,16 @@
 				\vec{\nabla}^* &= L \vec{\nabla}
 			\end{aligned}
 			\label{eq:nondimvar}
+			\end{equation}
+			As example for non-dimensionalization, the incompressible Navier-Stokes equation, \eqref{eq:compmomentum} under $\frac{\partial \rho}{\partial t} \defgr 0$, is considered without external forces $f$. 
+			\begin{equation*}
+				\frac{\partial}{\partial t} (\rho \vec{V}) + \nabla \cdot (\rho \vec{V} \vec{V}) = \rho \vec{f} - \nabla p + \mu \nabla^2 \vec{V}
 			\end{equation*}
-			As example for the non-dimensionalization equation \ref{eq:compmomentum} is considered without external forces $f$. Every term in equation \ref{eq:compmomentum} has primary dimensions [$\frac{kg}{m^2 s^2}$], s.t. multiplication by constant $\frac{L}{\rho V^2} = [\frac{m^2 s^2}{kg}]$ cancels the dimension. Additionally substituting \ref{eq:nondimvar} yields the non-dimensionalized compressible Navier Stokes
+			Substituting \eqref{eq:nondimvar} yields
+			\begin{equation*}
+				\rho V f \frac{\partial \vec{V}}{\partial t^*} + \frac{\rho V^2}{L}\left( \vec{V}^* \cdot \vec{\nabla}^* \right) \vec{V}^* = - \frac{p_0 - p_\infty}{L}\vec{\nabla}^*p^* + \frac{\mu V}{L^2}\vec{\nabla}^* \vec{V}^*
+			\end{equation*}
+			Every term has primary dimensions [$\frac{kg}{m^2 s^2}$], s.t. multiplication by constant $\frac{L}{\rho V^2} = [\frac{m^2 s^2}{kg}]$ cancels the dimension. This gives the non-dimensionalized incompressible Navier-Stokes
 			\begin{equation}
 				[\frac{f L}{V}] \frac{\partial \vec{V}^*}{\partial t^*} + (\vec{V}^* \cdot \vec{\nabla}^*)\vec{V}^* = - [\frac{p_0 -p_{\infty}}{pV^2}]\vec{\nabla}^* p^* + [\frac{\mu}{\rho V L}] \nabla^{*2}\vec{V}^*
 				\label{eq:nondimns}
@@ -234,23 +261,23 @@
 				\item Euler number $$Eu = \frac{p_0 -p_{\infty}}{pV^2}$$
 				\item Inverse Reynolds number $$ \frac{1}{Re} = \frac{\mu}{\rho V L}$$
 			\end{itemize}
-			Non-dimensionalization is advantageous as for any value of scaling parameters $L,V,\dots$ equation \ref{eq:nondimns} holds. The non-dimensionalization of the isentropic Navier Stokes \ref{eq:isennsmach} can be performed in similar fashion.  
+			Note, the choice of non-dimensionalization parameters is arbitrary valid. The process of can be performed equivalently for any set of governing equations.\\		Non-dimensionalization is advantageous as for any value of scaling parameters $L,V,\dots$, \eqref{eq:nondimns} holds. With regards to simulation results, non-dimensionalization is case dependent on the governing equations.
 		
 		\section{Spatial Discretization}\label{sec:spacediscr}
 			\begin{figure}[h!]
 				\centering
 				\includegraphics[width=0.5\linewidth]{mesh}
-				\caption{Rotational symmetric Mesh with a grid constructed of 200 equidistant angular levels and 112 almost logarithmic scaled radii with a central cylinder cutout.}
+				\caption{Rotational symmetric Mesh with a grid constructed of 200 equidistant angular levels and 112 logarithmic scaled radii with a central cylinder cutout.}
 				\label{fig:mesh}
 			\end{figure}
-			The fluid domain $\Omega$ is constructed of quadrilateral cells. The cells are arranged in a rotational symmetric pattern around a central cylindrical cutout with radius $R = 0.5$. The cells are arranged such that the nodes coincide on fixed levels with respect to the center. They form a finite potential map in terms of radial coordinate $r$ and angular coordinate $\phi$. The discretization produces $200$ equidistant angular levels and $112$ radius levels that are linearly spaced near the central cylinder and logarithmic spaced towards the outer boundary. \\
-			The elementary geometry is depicted in figure \ref{fig:mesh}.
+			The fluid domain $\Omega$ is constructed of quadrilateral cells. The cells are arranged in a rotational symmetric pattern around a central cylindrical cutout with radius $R = 0.5$. The cells are arranged such that the nodes coincide on fixed levels with respect to the center. They form a finite potential map in terms of radial coordinate $r$ and angular coordinate $\phi$. The discretization produces $200$ equidistant angular levels and $112$ radius levels that are logarithmic spaced towards the outer boundary. \\
+			The elementary geometry is depicted in figure \ref{fig:mesh}. 
 	
 		\section{Boundary Conditions}
-			The numerical simulation of flow problems require the confinement of a
+			"The numerical simulation of flow problems require the confinement of a
 			conceptually unbounded flow domain to a bounded computational domain,
 			thereby introducing artificial boundaries, along which a set of boundary
-			conditions can be enforced. \cite{Rannacher2000}	\\
+			conditions can be enforced" \cite{Rannacher2000}.	\\
 			Most commonly a boundary integral arises when solving the governing partial differential equation by integration by parts. The boundary integral may be fixed to enforce a set of boundary condition. The first-type boundary condition, more well known as Dirichlet condition, enforces fixed values on the system variables along the boundary $\partial \Omega$. The second-type boundary, known as Neumann condition, enforces a fixed normal derivative to the boundary and has shown to be less intrusive to the solution inside the computational domain. \\ 
 			Let $\mathbf{q} \in \R^n$ denote the state described by an arbitrary partial differential equation, then the \emph{Dirichlet} boundary yields
 			\begin{equation*}
@@ -263,7 +290,7 @@
 				\label{eq:neumann}
 			\end{equation}
 			where $\vec{n}$ denotes the normal to the boundary $\partial \Omega$, $f(x)$ is a known scalar function and $\sprod{\cdot}{\cdot}$ denotes the inner product operator.\\
-			In regards to the given geometry \ref{fig:mesh} two boundaries are present. The central cylinder is treated as no-slip wall condition, posing the special Dirichlet condition 
+			In regards to the given geometry of figure \ref{fig:mesh}, two boundaries are present. The central cylinder is treated as no-slip wall condition, posing the special Dirichlet condition 
 			\begin{equation*}
 				\mathbf{q}(x) \times \vec{n} = U \times  \vec{n} \qquad \forall x \in \partial \Omega,
 			\end{equation*}
@@ -279,7 +306,7 @@
 				\label{eq:taylorseries},
 			\end{equation}
 			where $\left.(\cdot)\right\vert_{x}$ means evaluated at point $(x)$.
-			Higher order derivatives are unknown and as such simply neglected. Because commonly $h << 1$, higher order terms vanish as $h$ is sufficiently small, the factor decreases exponentially with the order of the term and additionally the factorial in the denominator grows. This produces an error of second order in $h$
+			Higher order derivatives are unknown and as such simply neglected. Since commonly $h << 1$, higher order terms vanish as $h$ is sufficiently small, the factor decreases exponentially with the order of specific terms. Additionally, the factorial in the denominator grows, further decreasing latter terms. \\ Neglecting second and higher order terms produces an error of second order in $h$ s.t.
 			\begin{equation*}
 				f(x + h) = f(x) + h \left.\frac{\partial f}{\partial x}\right\vert_{x} + \mathcal{O}(h^2).
 			\end{equation*}
@@ -288,7 +315,7 @@
 				\left.\frac{\partial f}{\partial x}\right\vert_{x} = \frac{f(x + h) - f(x)}{h} + \mathcal{O}(h)
 				\label{eq:fwdiff}
 			\end{equation}
-			Equation \ref{eq:fwdiff} is known as forward difference scheme.\\
+			Equation \eqref{eq:fwdiff} is known as forward difference scheme.\\
 			Similarly a Taylor series expansion can be used to approximate $f(x - h)$ as
 			\begin{equation}
 				f(x - h) = f(x) - h \left.\frac{\partial f}{\partial x}\right\vert_{x} + \frac{h^2}{2!} \left.\frac{\partial^2 f}{\partial x^2}\right\vert_{x} -
@@ -302,7 +329,7 @@
 				\label{eq:bwdiff}.
 			\end{equation}
 			Equation \ref{eq:bwdiff} is known as backward difference scheme.\\
-			Subtracting equation \ref{eq:taylorseriesneg} from \ref{eq:taylorseries} gives 
+			Subtracting \eqref{eq:taylorseriesneg} from \eqref{eq:taylorseries} gives 
 			\begin{equation}
 				f(x + h) - f(x - h) = 2 \left.\frac{\partial f}{\partial x}\right\vert_{x} + \frac{2 h^3}{3!} \left.\frac{\partial^3 f}{\partial x^3}\right\vert_{x}	+ \dots
 				\label{eq:taylorsercent}.
@@ -313,26 +340,26 @@
 				\label{eq:centdiff}.
 			\end{equation}
 			Note the central difference scheme is second order accurate.\\
-			Adding equation \ref{eq:taylorseriesneg} to \ref{eq:taylorseries} gives 
+			In similar fashion adding \eqref{eq:taylorseriesneg} to \eqref{eq:taylorseries} gives 
 			\begin{equation}
 				f(x + h) + f(x - h) = 2 \left.\frac{\partial f}{\partial x}\right\vert_{x} + \frac{2 h^2}{2!} \left.\frac{\partial^2 f}{\partial x^2}\right\vert_{x}	+ \frac{2 h^4}{4!} \left.\frac{\partial^4 f}{\partial x^4}\right\vert_{x} + \dots
 				\label{eq:taylorsecder}.
 			\end{equation}
-			Rearranging for the second derivative gives a finite difference scheme of second order accuracy
+			Rearranging for the second derivative gives the finite difference scheme for the second derivative and is second order accurate.
 			\begin{equation}
 				\left.\frac{\partial^2 f}{\partial x^2}\right\vert_{x} = \frac{f(x + h) - 2 f(x) + f(x - h)}{h^2} + \mathcal{O}(h^2)
-				\label{eq:secdiff}.
+				\label{eq:secdiff}
 			\end{equation}
 			
 		\section{Polar Coordinates}
-			As the utilized spatial discretization, given by the mesh in figure \ref{fig:mesh}, inherits rotational symmetry, the coordinate transform from Cartesian to polar coordinates is beneficial. In two dimensions cylinder coordinates coincide with polar coordinates as the non existing $z$ axis remains non transformed. \\
+			As the utilized spatial discretization, given by the mesh in figure \ref{fig:mesh}, inherits rotational symmetry, the coordinate transform from Cartesian to polar coordinates is beneficial. \\
 			\begin{figure}[h!]
 				\centering
 				\includegraphics[width=0.5\linewidth]{polar_cartesian.png}
-				\caption{Relation of cartesian coordinate system to polar coordinate system. In three dimensions, the $z$-axis remains unchanged to achieve the cylinder coordinate system.}
+				\caption{Geometric relations between the Cartesian coordinate system and polar coordinates. Note, in three spatial dimensions the $z$-axis remains unchanged to achieve the cylinder coordinate system.}
 				\label{fig:polar}
 			\end{figure}
-			The general polar coordinates $r \in \R^{+}$ and $\phi \in (-\pi,\pi]$,can be transformed to Cartesians $x$ and $y$ trough the geometric relation depicted in \ref{fig:polar}.  
+			The general polar coordinates $r \in \R^{+}$ and $\phi \in (-\pi,\pi]$, can be transformed to Cartesians $x$ and $y$ trough the geometric relation depicted in figure \ref{fig:polar}.  
 			\begin{align}
 				\begin{split}
 					x &= r \cos{\phi} \\
@@ -346,23 +373,14 @@
 				\frac{\partial }{\partial x} &= \frac{\partial }{\partial \phi}\frac{\partial  \phi}{\partial x}+\frac{\partial }{\partial r}\frac{\partial r}{\partial x}\\
 				\frac{\partial }{\partial y} &= \frac{\partial }{\partial \phi}\frac{\partial  \phi}{\partial y}+\frac{\partial }{\partial r}\frac{\partial r}{\partial y},
 			\end{align*}
-			where the geometric relation \ref{eq:geodep} yield:
+			where the geometric relations \eqref{eq:geodep} yield:
 			\begin{align*}
 				\frac{\partial \phi}{\partial x} &= -\frac{y}{x^2+y^2} \:= -\frac{y}{r^2}\\
 				\frac{\partial \phi}{\partial y} &= \frac{x}{x^2+y^2} \quad= \frac{y}{r^2}\\
 				\frac{\partial r}{\partial x} &= \frac{x}{\sqrt{x^2+y^2}} = \frac{x}{r}\\
 				\frac{\partial r}{\partial y} &= \frac{y}{\sqrt{x^2+y^2}} = \frac{y}{r}
 			\end{align*}
-			Similarly second derivatives can be derived as
-			\begin{align}
-				\begin{split}
-					\frac{\partial^2}{\partial x^2} &= \frac{\partial^2}{\partial \phi^2}\frac{\partial^2 \phi}{\partial x^2} + \frac{\partial^2}{\partial r^2}\frac{\partial^2 r}{\partial x^2} + 2 \frac{\partial}{\partial \phi}\frac{\partial \phi}{\partial x}\frac{\partial}{\partial r}\frac{\partial r}{\partial x}\\
-					\frac{\partial^2}{\partial y^2} &= \frac{\partial^2}{\partial \phi^2}\frac{\partial^2 \phi}{\partial y^2} + \frac{\partial^2}{\partial r^2}\frac{\partial^2 r}{\partial y^2} + 2 \frac{\partial}{\partial \phi}\frac{\partial \phi}{\partial y}\frac{\partial}{\partial r}\frac{\partial r}{\partial y}.
-				\end{split}
-				\label{eq:polsecder}
-			\end{align}
-			Note the mixed terms $\frac{\partial^2}{\partial r \partial \phi}$ arising in \ref{eq:polsecder}. As these are more difficult to compute, and the second derivatives are not individually required in this thesis, the Laplacian was chosen to obtain the sum of second derivatives. \\
-			The Laplacian is the differential operator describing the divergence of the the gradient. Since the Navier-Stokes include the Laplacian operator, a direct treatment is beneficial.
+			With regards to the problem context of the Navier-Stokes equations, second derivatives appear only in the form of the Laplacian operator, that is a differential operator describing the divergence of the gradient. \\
 			In two dimensional Cartesian's the Laplacian notes
 			\begin{equation*}
 				\Delta = \frac{\partial^2}{\partial x^2} + \frac{\partial^2}{\partial y^2}
@@ -372,17 +390,17 @@
 				\Delta = \frac{\partial^2}{\partial r^2} + \frac{1}{r} \frac{\partial}{\partial r}+ \frac{1}{r^2} \frac{\partial^2}{\partial \phi^2}
 				\label{eq:pollaplace}
 			\end{equation}	
-			Note that \ref{eq:pollaplace} has only single variable partial derivatives. 
+			Note that the Laplacian is only dependent on single variable spatial derivatives. 
 		
 		\section{Control Theory}
-			
-		
+			%tbd
+				
 		\section{Reduced Order Model}
 			This section is formulated in accordance with \cite{ROWLEY2004115, Pinnau2008, brunton_kutz_2019, Arunajatesan20144, tubiblio70572}.
 			\subsection{Proper Orthogonal Decomposition}
 				Proper Orthogonal Decomposition, abbreviated POD, is a projection method finding a reduced order subspace in an optimal least square approximation. 
 				\\
-				Let $\Omega \in \R^n$ be a finite dimensional Hilbert space with inner product $\langle \cdot , \cdot \rangle_{\Omega}$ and induced norm $\norm{\cdot}_{\Omega} = \sqrt{\langle \cdot , \cdot \rangle_{\Omega}}$. Let \{$q_k \in \Omega| k=1,\dots,m$\} be an ensemble of snapshots with $m<n$ in discrete time where $q(u,v,p,x,t)$ s.t. 
+				Let $\Omega \in \R^n$ be a finite dimensional Hilbert space with inner product $\langle \cdot , \cdot \rangle_{\Omega}$ and induced norm $\norm{\cdot}_{\Omega} = \sqrt{\langle \cdot , \cdot \rangle_{\Omega}}$. Let \{$q_k \in \Omega| k=1,\dots,m$\} be an ensemble of snapshots with $m<n$ in discrete time where $q(u,v,p,\vec{x},t)$ s.t. 
 				\begin{align*}
 					\langle q , q \rangle_{\Omega} &= \int_{\Omega} u_1 u_2 + v_1 v_2 + p_1 p_2 \; dV \\
 					\norm{q}_{\Omega} &= \sqrt{\langle q , q \rangle_{\Omega}}\\
@@ -435,7 +453,7 @@
 					\begin{equation*}
 						\Q = \Phi \Sigma V^T,
 					\end{equation*}
-					where $\Sigma \in \R^{n \times m}$ is diagonal with $diag(\Sigma) = \sigma_1 \geq \dots \geq \sigma_R > 0$ being singular values and $R = rank(\Q)$. The matrices $\Phi$ and $V$ are composed of the eigenvectors $\phi_i$ and $\tau_i$ of the covariance matrices $\Q \Q^T$ and $\Q^T\Q$ respectively and form an orthonormal basis s.t. $\Phi^T \Phi = \mathbf{I}$ and $V V^T = \mathbf{I}$ . 
+					where $\Sigma \in \R^{n \times m}$ is diagonal with $\text{diag}(\Sigma) = \sigma_1 \geq \dots \geq \sigma_R > 0$ being singular values and $R = \text{rank}(\Q)$. The matrices $\Phi$ and $V$ are composed of the eigenvectors $\phi_i$ and $v_i$ of the covariance matrices $\Q \Q^T$ and $\Q^T\Q$ respectively and form an orthonormal basis s.t. $\Phi^T \Phi = \mathbf{I}$ and $V V^T = \mathbf{I}$. \\
 					The decomposition allows representation of snapshots $q_i$ in terms of the right and left singular vectors such that
 					\begin{equation*}
 						q_i = \sum_{j=1}^{R} \sigma_j \phi_j v_{ij},
@@ -453,54 +471,50 @@
 						\Q^T Q v_j = \sigma_j^2 v_j,
 					\end{equation}
 					where $\Q^T \Q$ is a symmetric matrix with the eigenvalues being the square of the singular values $\sigma_j$. \\
-					Note that in the case of of a snapshot matrix $\Q \in \R^{n \times m}$, where $n$ is the spatial dimension and $m$ denotes the number of snapshots in time, $\Phi$ corresponds to spatial singular vectors and $V$ to temporal singular vectors. 					
+					Note that in the case of a snapshot matrix $\Q \in \R^{n \times m}$, where $n$ is the spatial dimension and $m$ denotes the number of snapshots in time, $\Phi$ corresponds to spatial singular vectors and $V$ to temporal singular vectors. 					
 			\subsection{Galerkin Projection}\label{sec:gp}
-				Given the POD decomposition 
+				Given the decomposition 
 				\begin{equation}
 					q(\mathbf{x},t) = \sum_{i}^{r} a_i(t) \phi_i
-					\label{eq:poddecomp}
+					\label{eq:decomp}
 				\end{equation}
-				where $a_i$ is solely dependent on time and $\phi$ from space. $r$ is the chosen number of POD basis functions $\phi$ to reconstruct $q$. 
+				where $a_i$ is solely dependent on time and $\phi_i$ on space, $r$ is the chosen number of basis functions $\phi$ to reconstruct $q$.\\
+				The basis functions $\phi_i$ are constraint to orthogonality and normality
+				\begin{equation}
+					\begin{split}
+						\sprod{\phi_i}{\phi_j}_{\Omega} = \delta_{ij}
+					\end{split}\quad\quad\quad
+					\begin{split}
+						i,j = 1, \dots , m.
+					\end{split}
+					\label{eq:orthog}
+				\end{equation}
 				Let a complex dynamical system be described by a system of nonlinear partial differential equations (PDEs) of a single spatial variable be modeled as
 				\begin{equation}
 					q_t = \mathbf{N}(q,q_x,q_{xx},\dots,x,t)
 					\label{eq:nonlindyn}
 				\end{equation}
-				where the subscript denotes partial differentiation and $\mathbf{N}(\cdot)$ prescribes the generically nonlinear evolution.   
-				Given that the state $q$ of the system is of high dimension $n>>1$ e.g. as value based vector for $n$ number of points in a fluid domain $\Omega$ with boundary $d\Omega$ the concept of model order reduction becomes increasingly beneficial. 
-				Deploying equation \ref{eq:poddecomp} on the dynamical system \ref{eq:nonlindyn} results in 
+				where the subscript denotes partial differentiation and $\mathbf{N}(\cdot)$ prescribes the generically nonlinear evolution.\\   
+				Given that the state $q$ of the system is of high dimension $n>>1$ e.g. as value based vector for $n$ number of points in a fluid domain $\Omega$ with boundary $d\Omega$, the concept of model order reduction becomes increasingly beneficial. 
+				Deploying equation \eqref{eq:decomp} on the dynamical system \eqref{eq:nonlindyn} results in 
 				\begin{equation*}
 					\sum_{k = 1}^{r} \phi_k \frac{d a_k}{d t} = \mathbf{N}(\sum_{i = 1}^{r} a_i \phi_i,\left(\sum_{i = 1}^{r} a_i \phi_i\right)_x,\left(\sum_{i = 1}^{r} a_i \phi_i\right)_{xx},\dots,x,t)
 					\label{eq:decnonlindyn}
 				\end{equation*}
-				Utilizing the orthogonality and normality of the bases $\phi$
-				\begin{equation*}
-				\begin{split}
-					\sprod{\phi_i}{\phi_j}_{\Omega} = \delta_{ij}
-				\end{split}\quad\quad\quad
-				\begin{split}
-					i,j = 1, \dots , m.
-				\end{split}
-				\end{equation*}
-				the projection of the POD modes onto equation \ref{eq:decnonlindyn} yields a system of $r$ coupled ordinary differential equations in $a_k$
+				Utilizing the orthogonality and normality of the bases $\phi$ described in \eqref{eq:orthog}, the projection of the basis functions onto equation \eqref{eq:decnonlindyn} yields a system of $r$ coupled ordinary differential equations in $a_k$
 				\begin{equation}
-					\frac{d a_k}{d t} = \left\langle \mathbf{N}(\sum_{i = 1}^{r} a_i \phi_i,\left(\sum_{i = 1}^{r} a_i \phi_i\right)_x,\left(\sum_{i = 1}^{r} a_i \phi_i\right)_{xx},\dots,x,t), \phi_k \right\rangle 				\label{eq:projnonlindyn}
+					\frac{d a_k}{d t} = \left\langle \mathbf{N}(\sum_{i = 1}^{r} a_i \phi_i,\left(\sum_{i = 1}^{r} a_i \phi_i\right)_x,\left(\sum_{i = 1}^{r} a_i \phi_i\right)_{xx},\dots,x,t), \phi_k \right\rangle.				\label{eq:projnonlindyn}
 				\end{equation}
-				The given nonlinear nature of $\mathbf{N}$ determines the mode-coupling that occurs between basis functions $\phi_i$ whereas the modal mixing is primarily produced by non-linearity.
-				Note that the Galerkin method prescribed here can also be deployed for full order simulations such as Finite Element Simulation where spatial discretization is performed using linear shape functions resulting in the FEM-Galerkin method \cite{Asadzadeh_2020}. 
-		. 
-				
-				
-				
+				The given nonlinear nature of $\mathbf{N}$ determines the mode-coupling that occurs between basis functions $\phi_i$. \\
+				Note that the Galerkin method prescribed here, is only limited by the necessary properties \eqref{eq:orthog} and includes the POD basis described in section \ref{sec:methodofsnapshots}. Galerkin projection can also be deployed for full order simulations such as Finite Element Simulation where spatial discretization is performed using linear shape functions resulting in the FEM-Galerkin method \cite{Asadzadeh_2020}. 	
 				
 			\subsection{Inner products for Compressible Navier Stokes}
-				The choice of inner product is essential for the quality of basis. The simplest choice of inner product over the fluid domain $\Omega$ is a naive summation over the product of fluid variables such as $\rho, u, v ,p$ in a two dimensional problem integrated over the domain volume defining the state of the dynamical system.
+				The choice of inner product is essential for the quality of basis functions. The simplest choice of inner product over the fluid domain $\Omega$ is a naive summation over the product of fluid variables such as $\rho, u, v ,p$ in a two dimensional problem integrated over the domain volume defining the state of the dynamical system.
 				\begin{equation}
 					\sprod{q_i}{q_2} = \int_{\Omega} (\rho_1 \rho_2 + u_1 u_2 + v_1 v_2 + p_1 p_2) dV
 					\label{eq:standsprod}
 				\end{equation}
-				Note that the inner product \ref{eq:standsprod} is nonphysical as the dimension of the flow variable $\rho, p ,u ,v$ mismatch. This problem may be solved by non-dimensionalization of the flow variables but then the choice of scaling parameters becomes critical. %continue in 13 section 4.2  
-				\\
+				Note that the inner product \eqref{eq:standsprod} is nonphysical as the dimension of the flow variable $\rho, p ,u ,v$ mismatch. This problem may be solved by non-dimensionalization of the flow variables but then the choice of scaling parameters becomes critical. \\
 				Another solution is the introduction of an inner product with a direct physical interpretation in its induced norm. Given the inclusion of thermodynamic and kinematic variables a family of inner products is defined where under special bifurcation parameter the interpretation of the induced norm is either the integrated stagnation enthalpy or the integrated stagnation energy.   
 				In the case of compressible flow the total energy is dependent on thermodynamic and kinematic variables. Given the thermodynamic equations for stagnation enthalpy and stagnation energy
 				\begin{align}
@@ -508,7 +522,7 @@
 					e &= E + \frac{1}{2}(u^2+v^2),\label{eq:stagen}
 				\end{align}
 				where $h$ is the static enthalpy and $E = \frac{h}{\gamma}$ is the internal energy per unit mass.
-				Considering the physical context the desired form of induced norm is 
+				Considering the physical context, the desired form of induced norm is 
 				\begin{equation*}
 					\frac{1}{2} \norm{q}_\alpha^2 = \int_{\Omega}\left( \alpha h + \frac{1}{2} (u^2+v^2)\right)dV
 				\end{equation*}
@@ -516,20 +530,20 @@
 				\begin{equation}
 					\sprod{q_1}{q_2}_\alpha = \int_{\Omega}\left( u_1 u_2 + v_1 v_2 + \frac{2 \alpha}{\gamma -1 } a_1 a_2 \right)\label{eq:inprodmach}.
 				\end{equation} 
-				Choosing $\alpha = 1$ corresponds to using the integral of stagnation enthalpy \ref{eq:stagenth} as induced norm, while taking $\alpha = \frac{1}{\gamma}$ corresponds to using the integral of stagnation energy \ref{eq:stagen}. \\
+				Choosing $\alpha = 1$ corresponds to using the integral of stagnation enthalpy \eqref{eq:stagenth} as induced norm, while taking $\alpha = \frac{1}{\gamma}$ corresponds to using the integral of stagnation energy \eqref{eq:stagen}. \\
 				Note that if and only if the energy flux trough the boundary $d\Omega$ is $0$, the total energy is conserved by
 				\begin{equation}
 					\int_{\Omega}\left( \rho E + \frac{1}{2} \rho (u^2+v^2) \right) dV
 				\end{equation}
 			
-			\subsection{Galerkin Systems}	
+			\subsection{Galerkin System}	
 				Given the isentropic Navier Stokes equations from section \ref{sec:INS}, the equations in the two dimensional fluid domain, with respect to the mach number as thermodynamic variable, write:
 				\begin{align}
-					u_t &= -u u_x - v u_y - \frac{2}{\gamma -1 }a a_x + \mu (u_{xx} + u_{yy}) \nonumber\\
-					v_t &= -u v_x - v v_y - \frac{2}{\gamma -1 }a a_y + \mu (v_{xx} + v_{yy})\label{eq:varisenns}\\
+					u_t &= -u u_x - v u_y - \frac{2}{\gamma -1 }a a_x + \nu (u_{xx} + u_{yy}) \nonumber\\
+					v_t &= -u v_x - v v_y - \frac{2}{\gamma -1 }a a_y + \nu (v_{xx} + v_{yy})\label{eq:varisenns}\\
 					a_t &= -u a_x - v a_y - \frac{\gamma -1}{2}a (u_{x} + v_{y}) \nonumber
 				\end{align}
-				Let the dynamic state variable $\mathbf{q} = (u,v,a)$, then equation \ref{eq:varisenns} becomes
+				Let the dynamic state variable $\mathbf{q} = (u,v,a)$, then equation \eqref{eq:varisenns} becomes
 				\begin{equation}
 					\dot{\mathbf{q}} = \nu \mathbf{L}(\mathbf{q}) + \mathbf{Q}(\mathbf{q},\mathbf{q}), \label{eq:qdot}
 				\end{equation}
@@ -539,27 +553,44 @@
 						u_{xx} + u_{yy} \\ v_{xx} + v_{yy} \\ 0
 					\end{pmatrix} \label{eq:L}\\
 					\mathbf{Q}(\mathbf{q}^1,\mathbf{q}^2) &= - \begin{pmatrix}
-						u^1 u^2_x - v^1 u^2_y - \frac{2}{\gamma - 1}a^1 a^2_x \\
-						u^1 v^2_x - v^1 v^2_y - \frac{2}{\gamma - 1}a^1 a^2_y \\
-						u^1 a^2_x - v^1 a^2_y - \frac{\gamma -1}{2}a^1 (u^2_x + v^2_y).
+						u^1 u^2_x + v^1 u^2_y + \frac{2}{\gamma - 1}a^1 a^2_x \\
+						u^1 v^2_x + v^1 v^2_y + \frac{2}{\gamma - 1}a^1 a^2_y \\
+						u^1 a^2_x + v^1 a^2_y + \frac{\gamma -1}{2}a^1 (u^2_x + v^2_y).
 					\end{pmatrix} \label{eq:Q}
 				\end{align}
-				The superscript in equation \ref{eq:Q} only denotes the corresponding input state and not an exponent.  
-				\\
+				The superscript denotes the corresponding input state and not an exponent.\\
 				Using the expansion of state $\mathbf{q}$ in terms of any orthogonal basis functions $\phi$ as
 				\begin{equation}
 					\mathbf{q}(x,t) = \bar{\mathbf{q}}(x) + \sum_{i=1}^{r} a_i(t)\phi_i(x) \label{eq:centdecomp},
 				\end{equation}
 				where $\bar{\mathbf{q}}$ is fixed, typically being the mean of all snapshots used for POD determination. The POD computation is performed on the centered data also known as fluctuating flow 
-				\begin{equation}
+				\begin{equation*}
 					\tilde{\mathbf{q}} = \mathbf{q} - \bar{\mathbf{q}} = \sum_{i=1}^{r} a_i(t)\phi_i(x).
-				\end{equation}
-				The resulting Galerkin system results from projecting the POD modes $\phi$ onto the governing equations \ref{eq:qdot} as described in section \ref{sec:gp}.
+				\end{equation*}
+				Applying the decomposition \eqref{eq:centdecomp} to \eqref{eq:qdot} gives
+				\begin{align*}
+					\sum_{i=1}^{r} \phi_i(x) \frac{\partial a_i}{\partial t} &= \nu \left( \mathbf{L}(\bar{\mathbf{q}}) + \sum_{i=1}^{r} a_i \mathbf{L}(\phi_i)\right) + \Q(\bar{\mathbf{q}},\bar{\mathbf{q}}) + \sum_{i=1}^{r} a_i \left( \Q(\bar{\mathbf{q}},\phi_i) + \Q(\phi_i, \bar{\mathbf{q}}) \right)\\ &+ \sum_{i=1}^{r} \sum_{j=1}^{r} \Q(\phi_i, \phi_j) a_i a_j.
+				\end{align*}
+				Projection onto the basis functions $\phi_k$, as presented in section \ref{sec:gp}, utilizing the orthogonality property results in $r$ ordinary differential equation
+				\begin{align*}
+					\frac{\partial a_k}{\partial t} &= \Bigg\langle \phi_k , \nu \left( \mathbf{L}(\bar{\mathbf{q}}) + \sum_{i=1}^{r} a_i \mathbf{L}(\phi_i)\right) + \Q(\bar{\mathbf{q}},\bar{\mathbf{q}}) + \sum_{i=1}^{r} a_i \left( \Q(\bar{\mathbf{q}},\phi_i) + \Q(\phi_i, \bar{\mathbf{q}}) \right)\\ &+ \sum_{i=1}^{r}\sum_{j=1}^{r} \Q(\phi_i, \phi_j) a_i a_j \Bigg\rangle
+				\end{align*}
+				because 
+				\begin{equation*}
+					\left\langle \phi_k, \sum_{i=1}^{r} \phi_i \frac{\partial a_i}{\partial t}\right\rangle = \frac{\partial a_k}{\partial t}
+				\end{equation*}
+				since 
+				\begin{equation*}
+					\left\langle \phi_k,\phi_i \right\rangle = \delta_{ki},
+				\end{equation*}
+				where $\delta_{ki}$ is the Kronecker delta function.
+				The resulting Galerkin system is derived by interchanging operator ordering and grouping into coefficients defined by their respective inner product.		
+				
 				\begin{equation}
 					\dot{a}_k = \nu b^1_k + b^2_k + \sum_{i=1}^{r} (\nu L_{ik}^1 + L_{ik}^2)a_i + \sum_{i=1}^{r}\sum_{j=1}^{r} Q_{ijk}a_i a_j
 					\label{eq:galerkinsystem}
 				\end{equation}
-				The coefficients for the system of ordinary differential equations follow by utilizing the distributive property of the inner product to project modes onto single terms of the governing equations s.t.
+				The coefficients for the Galerkin system result from grouping terms with respect to their similarity. 
 				\begin{align}
 					\begin{split}
 						b_k^1 &= \sprod{\mathbf{L}(\bar{\mathbf{q}})}{\phi_k} \\
@@ -573,31 +604,35 @@
 					\end{split}
 					\label{eq:galerkincoeffs}
 				\end{align}
-				The coefficients of equation \ref{eq:galerkinsystem} are constants which are computed before the reduced system is solved. Note that if $\bar{\mathbf{q}}$ is a steady solution of the Navier-Stokes such that 
+				The coefficients are constants, depending solely on the given basis function and mean flow. Therefore the computation can be done pre-simulation, forming a system of ordinary differential equations with quadratic dependence in the state variables $a_i$. Note the model reduction from $n$ to $r$ is solely achieved via the projection method introduced in section \ref{sec:gp}.
+				Additionally, if $\bar{\mathbf{q}}$ is a steady solution to the governing equations such that 
 				\begin{equation*}
 					\nu \mathbf{L}(\bar{\mathbf{q}}) + \mathbf{Q}(\bar{\mathbf{q}},\bar{\mathbf{q}}) = 0
 				\end{equation*} 
-				then the affine terms vanish.  
+				then the affine terms in \eqref{eq:galerkinsystem} vanish.  
 				 
 			
-			\subsection{Stabilization}\label{sec:stabilization}
-				The stability of the POD Galerkin method in the case of incompressible Navier Stokes is well researched. Instability is associated with a lack of inclusion for the pressure term in the projection and truncation errors due to the reduction of degrees of freedom. Considering the compressible Navier Stokes, unstable system behavior is more complex and less well understood. Referring to \cite{Iollo2000StabilityPO}, the inclusion of a stabilization scheme is necessary to form a stable solution to the system of ordinary differential equations. \cite{gloerfelt2008}
-				\begin{itemize}
-					\item \textbf{Artifical Viscosity} The stability of the system of ODEs can be achieved by empirically increasing the viscosity $\nu$ until stable dynamical behavior is achieved. According to \cite{couplet2003} and \cite{gloerfelt2008} the intermodal energy transfer bears similarity with the turbulent transfer and form a model closure problem. The lack of modal interaction produced by truncation and simplification in the projection model necessitates additional diffusive behavior. 
-					\item \textbf{Sobolev Norm}	Choosing the inner product norm in a Sobolev space including a disspative part directly in the inner product evaluation \cite{gloerfelt2008} in the form
+			\subsection{Stability}\label{sec:stabilization}
+				The stability property of the POD Galerkin method for the regime of compressible Navier Stokes is not given per se. Although the projection itself does not inherit any erroneous procedure, limitations arise as the methodological difference between full order model and reduced order model lead to model instability. Due to reduction of degrees of freedom, a truncation error is inherited in the reduced model. Additionally, the system lacks modal dissipation therefore becoming unstable \cite{gloerfelt2008}. This effect is further intensified by methodological difference in the treatment of full and reduced order model. \\
+				For models based on the incompressible regime, instability is associated with a lack of the inclusion of the pressure term in the projection.
+				Referring to \cite{Iollo2000StabilityPO}, the inclusion of a stabilization scheme is necessary to form a stable solution to the system of ordinary differential equations. Multiple methods have been proposed in \cite{gloerfelt2008}.
+				\subsubsection{Artifical Viscosity}
+					The stability of the system of ODEs can be achieved by empirically increasing the viscosity $\nu$ until stable dynamical behavior is achieved. According to \cite{couplet2003} and \cite{gloerfelt2008} the intermodal energy transfer bears similarity with the turbulent transfer and form a model closure problem. The lack of modal interaction produced by truncation and simplification in the projection model necessitates additional diffusive behavior. 
+				\subsubsection{Sobolev Norm}
+					Choosing the inner product norm in a Sobolev space, including a disspative part directly in the inner product evaluation, the inner product is of form
 					\begin{align*}
 						\sprod{q_1}{q_2} = &\int_{\Omega}\left( u_1 u_2 + v_1 v_2 + \frac{2 \alpha}{\gamma - 1}a_1 a_2\right) dV + \\
 						&\epsilon \int_{\Omega}\left(\nabla u_1 \nabla u_2 + \nabla v_1 \nabla v_2 + \frac{2 \alpha}{\gamma - 1} \nabla a_1 \nabla a_2\right) dV,
 					\end{align*}
 					where parameter $\epsilon$ is tuned empirically.
-					\item \textbf{Penalty Term} 
-					Enforcing the correct boundary conditions in the Galerkin model by using a penalty term instead of including the pressure term was discussed briefly by \cite{gloerfelt2008}. The extension to the compressible regime consists notes
+				\subsubsection{Penalty Term} 
+					Enforcing the correct boundary conditions in the Galerkin model by using a penalty term instead of the inclusion of the pressure term. The approach can be applied to the compressible regime. The low-dimensional Galerkin model is adapted to
 					\begin{equation*}
-						\dot{a}_k = f_k(a) - G_k(a)
+						\dot{a}_k = f_k(a) - G_k(a),
 					\end{equation*}  
 					where $f_k$ is the quadratic Galerkin projection of the compressible Navier-Stokes equations, $\dot{a}_k$ is the time evolution of mode activation and $G_k$ denotes a boundary penalty term
 					\begin{equation*}
-						G_k(a) = \tau \int_{\Omega} \phi_k \Upsilon (x) (q-q_\infty)dV.
+						G_k(a) = \tau \int_{\Omega} \phi_k \Upsilon (x) (q-q_\infty)dV,
 					\end{equation*}
 					with 
 					\begin{equation*}
@@ -613,7 +648,8 @@
 							G_k(a) = \tau \left( \sum_{i=1}^{r} a_i \int_{d\Omega} \phi_k \cdot \phi_i dS - \int_{d\Omega} \phi_k \cdot q_\infty dS \right)
 					\end{equation*}
 					Note that $\tau$ corresponds to the weight associated with compliance to the boundary condition and is tuned empirically to find the stabilized Galerkin model. 
-					\item \textbf{Calibration} Given the non-calibrated model
+				\subsubsection{Calibration} 
+					Given the non-calibrated, hypothesized model
 					\begin{equation*}
 						\dot{\mathbf{a}}^*(t) = f^*[\mathbf{a}^*(t)]
 					\end{equation*}
@@ -621,14 +657,16 @@
 					\begin{equation}
 						J^\alpha = (1 - \alpha) \mathcal{E} + \alpha \mathcal{D}, \label{eq:minpolymod}
 					\end{equation}
-					where $\alpha$ is a calibration parameter, $\mathcal{E}$ a measure for the normalized error between a new model $f$ with coefficients $a$ and the hypothesized model $f^*$ deducted directly from snapshot data and $\mathcal{D}$ is penalty term for the distance between $f$ and $f^*$. $\mathcal{E}$ is defined as
+					where $\alpha$ is a calibration parameter, $\mathcal{E}$ a measure for the normalized error between a new model $f$ and the hypothesized model $f^*$ deducted directly from snapshot data and $\mathcal{D}$ is a distance measure for the coefficients in $f$ and $f^*$.\\
+					$\mathcal{E}$ is defined as
 					\begin{equation*}
-						\mathcal{E}(f) = \frac{\overline{\norm{e(f,t)}^2}}{\overline{\norm{e(f^*,t)}^2}},
+						\mathcal{E}(f) \defgr \frac{\overline{\norm{e(f,t)}^2}}{\overline{\norm{e(f^*,t)}^2}},
 					\end{equation*}
-					where $\norm{\cdot}$ denotes a norm of $\R^M$ and $\overline{\cdot}$ denotes arithmetic time average. As choice for $e(f,t)$ the gap between time derivatives of the optimal activations $a^o(t)$ and those obtained of the polynomial model $f$
+					where $\norm{\cdot}$ denotes a norm of $\R^M$ and $\overline{\cdot}$ denotes arithmetic time average. As choice for $e(f,t)$, the gap between time derivatives of the optimal activations $a^o(t)$ and those obtained of the polynomial model $f$
 					\begin{equation*}
 						e(f,t) = \dot{a}^o(t) - f[a^o(t)]
 					\end{equation*} 
+					was chosen. This error function results in flow calibration, in contrast to a simpler state calibration where the difference between system states defines the error function.\\ 
 					Let
 					\begin{equation*}
 						f = \sum_{k=1}^{P}y_k m_k,
@@ -638,48 +676,48 @@
 					\begin{equation*}
 						\mathcal{D}(f) = \frac{\norm{f - f^*}^2}{\norm{f^*}^2}
 					\end{equation*}
-				where $\norm{f} = \sqrt{y^T y}$ is a seminorm. The minimization of \ref{eq:minpolymod} results in the vector $y^\alpha$ of the polynomial coefficients of $f^\alpha$ in the monomial basis. The calibration procedure amounts to solving a linear system due to choice of $e(f,t)$.
-				\end{itemize}				
+					where $\norm{f} = \sqrt{y^T y}$ is a seminorm. The minimization of \eqref{eq:minpolymod} results in the vector $y^\alpha$ of the polynomial coefficients of $f^\alpha$ in the monomial basis. The calibration procedure amounts to solving a linear system due to choice of $e(f,t)$.
+									
 			\subsection{Control Methods}
-				The methods of application of control for the reduced order model presented here, are proposed by \cite{Peraire2012}.
+				The methods for control application utilizing reduced order models presented here, were proposed by \cite{Peraire2012}.
 				\subsubsection{Control Function Method}\label{sec:controlfunction}
 					The application of a control function is assumed to follow the superposition principle. The control function is simply the velocity field generated by a steady cylinder rotation under zero freestream velocity corresponding to a fixed potential vortex $\mathbf{q}_c$. The angular velocity of the cylinder chosen for the simulation of the potential vortex corresponds to a control input $\gamma = 1$. 
-					Utilizing the POD decomposition \ref{eq:centdecomp} and the control function expansion the flow notes
+					Utilizing the POD decomposition \eqref{eq:centdecomp}, the control function expansion the flow notes
 					\begin{equation}
 						\mathbf{q}(x,t) = \bar{\mathbf{q}} + \gamma(t)\mathbf{q}_c + \sum_{i=1}^{r} a_i(t)\phi_i(x),
 						\label{eq:confuncdecomp}
 					\end{equation}
 					where $\gamma(t)$ denotes the control input and $\gamma(t) \mathbf{q}_c$ satisfies the non-homogeneous velocity boundary condition on the cylinder wall and the farfield condition.\\
-					Deploying \ref{eq:confuncdecomp} in the isentropic formulation of \ref{eq:qdot} gives:
+					Deploying \eqref{eq:confuncdecomp} in the isentropic formulation of \eqref{eq:qdot} gives:
 					\begin{align*}
-						\dot{\mathbf{q}} &= \nu \mathbf{L}(\bar{\mathbf{q}}) + \nu \gamma  \mathbf{L}(\mathbf{q}_c) + \nu \sum_{i=1}^{r} a_i \mathbf{L}(\phi_i) \\ &+ \mathbf{Q}(\bar{\mathbf{q}},\bar{\mathbf{q}}) + \mathbf{Q}(\bar{\mathbf{q}},\mathbf{q}_c ) + \mathbf{Q}(\mathbf{q}_c ,\bar{\mathbf{q}}) + \mathbf{Q}(\mathbf{q}_c,\mathbf{q}_c)\\
+						\dot{\gamma} \mathbf{q}_c + \sum_{i=1}^{r} \phi_i \dot{a_i} &= \nu \mathbf{L}(\bar{\mathbf{q}}) + \nu \gamma  \mathbf{L}(\mathbf{q}_c) + \nu \sum_{i=1}^{r} a_i \mathbf{L}(\phi_i) \\ &+ \mathbf{Q}(\bar{\mathbf{q}},\bar{\mathbf{q}}) + \mathbf{Q}(\bar{\mathbf{q}},\mathbf{q}_c ) + \mathbf{Q}(\mathbf{q}_c ,\bar{\mathbf{q}}) + \mathbf{Q}(\mathbf{q}_c,\mathbf{q}_c)\\
 						&+ \sum_{i=1}^{r} \big[\mathbf{Q}(\phi_i,\bar{\mathbf{q}})+\mathbf{Q}(\bar{\mathbf{q}},\phi_i)+\mathbf{Q}(\phi_i,\mathbf{q}_c)+\mathbf{Q}(\mathbf{q}_c,\phi_i)\big]\\
 						&+ \sum_{i=1}^{r}\sum_{j=1}^{r} \mathbf{Q}(\phi_i,\phi_j).
 					\end{align*}
-					Note that the summation can be extended using $\mathbf{q}_c$ and $\bar{\mathbf{q}}$ as modes with activation $\gamma$ or $1$ respectively. Performing a Galerkin projection, described in \ref{sec:gp}, utilizing the control function and POD expansion in equation \ref{eq:confuncdecomp} the resulting Galerkin system becomes
+					Note the arising of additional terms due to the inclusion of the control function. Performing a Galerkin projection unto the basis functions $\phi_k$, described in \ref{sec:gp}, gives
 					\begin{align}
 						\dot{a}_k &= \nu b^1_k + b^2_k + \sum_{i=1}^{r} (\nu L_{ik}^1 + L_{ik}^2)a_i + \sum_{i=1}^{r}\sum_{j=1}^{r} Q_{ijk}a_i a_j \nonumber \\
-						&+  \gamma (\nu d_k^1 + d_k^2) + \gamma^2 f_k + \sum_{i=1}^{r} \gamma g_{ik} a_i + h_k \frac{\partial \gamma}{\partial t}
+						&+  \gamma (\nu d_k^1 + d_k^2) + \gamma^2 f_k + \sum_{i=1}^{r} \gamma g_{ik} a_i + h_k \frac{\partial \gamma}{\partial t},
 						\label{eq:cfgalerkinsystem}
 					\end{align}
-					where 
+					where the coefficients are defined by their respective terms
 					\begin{align*}
 						\begin{split}
 							b_k^1 &= \sprod{\mathbf{L}(\bar{\mathbf{q}})}{\phi_k} \\
 							L_{ik}^1 &= \sprod{\mathbf{L}(\phi_i)}{\phi_k} \\
 							d_k^1 &= \sprod{\mathbf{L}(\mathbf{q}_c)}{\phi_k} \\
 							f_k &= \sprod{\mathbf{Q}(\mathbf{q}_c,\mathbf{q}_c)}{\phi_k}\\
-							h_k &= \sprod{\mathbf{q}_c}{\phi_k}
+							h_k &= - \sprod{\mathbf{q}_c}{\phi_k}
 						\end{split}
 						\begin{split}
 							b_k^2 &= \sprod{\mathbf{Q}(\bar{\mathbf{q}},\bar{\mathbf{q}})}{\phi_k} \\
 							L_{ik}^2 &=\sprod{\mathbf{Q}(\bar{\mathbf{q}},\phi_i) + \mathbf{Q}(\phi_i,\bar{\mathbf{q}})}{\phi_k} \\
 							d_k^2 &= \sprod{\mathbf{Q}(\mathbf{q}_c,\bar{\mathbf{q}}) + \mathbf{Q}(\bar{\mathbf{q}},\mathbf{q}_c)}{\phi_k} \\
 							g_{ik} &= \sprod{\mathbf{Q}(\mathbf{q}_c,\phi_i) + \mathbf{Q}(\phi_i,\mathbf{q}_c)}{\phi_k} \\
-							Q_{ijk} &=\sprod{\mathbf{Q}(\phi_i,\phi_j))}{\phi_k}					
+							Q_{ijk} &=\sprod{\mathbf{Q}(\phi_i,\phi_j))}{\phi_k}.					
 						\end{split}
 					\end{align*}
-					Note the additional terms in the Galerkin system arise from the addition of the control function and the lack of orthogonality with respect to the POD basis.  				
+					Note the additional terms in the Galerkin system arise from the addition of the control function and the lack of orthogonality with respect to the POD basis. The treatment of the time derivative of $\gamma$ can be simplified by constructing $\gamma$ by a basis with known derivative.   				
 				\subsubsection{Penalty Method}
 					Enforcing the boundary condition in a "weak" fashion, the velocity on the cylinder wall may be written as 
 					\begin{equation*}
@@ -703,21 +741,22 @@
 					where 
 					\begin{equation*}
 						\Upsilon(x) = \begin{cases}
-							1, \text{ if x is on } \partial \Omega, \\
+							1, \text{ if x is on or in distance } \epsilon \text{ to } \partial \Omega, \\
 							0, \text{ otherwise.}
 						\end{cases}
 					\end{equation*}
 					and $\mathbf{q}_\infty$ are the set boundary values $\gamma R e_\theta$. It yields
 					\begin{equation}
-						d_k(a) = - \tau \left( \sum_{i=1}^{r} a_i \int_{\partial \Omega} \phi_k \cdot \phi_i dS - \int_{\partial \Omega} \phi_k \cdot \mathbf{q}_\infty dS \right).
+						d_k(a) = - \tau \left( \sum_{i=1}^{r} a_i \int_{\partial \Omega} \phi_k \cdot \Upsilon(x)\phi_i dV - \int_{\partial \Omega} \phi_k \cdot \Upsilon(x)\mathbf{q}_\infty dV \right).
 						\label{eq:penalty}
 					\end{equation}
-					where the weight parameter $\tau$ is tuned empirically and determines the strength of the imposition of boundary conditions. With respect to \ref{eq:pmboundaryterm}, the parameter $\epsilon$ is included in the weight $\tau$ in \ref{eq:penalty}. The additional term $d_k^1$ and $d_k^2$ are concluded from \ref{eq:penalty} as
+					where the weight parameter $\tau$ is tuned empirically and determines the strength of the imposition of boundary conditions. The additional term $d_k^1$ and $d_k^2$ are concluded from \eqref{eq:penalty} as
 					\begin{align*}
-						d_k^1 &= - \tau \sum_{i=1}^{r} a_i \int_{\partial \Omega} \phi_k \cdot \phi_i dS\\
-						d_k^2 &= \tau \int_{\partial \Omega} \phi_k \cdot \mathbf{q}_\infty^0 dS.
+						d_k^1 &= - \tau \sum_{i=1}^{r} a_i \int_{\partial \Omega} \phi_k \cdot  \Upsilon(x)\phi_i dV\\
+						d_k^2 &= \tau \int_{\partial \Omega} \phi_k \cdot  \Upsilon(x) \mathbf{q}_\infty dV.
 					\end{align*}
-					where $\mathbf{q}_\infty^0$	corresponds to the state of a fixed cylinder rotation with $\gamma_0$. 
+					Note that the volume integrals become surface integrals as $\epsilon \rightarrow 0$ corresponding to only enforcing values on the boundary itself.\\
+					In the original formulation, the basis functions $\phi_i$ inherit the no-slip wall condition and as such can not enforce a satisfying cylinder rotation. Therefore $phi_i$ can be obtained similarly to \cite{Pinnau2008} from a full order simulation with cylinder rotation defined by a chirp signal. Otherwise the choice of $\epsilon$ has to be accordingly.   
 					
 			\subsection{Optimal Control}
 				
@@ -741,7 +780,7 @@
 			The efficient calculation of the gradient function is accomplished using ideas of Optimal Control Theory whereas the system dynamics are imposed onto the control problem via Lagrangian multipliers s.t. the Control Function method is replaced by
 			\begin{align}
 				\begin{split}
-					E(\vec{a},\gamma) &= \int_{0}^{T} f(\vec{a},\gamma) dt - \sum_{k}^{R} \int_{0}^{T} \phi_k (\dot{a}_k - \nu b^1_k - b^2_k - \sum_{i=1}^{r} (\nu L_{ik}^1 + L_{ik}^2)a_i \\ &- \sum_{i=1}^{r}\sum_{j=1}^{r} Q_{ijk}a_i a_j - \gamma (\nu d_k^1 + d_k^2) - \gamma^2 f_k - \sum_{i=1}^{r} \gamma g_{ik} a_i - h_k \frac{\partial \gamma}{\partial t}) dt,
+					E(\vec{a},\gamma) &= \int_{0}^{T} f(\vec{a},\gamma) dt - \sum_{k=1}^{R} \int_{0}^{T} \phi_k (\dot{a}_k - \nu b^1_k - b^2_k - \sum_{i=1}^{r} (\nu L_{ik}^1 + L_{ik}^2)a_i \\ &- \sum_{i=1}^{r}\sum_{j=1}^{r} Q_{ijk}a_i a_j - \gamma (\nu d_k^1 + d_k^2) - \gamma^2 f_k - \sum_{i=1}^{r} \gamma g_{ik} a_i - h_k \frac{\partial \gamma}{\partial t}) dt,
 				\end{split}\label{eq:optimgalerkin}
 			\end{align}
 			where $\{ \phi_k, k = 1, \dots, R\}$ are co-state variables. If and only if the activations $a_k$ satisfy the Galerkin system \ref{eq:galerkinsystem}, the minimization of equation \ref{eq:optimgalerkin} is equivalent to minimizing \ref{eq:gencostunction}, since the additional terms are identical to zero for arbitrary $\phi_k$. \\
@@ -755,12 +794,13 @@
 			\begin{align*}
 				\begin{split}
 					\delta E(\vec{a},\gamma) &= \sum_{k=1}^{R} \int_{0}^{T}(
-					\frac{d \phi_k}{d t} + \sum_{i=1}^{R}[\nu L^1_{ik} + L^2_{ik} + \sum_{j=1}^{R} (Q_{ijk} + Q_{jik}) a_j + \gamma g_{ik}  ] \phi_i + \frac{\partial f}{\partial a_k}
-					) \partial a_k dt \\ &+ \int_{0}^{T}( \sum_{k=1}^{R} (h_k \frac{d \phi_k}{d t} + [\nu d^1_k + d^2_k + \sum_{i=1}^{R} g_{ik} a_i + 2 \gamma f_k] \phi_k)
+					\frac{d \phi_k}{d t} + \sum_{i=1}^{R}[\nu L^1_{ki} + L^2_{ki} + \sum_{j=1}^{R} (Q_{kji} + Q_{jki}) a_j + \gamma g_{ki}  ] \phi_i + \frac{\partial f}{\partial a_k}
+					) \delta a_k dt \\ &+ \int_{0}^{T}( \sum_{k=1}^{R} (h_k \frac{d \phi_k}{d t} + [\nu d^1_k + d^2_k + \sum_{i=1}^{R} g_{ik} a_i + 2 \gamma f_k] \phi_k)
 					+ \frac{\partial f}{\partial \gamma}
-					) \partial \gamma dt \\ &- \sum_{k=1}^{R} ([ \phi_k \delta a_k ]_0^T + [h_k \phi_k \delta \gamma ]_0^T).
+					) \delta \gamma dt \\ &- \sum_{k=1}^{R} ([ \phi_k \delta a_k ]_0^T + [h_k \phi_k \delta \gamma ]_0^T).
 				\end{split}
 			\end{align*} 
+			Note the shift in indexes due to the ordering of variables. 
 			Since initial conditions $a_k^0$ and $\gamma^0$ are given, only variations satisfying $\delta a_k(0)=0$ and $\delta \gamma(0)=0$ are considered. Therefore if $\phi_k$ is constrained to satisfy 
 			\begin{equation}
 				\begin{split}
@@ -775,7 +815,7 @@
 			\end{equation}
 			where 
 			\begin{equation*}
-				A_{ik} = - [\nu L^1_{ik} + L^2_{ik} + \sum_{j=1}^{R} (Q_{ijk} + Q_{jik}) a_j + \sum_{i=1}^{R} \gamma g_{ik}],
+				A_{ik} = - [\nu L^1_{ki} + L^2_{ki} + \sum_{j=1}^{R} (Q_{kji} + Q_{jki}) a_j + \gamma g_{ki }],
 			\end{equation*} equation \ref{eq:deltaE} reduces to 
 			\begin{equation*}
 				\delta E(\vec{a},\gamma) = \int_{0}^{T} (\sum_{k=1}^{R}( h_k \sum_{i=1}^{R} A_{ik} \phi_i + [\nu d^1_k + d^2_k + \sum_{i=1}^{R} g_{ik} a_i + 2 \gamma f_k]\phi_k - h_k \frac{\partial f}{\partial a_k})+ 
@@ -784,7 +824,7 @@
 			The problem employed as constraint on $\phi_k$, given in equation \ref{eq:constraintproblem}, describes a linear initial value problem that needs to be solved in reverse time for the $R$ co-state functions $\phi_k(t)$.\\
 			Since the given Galerkin system is already discretized in the temporal domain, the unknown control function $\gamma(t)$ is parameterized using a sinus expansion
 			\begin{equation*}
-				\gamma(t) \approx \gamma(0)(1 - \frac{t}{T}) + \sum_{m=1}^{N_d} \beta_m \sin({\frac{m \pi t}{2 T}}),
+				\gamma(t) \approx \gamma(0)(1 - \frac{t}{T}) + \sum_{m=1}^{N_d} \beta_m \sin({\frac{ m \pi t}{2 T}}),
 			\end{equation*}
 			where $\beta^s$ contains the $N_d$ design variables $\beta^s_m$. The update is computed via the discrete analogue of equation \ref{eq:steepestdescent}
 			\begin{equation*}
@@ -792,7 +832,7 @@
 			\end{equation*}
 			where the components $G_m^n$ of the discrete gradient vector $G^n$ are computed as
 			\begin{align*}
-				G_m^s &= \Delta t \sum_{n=0}^{N_t}\{(\sum_{k=1}^{R}(h_k \sum_{i=1}^{R} A_{ik}^{sn} \phi_i + [\nu d^1_k + d^2_k + \sum_{i=1}^{R} g_{ik} a_i^{sn} + 2 \gamma^{sn} f_k] \phi_k^{sn} \\
+				G_m^s &= \Delta t \sum_{n=0}^{N_t}\{(\sum_{k=1}^{R}([h_k \sum_{i=1}^{R} A_{ik}^{sn} \phi_i + \nu d^1_k + d^2_k + \sum_{i=1}^{R} g_{ik} a_i^{sn} + 2 \gamma^{sn} f_k] \phi_k^{sn} \\
 				&- h_k (\frac{\partial f}{\partial a_k})^{sn}) + (\frac{\partial f}{\partial \gamma})^{sn}) \sin({\frac{m \pi n \Delta t }{2 T}}) \}
 			\end{align*}
 			where superscript $s$ denotes the update step, $n$ denotes time level and $N_t = \frac{T}{\Delta t}$.
